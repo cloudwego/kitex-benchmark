@@ -1,0 +1,17 @@
+syntax = "proto3";
+package grpc;
+
+option go_package = "github.com/cloudwego/kitex-benchmark/protobuf/grpc";
+
+//--------------------request & response--------------
+
+message GrpcMsg {
+    string Msg = 1;
+    bool Finish = 2;
+}
+
+//----------------------service-------------------
+service GrpcEcho {
+    rpc echoMsg (GrpcMsg) returns (GrpcMsg) {
+    }
+}

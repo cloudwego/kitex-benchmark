@@ -1,0 +1,16 @@
+syntax = "proto3";
+package protobuf;
+option go_package = "echo";
+
+//--------------------request & response--------------
+
+message StrMsg {
+    string Msg = 1;
+    bool Finish = 2;
+}
+
+//----------------------service-------------------
+service Echo {
+    rpc echoStr (StrMsg) returns (StrMsg) {
+    }
+}
