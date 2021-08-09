@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/apache/thrift v0.14.0
 	github.com/cloudwego/kitex v0.0.2-0.20210729075918-8053707e7e0a
+	github.com/cloudwego/netpoll v0.0.4-0.20210809091826-61d298ac0cec // indirect
 	github.com/gogo/protobuf v1.3.2
 	github.com/lesismal/arpc v1.1.8
 	github.com/montanaflynn/stats v0.6.6

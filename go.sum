@@ -54,6 +54,10 @@ github.com/cloudwego/kitex v0.0.2-0.20210729075918-8053707e7e0a h1:UlQGmAuAHab2M
 github.com/cloudwego/kitex v0.0.2-0.20210729075918-8053707e7e0a/go.mod h1:NfZ3Zj8MA+DklZd+z8i6/PEFmrnJAtHrz3AofZAKhKE=
 github.com/cloudwego/netpoll v0.0.2 h1:YIFcR1aN59/nof3KGqOnfjNWCiWr98xfD19J3QYpCPU=
 github.com/cloudwego/netpoll v0.0.2/go.mod h1:rZOiNI0FYjuvNybXKKhAPUja03loJi/cdv2F55AE6E8=
+github.com/cloudwego/netpoll v0.0.4-0.20210726091744-1426e2bfa40a h1:Ll7CZQRMtOzDFCESwSUvQpXs6x52FujuJp+NpGLnjvQ=
+github.com/cloudwego/netpoll v0.0.4-0.20210726091744-1426e2bfa40a/go.mod h1:rZOiNI0FYjuvNybXKKhAPUja03loJi/cdv2F55AE6E8=
+github.com/cloudwego/netpoll v0.0.4-0.20210809091826-61d298ac0cec h1:t8cZxeP8mW9XKfZWNJi2Eh7TUYe014UMVQZpiisYldM=
+github.com/cloudwego/netpoll v0.0.4-0.20210809091826-61d298ac0cec/go.mod h1:rZOiNI0FYjuvNybXKKhAPUja03loJi/cdv2F55AE6E8=
 github.com/cloudwego/netpoll-http2 v0.0.4 h1:pN4uqjklPdvuALd3nFH5UFlmxB7vy7t8MkvKaV8HavU=
 github.com/cloudwego/netpoll-http2 v0.0.4/go.mod h1:iFr5SzJCXIYgBg0ubL0fZiCQ6W36s9p0KjXpV04lmoY=
 github.com/cloudwego/thriftgo v0.0.2-0.20210726073420-0145861fcd04 h1:xrb9zM079RW/DgxuOWF9/MdD0b3sM1W76BN7SxJW+vo=
