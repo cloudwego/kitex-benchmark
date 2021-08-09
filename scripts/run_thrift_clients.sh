@@ -15,7 +15,7 @@ for b in ${body[@]}; do
       addr="${ip}:${ports[i]}"
 
       # run client
-      taskset -c 0-20 ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n
+      $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n
     done
   done
 done
