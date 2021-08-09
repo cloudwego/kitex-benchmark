@@ -2,8 +2,8 @@
 
 . ./scripts/env.sh
 
-repo=("grpc" "kitex" "kitex-mux" "rpcx")
-ports=(8000 8001 8002 8003)
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc")
+ports=(8000 8001 8002 8003 8004)
 
 . ./scripts/build_pb.sh
 

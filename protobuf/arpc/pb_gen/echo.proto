@@ -1,0 +1,9 @@
+syntax = "proto3";
+package arpc;
+
+//--------------------request & response--------------
+
+message ArpcMsg {
+    string Msg = 1;
+    bool Finish = 2;
+}
