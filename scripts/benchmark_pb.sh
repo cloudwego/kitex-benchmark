@@ -14,12 +14,12 @@ for b in ${body[@]}; do
       rp=${repo[i]}
       addr="127.0.0.1:${ports[i]}"
       # server start
-      nohup taskset -c 0-3 ./output/bin/${rp}_reciever >> output/log/nohup.log 2>&1 &
+      nohup $taskset_server ./output/bin/${rp}_reciever >> output/log/nohup.log 2>&1 &
       sleep 1
-      echo "server $rp running at cpu 0-3"
+      echo "server $rp running with $taskset_server"
 
       # run client
-      taskset -c 4-15 ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n
+      $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n
 
       # stop server
       pid=$(ps -ef | grep ${rp}_reciever | grep -v grep | awk '{print $2}')
