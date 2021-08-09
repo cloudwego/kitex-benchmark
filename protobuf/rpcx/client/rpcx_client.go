@@ -24,42 +24,53 @@ import (
 	"github.com/smallnest/rpcx/client"
 	"github.com/smallnest/rpcx/protocol"
 
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/rpcx/pb_gen"
+	gogo "github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewPBRpcxClient(opt *runner.Options) runner.Client {
 	cli := &pbRpcxClient{}
 	cli.msg = string(opt.Body)
-	cli.msgPool = &sync.Pool{
+	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &pb.RpcxMsg{}
+			return &gogo.Request{}
 		},
 	}
+	cli.respPool = &sync.Pool{
+		New: func() interface{} {
+			return &gogo.Response{}
+		},
+	}
+
 	option := client.DefaultOption
 	option.SerializeType = protocol.ProtoBuffer
 	d, _ := client.NewPeer2PeerDiscovery("tcp@"+opt.Address, "")
-	cli.clipool = client.NewXClientPool(opt.PoolSize, "RpcxEcho", client.Failtry, client.RandomSelect, d, option)
+	cli.clipool = client.NewXClientPool(opt.PoolSize, "Echo", client.Failtry, client.RandomSelect, d, option)
 	return cli
 }
 
 type pbRpcxClient struct {
-	msg     string
-	msgPool *sync.Pool
-	clipool *client.XClientPool
+	msg      string
+	reqPool  *sync.Pool
+	respPool *sync.Pool
+	clipool  *client.XClientPool
 }
 
-func (cli *pbRpcxClient) Echo(msg string) (err error) {
-	args := cli.msgPool.Get().(*pb.RpcxMsg)
-	reply := cli.msgPool.Get().(*pb.RpcxMsg)
-	defer cli.msgPool.Put(args)
-	defer cli.msgPool.Put(reply)
+func (cli *pbRpcxClient) Echo(action, msg string) (err error) {
+	args := cli.reqPool.Get().(*gogo.Request)
+	reply := cli.respPool.Get().(*gogo.Response)
+	defer cli.reqPool.Put(args)
+	defer cli.respPool.Put(reply)
+
+	args.Action = action
 	args.Msg = msg
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	xclient := cli.clipool.Get()
-	err = xclient.Call(ctx, "EchoMsg", args, reply)
+	err = xclient.Call(ctx, "Echo", args, reply)
+
+	runner.ProcessResponse(reply.Action, reply.Msg)
 	return err
 }

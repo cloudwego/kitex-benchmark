@@ -24,7 +24,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/grpc/grpc_gen"
+	grpcg "github.com/cloudwego/kitex-benchmark/codec/protobuf/grpc_gen"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
@@ -32,7 +32,7 @@ func NewPBGrpcClient(opt *runner.Options) runner.Client {
 	cli := &pbGrpcClient{}
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &pb.GrpcMsg{}
+			return &grpcg.Request{}
 		},
 	}
 	cli.connpool = runner.NewPool(func() interface{} {
@@ -41,7 +41,7 @@ func NewPBGrpcClient(opt *runner.Options) runner.Client {
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
-		return pb.NewGrpcEchoClient(conn)
+		return grpcg.NewEchoClient(conn)
 	}, opt.PoolSize)
 	return cli
 }
@@ -51,15 +51,21 @@ type pbGrpcClient struct {
 	connpool *runner.Pool
 }
 
-func (cli *pbGrpcClient) Echo(msg string) (err error) {
+func (cli *pbGrpcClient) Echo(msg, action string) error {
 	ctx := context.Background()
-	req := cli.reqPool.Get().(*pb.GrpcMsg)
+	req := cli.reqPool.Get().(*grpcg.Request)
 	defer cli.reqPool.Put(req)
+
+	req.Action = action
 	req.Msg = msg
 
-	pbcli := cli.connpool.Get().(pb.GrpcEchoClient)
+	pbcli := cli.connpool.Get().(grpcg.EchoClient)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	_, err = pbcli.EchoMsg(ctx, req)
+	reply, err := pbcli.Echo(ctx, req)
+
+	if reply != nil {
+		runner.ProcessResponse(reply.Action, reply.Msg)
+	}
 	return err
 }

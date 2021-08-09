@@ -21,18 +21,21 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloudwego/kitex-benchmark/runner"
-	"github.com/cloudwego/kitex-benchmark/thrift/kitex/kitex_gen/echo"
-	"github.com/cloudwego/kitex-benchmark/thrift/kitex/kitex_gen/echo/echoserver"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/connpool"
+
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 	cli := &thriftKiteXClient{}
 	cli.client = echoserver.MustNewClient("test.echo.kitex",
 		client.WithHostPorts(opt.Address),
-		client.WithLongConnection(connpool.IdleConfig{1000, 1000, time.Minute}))
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
 			return &echo.Request{}
@@ -46,12 +49,17 @@ type thriftKiteXClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *thriftKiteXClient) Echo(msg string) (err error) {
+func (cli *thriftKiteXClient) Echo(action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
-	req.Message = msg
 
-	_, err = cli.client.Echo(ctx, req)
+	req.Action = action
+	req.Msg = msg
+
+	reply, err := cli.client.Echo(ctx, req)
+	if reply != nil {
+		runner.ProcessResponse(reply.Action, reply.Msg)
+	}
 	return err
 }

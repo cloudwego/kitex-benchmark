@@ -26,8 +26,8 @@ import (
 	"github.com/lesismal/arpc/codec"
 	"github.com/lesismal/arpc/log"
 
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/arpc/pb_gen"
-	"github.com/cloudwego/kitex-benchmark/protobuf/arpc/pbcodec"
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/pbcodec"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
@@ -36,9 +36,14 @@ func NewPBArpcClient(opt *runner.Options) runner.Client {
 
 	cli := &pbArpcClient{}
 	cli.msg = string(opt.Body)
-	cli.msgPool = &sync.Pool{
+	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &pb.ArpcMsg{}
+			return &gogo.Request{}
+		},
+	}
+	cli.respPool = &sync.Pool{
+		New: func() interface{} {
+			return &gogo.Response{}
 		},
 	}
 
@@ -56,22 +61,27 @@ func NewPBArpcClient(opt *runner.Options) runner.Client {
 }
 
 type pbArpcClient struct {
-	msg     string
-	msgPool *sync.Pool
-	clipool *arpc.ClientPool
+	msg      string
+	reqPool  *sync.Pool
+	respPool *sync.Pool
+	clipool  *arpc.ClientPool
 }
 
-func (cli *pbArpcClient) Echo(msg string) (err error) {
-	args := cli.msgPool.Get().(*pb.ArpcMsg)
-	reply := cli.msgPool.Get().(*pb.ArpcMsg)
-	defer cli.msgPool.Put(args)
-	defer cli.msgPool.Put(reply)
+func (cli *pbArpcClient) Echo(action, msg string) (err error) {
+	args := cli.reqPool.Get().(*gogo.Request)
+	reply := cli.respPool.Get().(*gogo.Response)
+	defer cli.reqPool.Put(args)
+	defer cli.respPool.Put(reply)
+
+	args.Action = action
 	args.Msg = msg
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	client := cli.clipool.Next()
-	err = client.CallWith(ctx, "EchoMsg", args, reply)
+	err = client.CallWith(ctx, "Echo", args, reply)
+
+	runner.ProcessResponse(reply.Action, reply.Msg)
 	return err
 }

@@ -24,58 +24,13 @@ import (
 	"github.com/cloudwego/kitex-benchmark/perf"
 )
 
-func Main(name string, newer ClientNewer) {
-	initFlags()
-
-	r := NewRunner()
-
-	opt := &Options{
-		Address:  address,
-		PoolSize: poolSize,
-	}
-	cli := newer(opt)
-	payload := string(make([]byte, echoSize))
-	handler := func() error { return cli.Echo(payload) }
-
-	// === warming ===
-	r.Warmup(handler, concurrent, 100*1000)
-
-	// === beginning ===
-	if err := cli.Echo("begin"); err != nil {
-		log.Fatalf("beginning server failed: %v", err)
-	}
-	recorder := perf.NewRecorder(name)
-	recorder.Begin()
-
-	// === benching ===
-	r.Run(name, handler, concurrent, total, echoSize)
-
-	// == ending ===
-	recorder.End()
-	if err := cli.Echo("end"); err != nil {
-		log.Fatalf("ending server failed: %v", err)
-	}
-
-	// === reporting ===
-	recorder.Report()
-	fmt.Printf("\n\n")
-}
-
-func initFlags() {
-	flag.StringVar(&address, "addr", "", "client call address")
-	flag.IntVar(&echoSize, "b", 1024, "echo size once")
-	flag.IntVar(&concurrent, "c", 1, "call concurrent")
-	flag.Int64Var(&total, "n", 1, "call total nums")
-	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
-	flag.Parse()
-}
-
 var (
 	address    string
 	echoSize   int
 	total      int64
 	concurrent int
 	poolSize   int
+	sleepTime  int
 )
 
 type Options struct {
@@ -87,5 +42,57 @@ type Options struct {
 type ClientNewer func(opt *Options) Client
 
 type Client interface {
-	Echo(msg string) (err error)
+	Echo(action, msg string) (err error)
+}
+
+type Response struct {
+	Action string
+	Msg    string
+}
+
+func initFlags() {
+	flag.StringVar(&address, "addr", "", "client call address")
+	flag.IntVar(&echoSize, "b", 1024, "echo size once")
+	flag.IntVar(&concurrent, "c", 1, "call concurrent")
+	flag.Int64Var(&total, "n", 1, "call total nums")
+	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
+	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
+	flag.Parse()
+}
+
+func Main(name string, newer ClientNewer) {
+	initFlags()
+
+	r := NewRunner()
+
+	opt := &Options{
+		Address:  address,
+		PoolSize: poolSize,
+	}
+	cli := newer(opt)
+	payload := string(make([]byte, echoSize))
+	handler := func() error { return cli.Echo(payload, "") }
+
+	// === warming ===
+	r.Warmup(handler, concurrent, 100*1000)
+
+	// === beginning ===
+	if err := cli.Echo(BeginAction, ""); err != nil {
+		log.Fatalf("beginning server failed: %v", err)
+	}
+	recorder := perf.NewRecorder(fmt.Sprintf("%s@Client", name))
+	recorder.Begin()
+
+	// === benching ===
+	r.Run(name, handler, concurrent, total, echoSize)
+
+	// == ending ===
+	recorder.End()
+	if err := cli.Echo(EndAction, ""); err != nil {
+		log.Fatalf("ending server failed: %v", err)
+	}
+
+	// === reporting ===
+	recorder.Report() // report client
+	fmt.Printf("\n\n")
 }

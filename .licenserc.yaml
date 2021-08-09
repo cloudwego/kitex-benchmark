@@ -8,8 +8,6 @@ header:
     - '**/*.s'
 
   paths-ignore:
-    - '**/grpc_gen/**/*'
-    - '**/kitex_gen/**/*'
-    - '**/pb_gen/**/*'
+    - './codec/**/*'
 
   comment: on-failure

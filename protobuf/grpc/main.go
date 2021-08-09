@@ -23,33 +23,27 @@ import (
 
 	"google.golang.org/grpc"
 
+	grpcg "github.com/cloudwego/kitex-benchmark/codec/protobuf/grpc_gen"
 	"github.com/cloudwego/kitex-benchmark/perf"
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/grpc/grpc_gen"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
 	port = ":8000"
 )
 
-var recorder = perf.NewRecorder("GRPC")
+var recorder = perf.NewRecorder("GRPC@Server")
 
-// server is used to implement helloworld.GreeterServer.
 type server struct {
-	pb.UnimplementedGrpcEchoServer
+	grpcg.UnimplementedEchoServer
 }
 
-// EchoMsg implements helloworld.GreeterServer
-func (s *server) EchoMsg(ctx context.Context, req *pb.GrpcMsg) (resp *pb.GrpcMsg, err error) {
-	switch req.Msg {
-	case "begin":
-		recorder.Begin()
-	case "end":
-		recorder.End()
-		recorder.Report()
-	}
-	return &pb.GrpcMsg{
-		Msg:    req.Msg,
-		Finish: req.Finish,
+func (s *server) Echo(ctx context.Context, req *grpcg.Request) (*grpcg.Response, error) {
+	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+
+	return &grpcg.Response{
+		Msg:    resp.Msg,
+		Action: resp.Action,
 	}, nil
 }
 
@@ -59,7 +53,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterGrpcEchoServer(s, &server{})
+	grpcg.RegisterEchoServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 
 	if err := s.Serve(lis); err != nil {

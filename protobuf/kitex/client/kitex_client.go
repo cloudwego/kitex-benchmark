@@ -21,37 +21,45 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloudwego/kitex-benchmark/protobuf/kitex/kitex_gen/echo"
-	echo2 "github.com/cloudwego/kitex-benchmark/protobuf/kitex/kitex_gen/echo/echo"
-	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/connpool"
+
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
+	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewPBKiteXClient(opt *runner.Options) runner.Client {
 	cli := &pbKitexClient{}
-	cli.client = echo2.MustNewClient("test.echo.kitex",
+	cli.client = echosvr.MustNewClient("test.echo.kitex",
 		client.WithHostPorts(opt.Address),
-		client.WithLongConnection(connpool.IdleConfig{1000, 1000, time.Minute}))
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &echo.StrMsg{}
+			return &echo.Request{}
 		},
 	}
 	return cli
 }
 
 type pbKitexClient struct {
-	client  echo2.Client
+	client  echosvr.Client
 	reqPool *sync.Pool
 }
 
-func (cli *pbKitexClient) Echo(msg string) (err error) {
+func (cli *pbKitexClient) Echo(msg, action string) error {
 	ctx := context.Background()
-	req := cli.reqPool.Get().(*echo.StrMsg)
+	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
 	req.Msg = msg
-	_, err = cli.client.EchoStr(ctx, req)
+	req.Action = action
+
+	reply, err := cli.client.Echo(ctx, req)
+	if reply != nil {
+		runner.ProcessResponse(reply.Action, reply.Msg)
+	}
 	return err
 }

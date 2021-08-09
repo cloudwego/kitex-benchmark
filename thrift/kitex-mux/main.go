@@ -23,9 +23,10 @@ import (
 
 	"github.com/cloudwego/kitex/server"
 
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
 	"github.com/cloudwego/kitex-benchmark/perf"
-	"github.com/cloudwego/kitex-benchmark/thrift/kitex/kitex_gen/echo"
-	echosvr "github.com/cloudwego/kitex-benchmark/thrift/kitex/kitex_gen/echo/echoserver"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
@@ -35,25 +36,21 @@ const (
 // EchoServerImpl implements the last service interface defined in the IDL.
 type EchoServerImpl struct{}
 
-var recorder = perf.NewRecorder("KITEX-MUX")
+var recorder = perf.NewRecorder("KITEX-MUX@Server")
 
 // Echo implements the EchoServerImpl interface.
-func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (resp *echo.Response, err error) {
-	switch req.Message {
-	case "begin":
-		recorder.Begin()
-	case "end":
-		recorder.End()
-		recorder.Report()
-	}
+func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
+	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+
 	return &echo.Response{
-		Message: req.Message,
+		Action: resp.Action,
+		Msg:    resp.Msg,
 	}, nil
 }
 
 func main() {
 	address := &net.UnixAddr{Net: "tcp", Name: port}
-	svr := echosvr.NewServer(new(EchoServerImpl),
+	svr := echoserver.NewServer(new(EchoServerImpl),
 		server.WithServiceAddr(address),
 		server.WithMuxTransport())
 

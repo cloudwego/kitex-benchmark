@@ -22,28 +22,24 @@ import (
 	"github.com/smallnest/rpcx/log"
 	"github.com/smallnest/rpcx/server"
 
+	gogo "github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
 	"github.com/cloudwego/kitex-benchmark/perf"
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/rpcx/pb_gen"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
 	port = ":8003"
 )
 
-type RpcxEcho struct{}
+type Echo struct{}
 
-var recorder = perf.NewRecorder("RPCX")
+var recorder = perf.NewRecorder("RPCX@Server")
 
-func (s *RpcxEcho) EchoMsg(ctx context.Context, args *pb.RpcxMsg, reply *pb.RpcxMsg) error {
-	switch args.Msg {
-	case "begin":
-		recorder.Begin()
-	case "end":
-		recorder.End()
-		recorder.Report()
-	}
+func (s *Echo) Echo(ctx context.Context, args *gogo.Request, reply *gogo.Response) error {
+	resp := runner.ProcessRequest(recorder, args.Action, args.Msg)
 
-	reply.Msg = args.Msg
+	reply.Action = resp.Action
+	reply.Msg = resp.Msg
 	return nil
 }
 
@@ -52,6 +48,6 @@ func main() {
 	log.SetDummyLogger()
 
 	s := server.NewServer()
-	s.Register(new(RpcxEcho), "")
+	s.Register(new(Echo), "")
 	s.Serve("tcp", port)
 }

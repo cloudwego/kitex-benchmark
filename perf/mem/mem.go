@@ -20,6 +20,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -89,4 +92,28 @@ func calcStats(bucket []Stats) Usage {
 		MaxRss: maxRss,
 		AvgRss: totalRss / int64(len(bucket)),
 	}
+}
+
+func parseSmaps(data string) Stats {
+	lines := strings.Split(data, "\n")
+	reg := regexp.MustCompile("(\\w+): +(\\d+) kB")
+	stats := Stats{}
+	for _, line := range lines {
+		params := reg.FindStringSubmatch(line)
+		if len(params) < 3 {
+			continue
+		}
+		field, value := params[1], params[2]
+		var err error
+		switch strings.ToLower(field) {
+		case "rss":
+			stats.Rss, err = strconv.ParseInt(value, 10, 64)
+		case "pss":
+			stats.Pss, err = strconv.ParseInt(value, 10, 64)
+		}
+		if err != nil {
+			panic(fmt.Sprintf("parse mem field: %s failed: %v", field, err))
+		}
+	}
+	return stats
 }
