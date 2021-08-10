@@ -27,7 +27,6 @@ import (
 	log "github.com/lesismal/arpc/log"
 	"github.com/lesismal/nbio"
 	nlog "github.com/lesismal/nbio/logging"
-	"github.com/lesismal/nbio/taskpool"
 
 	"github.com/cloudwego/kitex-benchmark/perf"
 	pb "github.com/cloudwego/kitex-benchmark/protobuf/arpc/pb_gen"
@@ -70,6 +69,7 @@ func main() {
 	codec.DefaultCodec = &pbcodec.ProtoBuffer{}
 
 	handler.SetAsyncWrite(false)
+	handler.SetAsyncResponse(true)
 	handler.Handle("EchoMsg", EchoMsg)
 
 	g := nbio.NewGopher(nbio.Config{
@@ -94,8 +94,7 @@ func main() {
 }
 
 var (
-	handler        = arpc.NewHandler()
-	msgHandlerPool = taskpool.NewMixedPool(2048, 4, 1024)
+	handler = arpc.NewHandler()
 )
 
 // Session .
@@ -130,8 +129,6 @@ func onData(c *nbio.Conn, data []byte) {
 
 		msg := &arpc.Message{Buffer: session.Buffer[:arpc.HeadLen+header.BodyLen()]}
 		session.Buffer = session.Buffer[arpc.HeadLen+header.BodyLen():]
-		msgHandlerPool.Go(func() {
-			handler.OnMessage(session.Client, msg)
-		})
+		handler.OnMessage(session.Client, msg)
 	}
 }

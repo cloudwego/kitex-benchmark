@@ -61,6 +61,7 @@ func main() {
 	codec.DefaultCodec = &pbcodec.ProtoBuffer{}
 
 	svr := arpc.NewServer()
+	svr.Handler.SetAsyncResponse(true)
 	svr.Handler.Handle("EchoMsg", EchoMsg)
 
 	svr.Run(port)
