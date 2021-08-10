@@ -19,6 +19,7 @@ package main
 import (
 	"github.com/lesismal/arpc"
 	"github.com/lesismal/arpc/codec"
+	"github.com/lesismal/arpc/log"
 
 	"github.com/cloudwego/kitex-benchmark/perf"
 	pb "github.com/cloudwego/kitex-benchmark/protobuf/arpc/pb_gen"
@@ -29,9 +30,7 @@ const (
 	port = ":8004"
 )
 
-type RpcxEcho struct{}
-
-var recorder = perf.NewRecorder("RPCX")
+var recorder = perf.NewRecorder("ARPC")
 
 func EchoMsg(ctx *arpc.Context) {
 	args := &pb.ArpcMsg{}
@@ -57,6 +56,8 @@ func EchoMsg(ctx *arpc.Context) {
 }
 
 func main() {
+	log.SetLevel(log.LevelNone)
+
 	codec.DefaultCodec = &pbcodec.ProtoBuffer{}
 
 	svr := arpc.NewServer()
