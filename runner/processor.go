@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	EchoAction   = "echo"
 	BeginAction  = "begin"
 	EndAction    = "end"
 	SleepAction  = "sleep"

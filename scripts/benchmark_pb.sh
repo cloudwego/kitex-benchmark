@@ -19,7 +19,7 @@ for b in ${body[@]}; do
       echo "server $rp running with $taskset_server"
 
       # run client
-      $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n
+      $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
 
       # stop server
       pid=$(ps -ef | grep ${rp}_reciever | grep -v grep | awk '{print $2}')

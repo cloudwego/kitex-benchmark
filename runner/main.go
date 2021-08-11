@@ -20,6 +20,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/cloudwego/kitex-benchmark/perf"
 )
@@ -71,7 +72,12 @@ func Main(name string, newer ClientNewer) {
 	}
 	cli := newer(opt)
 	payload := string(make([]byte, echoSize))
-	handler := func() error { return cli.Echo(payload, "") }
+	action := EchoAction
+	if sleepTime > 0 {
+		action = SleepAction
+		payload = strconv.Itoa(sleepTime)
+	}
+	handler := func() error { return cli.Echo(action, payload) }
 
 	// === warming ===
 	r.Warmup(handler, concurrent, 100*1000)

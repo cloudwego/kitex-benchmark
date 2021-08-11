@@ -11,6 +11,7 @@ fi
 n=5000000
 body=(1024)
 concurrent=(100 200 400 600 800 1000)
+sleep=0
 
 scpu=$((nprocs > 16 ? 3 : nprocs / 4 - 1)) # max is 3(4 cpus)
 taskset_server="taskset -c 0-$scpu"
