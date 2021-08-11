@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cloudwego/kitex-benchmark/perf"
@@ -30,10 +31,11 @@ func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
 			Msg:    recorder.ReportString(),
 		}
 	case SleepAction:
-		if n, err := strconv.Atoi(msg); err != nil {
-			sleepTime := time.Millisecond * time.Duration(n)
-			if sleepTime > 0 {
-				time.Sleep(sleepTime)
+		timeStr := strings.Split(msg, ",")[0]
+		if n, err := strconv.Atoi(timeStr); err == nil {
+			ms := time.Millisecond * time.Duration(n)
+			if ms > 0 {
+				time.Sleep(ms)
 			}
 		}
 	default:

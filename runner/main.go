@@ -75,7 +75,8 @@ func Main(name string, newer ClientNewer) {
 	action := EchoAction
 	if sleepTime > 0 {
 		action = SleepAction
-		payload = strconv.Itoa(sleepTime)
+		st := strconv.Itoa(sleepTime)
+		payload = fmt.Sprintf("%s,%s", st, payload[len(st)+1:])
 	}
 	handler := func() error { return cli.Echo(action, payload) }
 
