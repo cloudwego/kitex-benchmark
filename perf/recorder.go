@@ -75,5 +75,5 @@ func (r *Recorder) ReportString() string {
 }
 
 func (r *Recorder) Report() {
-	fmt.Printf(r.ReportString())
+	fmt.Print(r.ReportString())
 }

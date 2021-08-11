@@ -48,6 +48,6 @@ func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
 func ProcessResponse(action, msg string) {
 	switch action {
 	case ReportAction:
-		fmt.Printf(msg)
+		fmt.Print(msg)
 	}
 }
