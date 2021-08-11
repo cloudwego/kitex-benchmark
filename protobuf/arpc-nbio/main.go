@@ -50,11 +50,10 @@ func Echo(ctx *arpc.Context) {
 
 	resp := runner.ProcessRequest(recorder, args.Action, args.Msg)
 
-	reply := &gogo.Request{
+	reply := &gogo.Response{
 		Msg:    resp.Msg,
 		Action: resp.Action,
 	}
-
 	ctx.Write(reply)
 }
 
