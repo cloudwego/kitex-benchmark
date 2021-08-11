@@ -17,6 +17,8 @@ go mod tidy
 go build -v -o output/bin/grpc_bencher ./protobuf/grpc/client
 go build -v -o output/bin/rpcx_bencher ./protobuf/rpcx/client
 go build -v -o output/bin/arpc_bencher ./protobuf/arpc/client
+go build -v -o output/bin/arpc-nbio_bencher ./protobuf/arpc-nbio/client
 go build -v -o output/bin/grpc_reciever ./protobuf/grpc
 go build -v -o output/bin/rpcx_reciever ./protobuf/rpcx
 go build -v -o output/bin/arpc_reciever ./protobuf/arpc
+go build -v -o output/bin/arpc-nbio_reciever ./protobuf/arpc-nbio
