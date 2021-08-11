@@ -91,7 +91,7 @@ func Main(name string, newer ClientNewer) {
 	recorder.Begin()
 
 	// === benching ===
-	r.Run(name, handler, concurrent, total, echoSize)
+	r.Run(name, handler, concurrent, total, echoSize, sleepTime)
 
 	// == ending ===
 	recorder.End()
