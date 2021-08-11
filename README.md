@@ -61,6 +61,8 @@ n=5000000
 body=(1024 5120)
 # 并发度
 concurrent=(100 200 400 600 800 1000)
+# server handler sleep 时间(/ms)，默认为 0
+sleep=0
 ```
 
 ## 环境要求

@@ -54,8 +54,8 @@ func (cli *pbKitexClient) Echo(action, msg string) error {
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
-	req.Msg = msg
 	req.Action = action
+	req.Msg = msg
 
 	reply, err := cli.client.Echo(ctx, req)
 	if reply != nil {
