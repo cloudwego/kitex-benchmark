@@ -67,7 +67,13 @@ func (r *Recorder) End() {
 	r.waiter.Wait()
 }
 
+func (r *Recorder) ReportString() string {
+	output := ""
+	output += fmt.Sprintf("[%s] CPU Usage: %s\n", r.name, r.CpuUsage)
+	output += fmt.Sprintf("[%s] Mem Usage: %s\n", r.name, r.MemUsage)
+	return output
+}
+
 func (r *Recorder) Report() {
-	fmt.Printf("[%s] CPU Usage: %s\n", r.name, r.CpuUsage)
-	fmt.Printf("[%s] Mem Usage: %s\n", r.name, r.MemUsage)
+	fmt.Print(r.ReportString())
 }

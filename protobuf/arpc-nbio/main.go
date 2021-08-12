@@ -24,41 +24,36 @@ import (
 
 	"github.com/lesismal/arpc"
 	"github.com/lesismal/arpc/codec"
-	log "github.com/lesismal/arpc/log"
+	"github.com/lesismal/arpc/log"
 	"github.com/lesismal/nbio"
 	nlog "github.com/lesismal/nbio/logging"
 
+	gogo "github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/pbcodec"
 	"github.com/cloudwego/kitex-benchmark/perf"
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/arpc/pb_gen"
-	"github.com/cloudwego/kitex-benchmark/protobuf/arpc/pbcodec"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
 	port = ":8005"
 )
 
-var recorder = perf.NewRecorder("ARPC-NBIO")
+var recorder = perf.NewRecorder("ARPC-NBIO@Server")
 
-func EchoMsg(ctx *arpc.Context) {
-	args := &pb.ArpcMsg{}
+func Echo(ctx *arpc.Context) {
+	args := &gogo.Request{}
 
 	if err := ctx.Bind(args); err != nil {
 		ctx.Error(err)
 		return
 	}
-	switch args.Msg {
-	case "begin":
-		recorder.Begin()
-	case "end":
-		recorder.End()
-		recorder.Report()
-	}
 
-	reply := &pb.ArpcMsg{
-		Msg:    args.Msg,
-		Finish: args.Finish,
-	}
+	resp := runner.ProcessRequest(recorder, args.Action, args.Msg)
 
+	reply := &gogo.Response{
+		Msg:    resp.Msg,
+		Action: resp.Action,
+	}
 	ctx.Write(reply)
 }
 
@@ -70,7 +65,7 @@ func main() {
 
 	handler.SetAsyncWrite(false)
 	handler.SetAsyncResponse(true)
-	handler.Handle("EchoMsg", EchoMsg)
+	handler.Handle("Echo", Echo)
 
 	g := nbio.NewGopher(nbio.Config{
 		Network: "tcp",

@@ -21,38 +21,31 @@ import (
 	"github.com/lesismal/arpc/codec"
 	"github.com/lesismal/arpc/log"
 
-
+	gogo "github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/pbcodec"
 	"github.com/cloudwego/kitex-benchmark/perf"
-	pb "github.com/cloudwego/kitex-benchmark/protobuf/arpc/pb_gen"
-	"github.com/cloudwego/kitex-benchmark/protobuf/arpc/pbcodec"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
 	port = ":8004"
 )
 
-var recorder = perf.NewRecorder("ARPC")
+var recorder = perf.NewRecorder("ARPC@Server")
 
-func EchoMsg(ctx *arpc.Context) {
-	args := &pb.ArpcMsg{}
-
+func Echo(ctx *arpc.Context) {
+	args := &gogo.Request{}
 	if err := ctx.Bind(args); err != nil {
 		ctx.Error(err)
 		return
 	}
-	switch args.Msg {
-	case "begin":
-		recorder.Begin()
-	case "end":
-		recorder.End()
-		recorder.Report()
-	}
 
-	reply := &pb.ArpcMsg{
-		Msg:    args.Msg,
-		Finish: args.Finish,
-	}
+	resp := runner.ProcessRequest(recorder, args.Action, args.Msg)
 
+	reply := &gogo.Response{
+		Action: resp.Action,
+		Msg:    resp.Msg,
+	}
 	ctx.Write(reply)
 }
 
@@ -63,7 +56,7 @@ func main() {
 
 	svr := arpc.NewServer()
 	svr.Handler.SetAsyncResponse(true)
-	svr.Handler.Handle("EchoMsg", EchoMsg)
+	svr.Handler.Handle("Echo", Echo)
 
 	svr.Run(port)
 }

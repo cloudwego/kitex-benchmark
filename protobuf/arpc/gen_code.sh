@@ -1,1 +1,1 @@
-protoc --gogofaster_out=. pb_gen/echo.proto
+protoc --gogofaster_out=. ./pb_gen/echo.proto

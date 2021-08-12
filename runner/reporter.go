@@ -25,8 +25,8 @@ import (
 
 func (c *Counter) Report(title string, totalns int64, concurrent int, total int64, echoSize int) error {
 	ms, sec := int64(time.Millisecond), int64(time.Second)
-	logInfo("took %d ms for %d requests", totalns/ms, c.Total)
-	logInfo("requests total: %d, failed: %d", c.Total, c.Failed)
+	logInfo("[%s]: took %d ms for %d requests", title, totalns/ms, c.Total)
+	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
 
 	var tps float64
 	if totalns < sec {

@@ -23,32 +23,28 @@ import (
 
 	"github.com/cloudwego/kitex/server"
 
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
+	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
 	"github.com/cloudwego/kitex-benchmark/perf"
-	"github.com/cloudwego/kitex-benchmark/protobuf/kitex/kitex_gen/echo"
-	echosvr "github.com/cloudwego/kitex-benchmark/protobuf/kitex/kitex_gen/echo/echo"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
 	port = ":8002"
 )
 
-var recorder = perf.NewRecorder("KITEX-MUX")
+var recorder = perf.NewRecorder("KITEX-MUX@Server")
 
 // EchoImpl implements the last service interface defined in the IDL.
 type EchoImpl struct{}
 
-// EchoStr implements the EchoImpl interface.
-func (s *EchoImpl) EchoStr(ctx context.Context, req *echo.StrMsg) (resp *echo.StrMsg, err error) {
-	switch req.Msg {
-	case "begin":
-		recorder.Begin()
-	case "end":
-		recorder.End()
-		recorder.Report()
-	}
-	return &echo.StrMsg{
-		Msg:    req.Msg,
-		Finish: req.Finish,
+// Echo implements the EchoImpl interface.
+func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
+	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+
+	return &echo.Response{
+		Action: resp.Action,
+		Msg:    resp.Msg,
 	}, nil
 }
 
