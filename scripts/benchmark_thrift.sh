@@ -18,7 +18,7 @@ for b in ${body[@]}; do
       echo "server $rp running with $taskset_server"
 
       # run client
-      echo "benchmark $rp: echo size=$b, concurrent=$c, n=$n at:$(date "+%Y-%m-%d %H:%M:%S")"
+      echo "client $rp running with $taskset_client"
       $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
 
       # stop server

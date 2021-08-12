@@ -18,6 +18,7 @@ for b in ${body[@]}; do
       addr="${ip}:${ports[i]}"
 
       # run client
+      echo "client $rp running with $taskset_client"
       $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
     done
   done
