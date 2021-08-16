@@ -23,6 +23,7 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/connpool"
+	"github.com/cloudwego/kitex/transport"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
@@ -32,6 +33,7 @@ import (
 func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 	cli := &thriftKiteXClient{}
 	cli.client = echoserver.MustNewClient("test.echo.kitex",
+		client.WithTransportProtocol(transport.Framed),
 		client.WithHostPorts(opt.Address),
 		client.WithLongConnection(
 			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
