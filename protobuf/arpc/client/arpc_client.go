@@ -26,7 +26,7 @@ import (
 	"github.com/lesismal/arpc/codec"
 	"github.com/lesismal/arpc/log"
 
-	"github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
+	gogo "github.com/cloudwego/kitex-benchmark/codec/protobuf/gogo_gen"
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/pbcodec"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
@@ -47,6 +47,7 @@ func NewPBArpcClient(opt *runner.Options) runner.Client {
 		},
 	}
 
+	arpc.EnablePool(true)
 	codec.DefaultCodec = &pbcodec.ProtoBuffer{}
 	pool, err := arpc.NewClientPool(func() (net.Conn, error) {
 		return net.DialTimeout("tcp", opt.Address, time.Second*5)

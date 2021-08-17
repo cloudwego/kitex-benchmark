@@ -7,8 +7,8 @@ require (
 	github.com/cloudwego/kitex v0.0.3
 	github.com/cloudwego/thriftgo v0.1.2 // indirect
 	github.com/gogo/protobuf v1.3.2
-	github.com/lesismal/arpc v1.1.8
-	github.com/lesismal/nbio v1.1.21
+	github.com/lesismal/arpc v1.1.9
+	github.com/lesismal/nbio v1.1.23-0.20210815145206-b106d99bce56
 	github.com/montanaflynn/stats v0.6.6
 	github.com/smallnest/rpcx v1.6.7
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
