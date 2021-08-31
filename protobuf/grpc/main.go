@@ -44,6 +44,7 @@ func (s *server) Echo(ctx context.Context, req *grpcg.Request) (*grpcg.Response,
 	return &grpcg.Response{
 		Msg:    resp.Msg,
 		Action: resp.Action,
+		MapI64String: req.MapI64String,
 	}, nil
 }
 

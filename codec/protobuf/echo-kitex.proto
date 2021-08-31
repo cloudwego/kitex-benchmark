@@ -7,11 +7,13 @@ option go_package = "echo";
 message Request {
     string Action = 1;
     string Msg = 2;
+    map<int64, string> MapI64String = 3;
 }
 
 message Response {
     string Action = 1;
     string Msg = 2;
+    map<int64, string> MapI64String = 3;
 }
 
 //----------------------service-------------------

@@ -43,7 +43,7 @@ type Options struct {
 type ClientNewer func(opt *Options) Client
 
 type Client interface {
-	Echo(action, msg string) (err error)
+	Echo(action, msg string, kvs map[int64]string) (err error)
 }
 
 type Response struct {
@@ -78,13 +78,18 @@ func Main(name string, newer ClientNewer) {
 		st := strconv.Itoa(sleepTime)
 		payload = fmt.Sprintf("%s,%s", st, payload[len(st)+1:])
 	}
-	handler := func() error { return cli.Echo(action, payload) }
+	var size int64 = 100
+	kvs := make(map[int64]string, size)
+	for i:=int64(0); i<size; i++{
+		kvs[i] = fmt.Sprintf("id=%d", i)
+	}
+	handler := func() error { return cli.Echo(action, payload, kvs) }
 
 	// === warming ===
 	r.Warmup(handler, concurrent, 100*1000)
 
 	// === beginning ===
-	if err := cli.Echo(BeginAction, ""); err != nil {
+	if err := cli.Echo(BeginAction, "", nil); err != nil {
 		log.Fatalf("beginning server failed: %v", err)
 	}
 	recorder := perf.NewRecorder(fmt.Sprintf("%s@Client", name))
@@ -95,7 +100,7 @@ func Main(name string, newer ClientNewer) {
 
 	// == ending ===
 	recorder.End()
-	if err := cli.Echo(EndAction, ""); err != nil {
+	if err := cli.Echo(EndAction, "", nil); err != nil {
 		log.Fatalf("ending server failed: %v", err)
 	}
 

@@ -45,6 +45,7 @@ func Echo(ctx *arpc.Context) {
 	reply := &gogo.Response{
 		Action: resp.Action,
 		Msg:    resp.Msg,
+		MapI64String: args.MapI64String,
 	}
 	ctx.Write(reply)
 }

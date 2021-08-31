@@ -49,13 +49,14 @@ type pbKitexClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *pbKitexClient) Echo(action, msg string) error {
+func (cli *pbKitexClient) Echo(action, msg string, kvs map[int64]string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
 	req.Action = action
 	req.Msg = msg
+	req.MapI64String = kvs
 
 	reply, err := cli.client.Echo(ctx, req)
 	if reply != nil {

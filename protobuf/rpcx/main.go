@@ -40,6 +40,7 @@ func (s *Echo) Echo(ctx context.Context, args *gogo.Request, reply *gogo.Respons
 
 	reply.Action = resp.Action
 	reply.Msg = resp.Msg
+	reply.MapI64String = args.MapI64String
 	return nil
 }
 

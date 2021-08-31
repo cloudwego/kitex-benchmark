@@ -51,13 +51,14 @@ type pbGrpcClient struct {
 	connpool *runner.Pool
 }
 
-func (cli *pbGrpcClient) Echo(action, msg string) error {
+func (cli *pbGrpcClient) Echo(action, msg string, kvs map[int64]string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*grpcg.Request)
 	defer cli.reqPool.Put(req)
 
 	req.Action = action
 	req.Msg = msg
+	req.MapI64String = kvs
 
 	pbcli := cli.connpool.Get().(grpcg.EchoClient)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)

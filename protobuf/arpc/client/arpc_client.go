@@ -68,7 +68,7 @@ type pbArpcClient struct {
 	clipool  *arpc.ClientPool
 }
 
-func (cli *pbArpcClient) Echo(action, msg string) (err error) {
+func (cli *pbArpcClient) Echo(action, msg string, kvs map[int64]string) (err error) {
 	args := cli.reqPool.Get().(*gogo.Request)
 	reply := cli.respPool.Get().(*gogo.Response)
 	defer cli.reqPool.Put(args)
@@ -76,6 +76,7 @@ func (cli *pbArpcClient) Echo(action, msg string) (err error) {
 
 	args.Action = action
 	args.Msg = msg
+	args.MapI64String = kvs
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

@@ -45,6 +45,7 @@ func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response,
 	return &echo.Response{
 		Action: resp.Action,
 		Msg:    resp.Msg,
+		MapI64String: req.MapI64String,
 	}, nil
 }
 
