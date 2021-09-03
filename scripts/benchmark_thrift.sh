@@ -1,10 +1,17 @@
 #!/bin/bash
+set -e
+CURDIR=$(cd $(dirname $0); pwd)
 
-. ./scripts/env.sh
+echo "Checking whether the environment meets the requirements ..."
+source $CURDIR/env.sh
+echo "Check succeed."
+
 repo=("kitex" "kitex-mux")
 ports=(8001 8002)
 
-. ./scripts/build_thrift.sh
+echo "Building thrift services by exec build_thrift.sh ..."
+source $CURDIR/build_thrift.sh
+echo "Build succeed."
 
 # benchmark
 for b in ${body[@]}; do
@@ -13,18 +20,21 @@ for b in ${body[@]}; do
       rp=${repo[i]}
       addr="127.0.0.1:${ports[i]}"
       # server start
-      nohup $taskset_server ./output/bin/${rp}_reciever >> output/log/nohup.log 2>&1 &
+      echo "Starting server [$rp], if failed please view [output/log/nohup.log] for detail"
+      nohup $taskset_server $CURDIR/output/bin/${rp}_reciever >> output/log/nohup.log 2>&1 &
       sleep 1
-      echo "server $rp running with $taskset_server"
+      echo "Server [$rp] running with [$taskset_server]."
 
       # run client
-      echo "client $rp running with $taskset_client"
-      $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      echo "Starting client [$rp] ..."
+      $taskset_client $CURDIR/output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      echo "Client [$rp] running with [$taskset_client] succeed."
 
       # stop server
       pid=$(ps -ef | grep ${rp}_reciever | grep -v grep | awk '{print $2}')
       disown $pid
       kill -9 $pid
+      echo "Server [$rp] stopped, pid [$pid]."
       sleep 1
     done
   done

@@ -1,11 +1,13 @@
 #!/bin/bash
+set -e
+CURDIR=$(cd $(dirname $0); pwd)
 
-. ./scripts/env.sh
+source $CURDIR/env.sh
 repo=("kitex" "kitex-mux")
 ports=(8001 8002)
 ip=${IP:-"127.0.0.1"}
 
-. ./scripts/build_thrift.sh
+source $CURDIR/build_thrift.sh
 
 # benchmark
 for b in ${body[@]}; do
@@ -15,8 +17,8 @@ for b in ${body[@]}; do
       addr="${ip}:${ports[i]}"
 
       # run client
-      echo "client $rp running with $taskset_client"
-      $taskset_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      echo "Client [$rp] running with [$taskset_client] ..."
+      $taskset_client $CURDIR/output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
     done
   done
 done
