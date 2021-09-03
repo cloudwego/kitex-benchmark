@@ -29,11 +29,13 @@ import (
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-const (
-	port = ":8001"
-)
+const port = 8006
 
-var recorder = perf.NewRecorder("KITEX@Server")
+var (
+	_ echo.Echo = &EchoImpl{}
+
+	recorder = perf.NewRecorder("KITEX_GRPC@Server")
+)
 
 // EchoImpl implements the last service interface defined in the IDL.
 type EchoImpl struct{}
@@ -49,12 +51,12 @@ func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response,
 }
 
 func main() {
-	address := &net.UnixAddr{Net: "tcp", Name: port}
-	svr := echosvr.NewServer(new(EchoImpl), server.WithServiceAddr(address))
+	svr := echosvr.NewServer(
+		new(EchoImpl),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
+	)
 
-	err := svr.Run()
-
-	if err != nil {
+	if err := svr.Run(); err != nil {
 		log.Println(err.Error())
 	}
 }
