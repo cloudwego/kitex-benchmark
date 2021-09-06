@@ -127,6 +127,7 @@ CPU: >= 16核心
    <tr><td rowspan="5"> 100 </td></tr>
    <tr><td> kitex </td><td> 连接多路复用 </td><td> 200806.62 </td><td> 1.66ms </td><td> 2.77ms </td></tr>
    <tr><td> kitex </td><td> 长连接池    </td><td> 204468.11 </td><td> 1.78ms </td><td> 4.99ms </td></tr>
+   <tr><td> kitex </td><td> grpc      </td><td> 24339.91 </td><td> 43.73ms </td><td> 45.40ms </td></tr>
    <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 178903.63 </td><td> 2.09ms </td><td> 3.03ms </td></tr>
    <tr><td> grpc  </td><td> 连接多路复用 </td><td> 104432.22 </td><td> 3.22ms </td><td> 5.09ms </td></tr>
    <tr><td colspan="6"></td></tr>
@@ -134,6 +135,7 @@ CPU: >= 16核心
    <tr><td rowspan="5"> 200 </td></tr>
    <tr><td> kitex </td><td> 连接多路复用 </td><td> 217474.75 </td><td> 2.85ms </td><td> 4.84ms </td></tr>
    <tr><td> kitex </td><td> 长连接池    </td><td> 208105.67 </td><td> 2.62ms </td><td> 7.48ms </td></tr>
+   <tr><td> kitex </td><td> grpc      </td><td> 17639.80 </td><td> 51.98ms </td><td> 88.57ms </td></tr>
    <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 176322.84 </td><td> 4.58ms </td><td> 6.35ms </td></tr>
    <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110597.72 </td><td> 6.32ms </td><td> 8.97ms </td></tr>
    <tr><td colspan="6"></td></tr>
@@ -141,6 +143,7 @@ CPU: >= 16核心
    <tr><td rowspan="5"> 400 </td></tr>
    <tr><td> kitex </td><td> 连接多路复用 </td><td> 237156.98 </td><td> 5.02ms </td><td> 8.22ms </td></tr>
    <tr><td> kitex </td><td> 长连接池    </td><td> 208927.09 </td><td> 4.70ms </td><td> 10.23ms </td></tr>
+   <tr><td> kitex </td><td> grpc      </td><td> 18519.69 </td><td> 92.34ms </td><td> 131.72ms </td></tr>
    <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 164350.65 </td><td> 9.46ms </td><td> 13.50ms </td></tr>
    <tr><td> grpc  </td><td> 连接多路复用 </td><td> 112539.80 </td><td> 12.41ms </td><td> 17.37ms </td></tr>
    <tr><td colspan="6"></td></tr>
@@ -148,6 +151,7 @@ CPU: >= 16核心
    <tr><td rowspan="5"> 600 </td></tr>
    <tr><td> kitex </td><td> 连接多路复用 </td><td> 248210.98 </td><td> 7.35ms </td><td> 12.27ms </td></tr>
    <tr><td> kitex </td><td> 长连接池    </td><td> 206585.82 </td><td> 6.70ms </td><td> 13.77ms </td></tr>
+   <tr><td> kitex </td><td> grpc      </td><td> 18273.03 </td><td> 110.47ms </td><td> 151.41ms </td></tr>
    <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 155863.11 </td><td> 14.95ms </td><td> 21.68ms </td></tr>
    <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110447.42 </td><td> 18.83ms </td><td> 26.65ms </td></tr>
    <tr><td colspan="6"></td></tr>
@@ -155,6 +159,7 @@ CPU: >= 16核心
    <tr><td rowspan="5"> 800 </td></tr>
    <tr><td> kitex </td><td> 连接多路复用 </td><td> 250869.87 </td><td> 9.61ms </td><td> 16.63ms </td></tr>
    <tr><td> kitex </td><td> 长连接池    </td><td> 202175.99 </td><td> 10.00ms </td><td> 16.73ms </td></tr>
+   <tr><td> kitex </td><td> grpc      </td><td> 19237.47 </td><td> 140.28ms </td><td> 181.85ms </td></tr>
    <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 153935.56 </td><td> 19.69ms </td><td> 27.43ms </td></tr>
    <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110728.66 </td><td> 24.74ms </td><td> 34.08ms </td></tr>
    <tr><td colspan="6"></td></tr>
@@ -162,6 +167,7 @@ CPU: >= 16核心
    <tr><td rowspan="5"> 1000 </td></tr>
    <tr><td> kitex </td><td> 连接多路复用 </td><td> 254485.37 </td><td> 12.09ms </td><td> 20.89ms </td></tr>
    <tr><td> kitex </td><td> 长连接池    </td><td> 198328.16 </td><td> 11.68ms </td><td> 17.25ms </td></tr>
+   <tr><td> kitex </td><td> grpc      </td><td> 21259.33 </td><td> 147.09ms </td><td> 191.21ms </td></tr>
    <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 154200.48 </td><td> 23.99ms </td><td> 32.87ms </td></tr>
    <tr><td> grpc  </td><td> 连接多路复用 </td><td> 112437.62 </td><td> 29.55ms </td><td> 41.08ms </td></tr>
    <tr><td colspan="6"></td></tr>
