@@ -21,13 +21,13 @@ for b in ${body[@]}; do
       addr="127.0.0.1:${ports[i]}"
       # server start
       echo "Starting server [$rp], if failed please view [output/log/nohup.log] for detail"
-      nohup $taskset_server $CURDIR/output/bin/${rp}_reciever >> output/log/nohup.log 2>&1 &
+      nohup $taskset_server $CURDIR/../output/bin/${rp}_reciever >> $CURDIR/../output/log/nohup.log 2>&1 &
       sleep 1
       echo "Server [$rp] running with [$taskset_server]."
 
       # run client
       echo "Starting client [$rp] ..."
-      $taskset_client $CURDIR/output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      $taskset_client $CURDIR/../output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
       echo "Client [$rp] run with [$taskset_client] succeed."
 
       # stop server

@@ -21,7 +21,7 @@ for b in ${body[@]}; do
 
       # run client
       echo "Client [$rp] running with $taskset_client ..."
-      $taskset_client $CURDIR/output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      $taskset_client $CURDIR/../output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
     done
   done
 done
