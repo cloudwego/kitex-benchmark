@@ -6,6 +6,5 @@ import (
 )
 
 func ServeMonitor(addr string) error {
-	mux := http.NewServeMux()
-	return http.ListenAndServe(addr, mux)
+	return http.ListenAndServe(addr, nil)
 }
