@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -29,7 +30,7 @@ import (
 )
 
 const (
-	port = ":8000"
+	port = 8000
 )
 
 var recorder = perf.NewRecorder("GRPC@Server")
@@ -48,7 +49,12 @@ func (s *server) Echo(ctx context.Context, req *grpcg.Request) (*grpcg.Response,
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	// start pprof server
+	go func() {
+		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
+	}()
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
