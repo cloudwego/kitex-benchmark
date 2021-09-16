@@ -64,6 +64,11 @@ func initFlags() {
 func Main(name string, newer ClientNewer) {
 	initFlags()
 
+	// start pprof server
+	go func() {
+		perf.ServeMonitor(":18888")
+	}()
+
 	r := NewRunner()
 
 	opt := &Options{

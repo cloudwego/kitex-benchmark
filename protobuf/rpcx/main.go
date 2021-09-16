@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/smallnest/rpcx/log"
 	"github.com/smallnest/rpcx/server"
@@ -28,7 +29,7 @@ import (
 )
 
 const (
-	port = ":8003"
+	port = 8003
 )
 
 type Echo struct{}
@@ -44,10 +45,15 @@ func (s *Echo) Echo(ctx context.Context, args *gogo.Request, reply *gogo.Respons
 }
 
 func main() {
+	// start pprof server
+	go func() {
+		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
+	}()
+
 	server.UsePool = true
 	log.SetDummyLogger()
 
 	s := server.NewServer()
 	s.Register(new(Echo), "")
-	s.Serve("tcp", port)
+	s.Serve("tcp", fmt.Sprintf(":%d", port))
 }
