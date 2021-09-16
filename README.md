@@ -50,6 +50,34 @@ loopback 模式数据并未真正进入网卡，未能真实模拟线上服务�
 ./scripts/benchmark_pb.sh
 ```
 
+### Profiling
+
+由于默认压测参数会比较迅速完成一次压测，为了获得更长采集时间，可以手动在 `./scripts/env.sh` 中调整压测参数 n 大小。
+
+#### Profiling Client
+
+```bash
+go tool pprof localhost:18888/debug/pprof/{pprof_type}
+```
+
+#### Profiling Server
+
+不同 server 的 port 映射参见相应脚本，如:
+
+```bash
+cat ./scripts/benchmark_pb.sh
+
+# ...
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "arpc-nbio")
+ports=(8000 8001 8002 8003 8004 8005)
+```
+
+获取到对应 server 端口号后，执行：
+
+```bash
+go tool pprof localhost:{port}/debug/pprof/{pprof_type}
+```
+
 ### 更多场景测试
 
 修改 `./scripts/env.sh` 文件：
