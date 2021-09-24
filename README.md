@@ -98,8 +98,8 @@ sleep=0
 OS: Linux
    * 默认依赖了命令 `taskset`, 限定 client 和 server 运行的 CPU; 如在其他系统执行, 请修改脚本。
 
-CPU: >= 16核心
-   * 默认需要 16核 CPU, 具体在脚本的 `taskset -c ...` 部分, 可以修改或删除。
+CPU: 推荐配置 >=20核, 最低要求 >=4核
+   * 压测脚本默认需要 20核 CPU, 具体在脚本的 `taskset -c ...` 部分, 可以修改或删除。
 
 ## 参考数据
 
@@ -110,7 +110,7 @@ CPU: >= 16核心
 ### 配置
 
 * CPU:    Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz
-  * 运行限定 server 4CPU, client 12CPU
+  * 运行限定 server 4CPU, client 16CPU
 * OS:     Debian 5.4.56.bsk.1-amd64 x86_64 GNU/Linux
 * Go:     1.15.4
 
