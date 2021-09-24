@@ -109,8 +109,8 @@ CPU: >= 16核心
 
 ### 配置
 
-* CPU:    Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz, 48 Cores
-* Mem:    187 GB 
+* CPU:    Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz
+  * 运行限定 server 4CPU, client 12CPU
 * OS:     Debian 5.4.56.bsk.1-amd64 x86_64 GNU/Linux
 * Go:     1.15.4
 
