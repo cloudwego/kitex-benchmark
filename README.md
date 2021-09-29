@@ -116,13 +116,20 @@ CPU: 推荐配置 >=20核, 最低要求 >=4核
 
 ### 数据 (echo size 1KB)
 
-[Thrf Raw Data](scripts/reports/pb.csv)
-[Protobuf Raw Data](scripts/reports/pb.csv)
+- [Thrift Raw Data](scripts/reports/pb.csv)
+- [Protobuf Raw Data](scripts/reports/pb.csv)
 
-| Protocol | QPS                                  | TP99                                  | TP999                                  | Raw Data                                 |
-| :------  | :----------------------------------- | :-----------------------------------: | :------------------------------------: | :--------------------------------------: |
-| Thrift   | ![image](docs/images/thrift_qps.png) | ![image](docs/images/thrift_tp99.png) | ![image](docs/images/thrift_tp999.png) | [thrift.csv](scripts/reports/thrift.csv) |
-| Protobuf | ![image](docs/images/pb_qps.png)     | ![image](docs/images/pb_tp99.png)     | ![image](docs/images/pb_tp999.png)     | [pb.csv](scripts/reports/pb.csv)         |
+#### Thrift
+
+![image](docs/images/thrift_qps.png)
+![image](docs/images/thrift_tp99.png)
+![image](docs/images/thrift_tp999.png)
+
+#### Protobuf
+
+![image](docs/images/pb_qps.png)
+![image](docs/images/pb_tp99.png)
+![image](docs/images/pb_tp999.png)
 
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc
