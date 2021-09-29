@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "arpc-nbio")
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc")
 
 # build
 . ./scripts/build_pb.sh

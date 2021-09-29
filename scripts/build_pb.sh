@@ -19,8 +19,6 @@ $GOEXEC mod tidy
 $GOEXEC build -v -o output/bin/grpc_bencher ./protobuf/grpc/client
 $GOEXEC build -v -o output/bin/rpcx_bencher ./protobuf/rpcx/client
 $GOEXEC build -v -o output/bin/arpc_bencher ./protobuf/arpc/client
-$GOEXEC build -v -o output/bin/arpc-nbio_bencher ./protobuf/arpc-nbio/client
 $GOEXEC build -v -o output/bin/grpc_reciever ./protobuf/grpc
 $GOEXEC build -v -o output/bin/rpcx_reciever ./protobuf/rpcx
 $GOEXEC build -v -o output/bin/arpc_reciever ./protobuf/arpc
-$GOEXEC build -v -o output/bin/arpc-nbio_reciever ./protobuf/arpc-nbio

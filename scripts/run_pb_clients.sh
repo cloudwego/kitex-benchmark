@@ -2,8 +2,8 @@
 
 . ./scripts/env.sh
 
-repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "arpc-nbio")
-ports=(8000 8001 8002 8003 8004 8005)
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc")
+ports=(8000 8001 8002 8003 8004)
 
 ip=${IP:-"127.0.0.1"}
 

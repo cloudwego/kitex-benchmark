@@ -116,90 +116,20 @@ CPU: 推荐配置 >=20核, 最低要求 >=4核
 
 ### 数据 (echo size 1KB)
 
-<table>
-   <tr><th> 并发数 </th><th> thrift </th><th> 传输 </th><th> TPS </th><th> TP99(ms) </th><th> TP999(ms) </th></tr>
-   <tr><td colspan="6"></td></tr>
+- [Thrift Raw Data](scripts/reports/pb.csv)
+- [Protobuf Raw Data](scripts/reports/pb.csv)
 
-   <tr><td rowspan="3"> 100 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 249586.69 </td><td> 1.39ms </td><td> 9.23ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 223230.54 </td><td> 1.46ms </td><td> 2.46ms </td></tr>
-   <tr><td colspan="6"></td></tr>
+#### Thrift
 
-   <tr><td rowspan="3"> 200 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 251653.10 </td><td> 3.23ms </td><td> 11.56ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 259954.09 </td><td> 2.48ms </td><td> 4.23ms </td></tr>
-   <tr><td colspan="6"></td></tr>
+![image](docs/images/thrift_qps.png)
+![image](docs/images/thrift_tp99.png)
+![image](docs/images/thrift_tp999.png)
 
-   <tr><td rowspan="3"> 400 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 251758.62 </td><td> 8.05ms </td><td> 13.76ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 284189.41 </td><td> 4.31ms </td><td> 7.57ms </td></tr>
-   <tr><td colspan="6"></td></tr>
+#### Protobuf
 
-   <tr><td rowspan="3"> 600 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 252804.29 </td><td> 8.79ms </td><td> 14.17ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 293386.70 </td><td> 5.97ms </td><td> 10.13ms </td></tr>
-
-   <tr><td rowspan="3"> 800 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 249029.06 </td><td> 10.69ms </td><td> 14.75ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 301462.58 </td><td> 7.91ms </td><td> 13.99ms </td></tr>
-
-   <tr><td rowspan="3"> 1000 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 243720.26 </td><td> 12.35ms </td><td> 16.68ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 303662.55 </td><td> 9.37ms </td><td> 14.98ms </td></tr>
-</table>
-
-<table>
-   <tr><th> 并发数 </th><th> protobuf </th><th> 传输 </th><th> TPS </th><th> TP99(ms) </th><th> TP999(ms) </th></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="5"> 100 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 200806.62 </td><td> 1.66ms </td><td> 2.77ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 204468.11 </td><td> 1.78ms </td><td> 4.99ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 178903.63 </td><td> 2.09ms </td><td> 3.03ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 104432.22 </td><td> 3.22ms </td><td> 5.09ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="5"> 200 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 217474.75 </td><td> 2.85ms </td><td> 4.84ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 208105.67 </td><td> 2.62ms </td><td> 7.48ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 176322.84 </td><td> 4.58ms </td><td> 6.35ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110597.72 </td><td> 6.32ms </td><td> 8.97ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="5"> 400 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 237156.98 </td><td> 5.02ms </td><td> 8.22ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 208927.09 </td><td> 4.70ms </td><td> 10.23ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 164350.65 </td><td> 9.46ms </td><td> 13.50ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 112539.80 </td><td> 12.41ms </td><td> 17.37ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="5"> 600 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 248210.98 </td><td> 7.35ms </td><td> 12.27ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 206585.82 </td><td> 6.70ms </td><td> 13.77ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 155863.11 </td><td> 14.95ms </td><td> 21.68ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110447.42 </td><td> 18.83ms </td><td> 26.65ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="5"> 800 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 250869.87 </td><td> 9.61ms </td><td> 16.63ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 202175.99 </td><td> 10.00ms </td><td> 16.73ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 153935.56 </td><td> 19.69ms </td><td> 27.43ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110728.66 </td><td> 24.74ms </td><td> 34.08ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="5"> 1000 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 254485.37 </td><td> 12.09ms </td><td> 20.89ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 198328.16 </td><td> 11.68ms </td><td> 17.25ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 154200.48 </td><td> 23.99ms </td><td> 32.87ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 112437.62 </td><td> 29.55ms </td><td> 41.08ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-</table>
-
-| Protocol | QPS                                  | TP99                                  | TP999                                  |
-| :------  | :----------------------------------- | :-----------------------------------: | :------------------------------------: |
-| Thrift   | ![image](docs/images/thrift_qps.png) | ![image](docs/images/thrift_tp99.png) | ![image](docs/images/thrift_tp999.png) |
-| Protobuf | ![image](docs/images/pb_qps.png)     | ![image](docs/images/pb_tp99.png)     | ![image](docs/images/pb_tp999.png)     |
+![image](docs/images/pb_qps.png)
+![image](docs/images/pb_tp99.png)
+![image](docs/images/pb_tp999.png)
 
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc
