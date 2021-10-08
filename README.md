@@ -4,7 +4,7 @@ English | [中文](README_cn.md)
 
 This project shows several simple uses of [kitex][kitex] and provides several comparison projects.
 
-Due to the differences in the protocols and transmission modes used by different frameworks, it's difficult to bench them all under the same baseline. [kitex][kitex] gives several simple combinations for reference.
+Due to the differences in the protocols and transmission modes used by different frameworks, it's difficult to benchmark them all under the same baseline. [kitex][kitex] gives several simple combinations for reference.
 
 1. [kitex][kitex]:
 	- Multi-protocol: [thrift][thrift] (recommended), [protobuf][protobuf]
@@ -15,7 +15,7 @@ Due to the differences in the protocols and transmission modes used by different
 
 ## Usage
 
-### Loopback Mode
+### Loopback Network Mode
 
 Please make sure to meet [Requirements](#Requirements) before execution.
 
@@ -31,12 +31,12 @@ Please make sure to meet [Requirements](#Requirements) before execution.
 ./scripts/benchmark_pb.sh
 ```
 
-### Cross-nodes Mode
+### External Network Mode
 
-The packets in loopback mode don't enter the network card, failing to truly simulate the online services communication. So it also provides an approach to bench the
+The packets in loopback network mode don't enter the network card, failing to truly simulate the online services communication. So it also provides an approach to bench the
 client and server individually.
 
-But it should be noted that if the host machine has more than the CPU cores set by taskset, the process will borrow other ksoftirqd kernel threads that are not controlled by taskset, and shares the calculation of other CPUs. Therefore, it is recommended to use the same machine specification as taskset, or delete taskset when you use cross-node mode.
+But it should be noted that if the host machine has more than the CPU cores set by taskset, the process will borrow other ksoftirqd kernel threads that are not controlled by taskset, and shares the computation of other CPUs. Therefore, it is recommended to use the same machine specification as taskset, or delete taskset when you use cross-node mode.
 
 #### Thrift
 
@@ -114,7 +114,7 @@ sleep=0
 
 The benchmark ensures the caller has sufficient machine resources **overwhelming the server**, and focuses more on server performance. The performance data of the caller will be provided later.
 
-### Configuration
+### Specification
 
 * CPU: Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz
     * server 4-CPUs, client 16-CPUs
