@@ -15,7 +15,7 @@ Due to the differences in the protocols and transmission modes used by different
 
 ## Usage
 
-### Loopback Network Mode
+### Localhost Mode
 
 Please make sure to meet [Requirements](#Requirements) before execution.
 
