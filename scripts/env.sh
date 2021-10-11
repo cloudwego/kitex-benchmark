@@ -11,6 +11,7 @@ fi
 # GO
 GOEXEC=${GOEXEC:-"go"}
 GOROOT=$GOROOT
+USER=$(whoami)
 
 n=5000000
 body=(1024)
@@ -18,5 +19,9 @@ concurrent=(100 200 400 600 800 1000)
 sleep=0
 
 scpu=$((nprocs > 16 ? 3 : nprocs / 4 - 1)) # max is 3(4 cpus)
-taskset_server="taskset -c 0-$scpu"
-taskset_client="taskset -c $((scpu + 1))-$((nprocs - 1))"
+nice_cmd=''
+if [ "$USER" == "root" ]; then
+    nice_cmd='nice -c -20'
+fi
+cmd_server="${nice_cmd} taskset -c 0-$scpu"
+cmd_client="${nice_cmd} taskset -c $((scpu + 1))-$((nprocs - 1))"
