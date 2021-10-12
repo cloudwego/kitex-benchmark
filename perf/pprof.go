@@ -19,7 +19,21 @@ package perf
 import (
 	"net/http"
 	_ "net/http/pprof"
+	"os"
+	"runtime"
+	"strconv"
 )
+
+func init() {
+	mrate, _ := strconv.Atoi(os.Getenv("GOMUTEXRATE"))
+	brate, _ := strconv.Atoi(os.Getenv("GOBLOCKRATE"))
+	if mrate > 0 {
+		runtime.SetMutexProfileFraction(mrate)
+	}
+	if brate > 0 {
+		runtime.SetBlockProfileRate(brate)
+	}
+}
 
 func ServeMonitor(addr string) error {
 	return http.ListenAndServe(addr, nil)

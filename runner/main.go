@@ -66,7 +66,12 @@ func Main(name string, newer ClientNewer) {
 
 	// start pprof server
 	go func() {
-		perf.ServeMonitor(":18888")
+		err := perf.ServeMonitor(":18888")
+		if err != nil {
+			fmt.Printf("perf monitor server start failed: %v\n", err)
+		} else {
+			fmt.Printf("perf monitor server start success\n")
+		}
 	}()
 
 	r := NewRunner()
