@@ -36,8 +36,10 @@ const (
 func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
 	switch action {
 	case BeginAction:
+		fmt.Println("server process begin")
 		recorder.Begin()
 	case EndAction:
+		fmt.Println("server process end")
 		recorder.End()
 		// report on server side
 		recorder.Report()
