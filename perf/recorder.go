@@ -41,6 +41,8 @@ func NewRecorder(name string) *Recorder {
 }
 
 func (r *Recorder) Begin() {
+	r.Reset()
+
 	ctx, finish := context.WithCancel(context.Background())
 	r.finish = finish
 	r.waiter.Add(2)
@@ -65,6 +67,13 @@ func (r *Recorder) Begin() {
 func (r *Recorder) End() {
 	r.finish()
 	r.waiter.Wait()
+}
+
+func (r *Recorder) Reset() {
+	r.finish = nil
+	r.waiter = sync.WaitGroup{}
+	r.CpuUsage = cpu.Usage{}
+	r.MemUsage = mem.Usage{}
 }
 
 func (r *Recorder) ReportString() string {
