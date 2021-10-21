@@ -33,6 +33,8 @@ func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 	cli.client = echoserver.MustNewClient("test.echo.kitex",
 		client.WithTransportProtocol(transport.Framed),
 		client.WithHostPorts(opt.Address),
+		client.WithConnectTimeout(runner.ConnectTimout),
+		client.WithRPCTimeout(runner.ReadTimout),
 		client.WithMuxConnection(2))
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {

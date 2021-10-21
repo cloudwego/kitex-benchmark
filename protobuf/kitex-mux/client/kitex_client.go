@@ -31,6 +31,8 @@ func NewPBKiteXClient(opt *runner.Options) runner.Client {
 	cli := &pbKitexClient{}
 	cli.client = echosvr.MustNewClient("test.echo.kitex-mux",
 		client.WithHostPorts(opt.Address),
+		client.WithConnectTimeout(runner.ConnectTimout),
+		client.WithRPCTimeout(runner.ReadTimout),
 		//client.WithMuxConnection(opt.PoolSize))
 		// netpoll 设计上，2 个 connection 最优
 		client.WithMuxConnection(2))
