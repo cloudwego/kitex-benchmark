@@ -20,7 +20,6 @@ import (
 	"context"
 	"net"
 	"sync"
-	"time"
 
 	"github.com/lesismal/arpc"
 	"github.com/lesismal/arpc/codec"
@@ -49,7 +48,7 @@ func NewPBArpcNbioClient(opt *runner.Options) runner.Client {
 
 	codec.DefaultCodec = &pbcodec.ProtoBuffer{}
 	pool, err := arpc.NewClientPool(func() (net.Conn, error) {
-		return net.DialTimeout("tcp", opt.Address, time.Second*5)
+		return net.DialTimeout("tcp", opt.Address, runner.ConnectTimout)
 	}, opt.PoolSize)
 	if err != nil {
 		panic(err)
@@ -76,7 +75,7 @@ func (cli *pbArpcClient) Echo(action, msg string) (err error) {
 	args.Action = action
 	args.Msg = msg
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), runner.ReadTimout)
 	defer cancel()
 
 	client := cli.clipool.Next()

@@ -19,7 +19,6 @@ package main
 import (
 	"context"
 	"sync"
-	"time"
 
 	"github.com/smallnest/rpcx/client"
 	"github.com/smallnest/rpcx/protocol"
@@ -44,6 +43,7 @@ func NewPBRpcxClient(opt *runner.Options) runner.Client {
 
 	option := client.DefaultOption
 	option.SerializeType = protocol.ProtoBuffer
+	option.ConnectTimeout = runner.ConnectTimout
 	d, _ := client.NewPeer2PeerDiscovery("tcp@"+opt.Address, "")
 	cli.clipool = client.NewXClientPool(opt.PoolSize, "Echo", client.Failtry, client.RandomSelect, d, option)
 	return cli
@@ -65,7 +65,7 @@ func (cli *pbRpcxClient) Echo(action, msg string) (err error) {
 	args.Action = action
 	args.Msg = msg
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), runner.ReadTimout)
 	defer cancel()
 
 	xclient := cli.clipool.Get()

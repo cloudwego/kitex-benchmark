@@ -35,6 +35,8 @@ func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 	cli.client = echoserver.MustNewClient("test.echo.kitex",
 		client.WithTransportProtocol(transport.Framed),
 		client.WithHostPorts(opt.Address),
+		client.WithConnectTimeout(runner.ConnectTimout),
+		client.WithRPCTimeout(runner.ReadTimout),
 		client.WithLongConnection(
 			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
 	)
