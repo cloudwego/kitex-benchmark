@@ -41,14 +41,15 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 	}
 	tp99, _ := stats.Percentile(costs, 99)
 	tp999, _ := stats.Percentile(costs, 99.9)
+	max, _ := stats.Max(costs)
 
 	var result string
 	if tp999/1000 < 1 {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
-			title, tps, tp99/1000, tp999/1000, echoSize, concurrent, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus, Max: %.2fus (b=%d Byte, c=%d, n=%d)",
+			title, tps, tp99/1000, tp999/1000, max/1000, echoSize, concurrent, total)
 	} else {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
-			title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms, Max: %.2fms (b=%d Byte, c=%d, n=%d)",
+			title, tps, tp99/1000000, tp999/1000000, max, echoSize, concurrent, total)
 	}
 	logInfo(blueString(result))
 	return nil
