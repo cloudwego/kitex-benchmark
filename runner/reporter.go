@@ -49,7 +49,7 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 			title, tps, tp99/1000, tp999/1000, max/1000, echoSize, concurrent, total)
 	} else {
 		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms, Max: %.2fms (b=%d Byte, c=%d, n=%d)",
-			title, tps, tp99/1000000, tp999/1000000, max, echoSize, concurrent, total)
+			title, tps, tp99/1000000, tp999/1000000, max/1000000, echoSize, concurrent, total)
 	}
 	logInfo(blueString(result))
 	return nil

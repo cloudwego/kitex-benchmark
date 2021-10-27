@@ -17,6 +17,7 @@
 package runner
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -56,6 +57,9 @@ func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
 				err := onceFn()
 				end := r.timer.Now()
 				cost := end - begin
+				if err != nil {
+					fmt.Printf("request costs %d ms and failed: %v\n", cost/1000000, err)
+				}
 				r.counter.AddRecord(idx, err, cost)
 			}
 		}()
