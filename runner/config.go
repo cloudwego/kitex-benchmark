@@ -19,6 +19,6 @@ package runner
 import "time"
 
 const (
-	ConnectTimout = time.Millisecond * 10
-	ReadTimout    = time.Millisecond * 50
+	ConnectTimout = time.Millisecond * 50
+	ReadTimout    = time.Millisecond * 1000
 )
