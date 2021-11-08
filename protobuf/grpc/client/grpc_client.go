@@ -20,7 +20,6 @@ import (
 	"context"
 	"log"
 	"sync"
-	"time"
 
 	"google.golang.org/grpc"
 
@@ -36,8 +35,10 @@ func NewPBGrpcClient(opt *runner.Options) runner.Client {
 		},
 	}
 	cli.connpool = runner.NewPool(func() interface{} {
+		ctx, cancel := context.WithTimeout(context.Background(), runner.ConnTimeout)
+		defer cancel()
 		// Set up a connection to the server.
-		conn, err := grpc.Dial(opt.Address, grpc.WithInsecure())
+		conn, err := grpc.DialContext(ctx, opt.Address, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
@@ -60,7 +61,7 @@ func (cli *pbGrpcClient) Echo(action, msg string) error {
 	req.Msg = msg
 
 	pbcli := cli.connpool.Get().(grpcg.EchoClient)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), runner.RPCTimeout)
 	defer cancel()
 	reply, err := pbcli.Echo(ctx, req)
 

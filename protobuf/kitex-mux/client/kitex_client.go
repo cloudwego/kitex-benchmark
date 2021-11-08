@@ -33,7 +33,10 @@ func NewPBKiteXClient(opt *runner.Options) runner.Client {
 		client.WithHostPorts(opt.Address),
 		//client.WithMuxConnection(opt.PoolSize))
 		// netpoll 设计上，2 个 connection 最优
-		client.WithMuxConnection(2))
+		client.WithMuxConnection(2),
+		client.WithRPCTimeout(runner.RPCTimeout),
+		client.WithConnectTimeout(runner.ConnTimeout),
+	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
 			return &echo.Request{}

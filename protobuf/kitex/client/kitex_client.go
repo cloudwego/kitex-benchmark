@@ -34,7 +34,10 @@ func NewPBKiteXClient(opt *runner.Options) runner.Client {
 	cli.client = echosvr.MustNewClient("test.echo.kitex",
 		client.WithHostPorts(opt.Address),
 		client.WithLongConnection(
-			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute},
+		),
+		client.WithRPCTimeout(runner.RPCTimeout),
+		client.WithConnectTimeout(runner.ConnTimeout),
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {

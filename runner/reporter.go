@@ -28,38 +28,38 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 	logInfo("[%s]: took %d ms for %d requests", title, totalns/ms, c.Total)
 	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
 
-	var tps float64
+	var qps float64
 	if totalns < sec {
-		tps = float64(c.Total*sec) / float64(totalns)
+		qps = float64(c.Total*sec) / float64(totalns)
 	} else {
-		tps = float64(c.Total) / (float64(totalns) / float64(sec))
+		qps = float64(c.Total) / (float64(totalns) / float64(sec))
 	}
 
 	var costs = make([]float64, len(c.costs))
 	for i := range c.costs {
 		costs[i] = float64(c.costs[i])
 	}
+	sum, _ := stats.Sum(costs)
+	avg := sum / float64(len(costs))
 	tp99, _ := stats.Percentile(costs, 99)
 	tp999, _ := stats.Percentile(costs, 99.9)
+	tp9999, _ := stats.Percentile(costs, 99.99)
+	max, _ := stats.Max(costs)
 
-	var result string
-	if tp999/1000 < 1 {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
-			title, tps, tp99/1000, tp999/1000, echoSize, concurrent, total)
-	} else {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
-			title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, total)
-	}
+	result := fmt.Sprintf(
+		"[%s]: QPS: %.2f, Avg: %.2fms, TP99: %.2fms, TP999: %.2fms, TP9999: %.2fms, Max: %.2fms, (b=%d Byte, c=%d, n=%d)",
+		title, qps, avg/1000000, tp99/1000000, tp999/1000000, tp9999/1000000, max/1000000, echoSize, concurrent, total,
+	)
 	logInfo(blueString(result))
 	return nil
 }
 
-const blue_layout = "\x1B[1;36;40m%s\x1B[0m"
+const blueLayout = "\x1B[1;36;40m%s\x1B[0m"
 
 var infoTitle = blueString("Info: ")
 
 func blueString(s string) string {
-	return fmt.Sprintf(blue_layout, s)
+	return fmt.Sprintf(blueLayout, s)
 }
 
 func logInfo(format string, a ...interface{}) {
