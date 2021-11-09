@@ -21,15 +21,14 @@ import (
 	"log"
 	"net"
 
-	"github.com/cloudwego/kitex/server"
-
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
+	"github.com/cloudwego/kitex/server"
 )
 
-const port = 8006
+const port = 8005
 
 var (
 	_ echo.Echo = &EchoImpl{}

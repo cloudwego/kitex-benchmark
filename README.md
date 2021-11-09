@@ -76,7 +76,7 @@ Find port mapping of different servers at the corresponding script, such as:
 cat ./scripts/benchmark_pb.sh
 
 # ...
-repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "arpc-nbio")
+repo=("grpc" "kitex-pb" "kitex-mux" "rpcx" "arpc" "kitex-grpc")
 ports=(8000 8001 8002 8003 8004 8005)
 ```
 

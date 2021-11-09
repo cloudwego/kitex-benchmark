@@ -18,12 +18,12 @@ package main
 
 import (
 	"context"
-	"github.com/cloudwego/kitex/transport"
 	"sync"
 	"time"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/connpool"
+	"github.com/cloudwego/kitex/transport"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
