@@ -1,21 +1,23 @@
 # kitex-benchmark
 
-本项目展示了 [kitex][kitex] 的几种简单用法, 并提供了若干对比项目。
+English | [中文](README_cn.md)
 
-由于不同框架使用的 协议、传输模式等 存在差异，不能强行拉齐。[kitex][kitex] 给出了几种简单的组合，可供参考。
+This project shows several simple uses of [kitex][kitex] and provides several comparison projects.
+
+Due to the differences in the protocols and transmission modes used by different frameworks, it's difficult to benchmark them all under the same baseline. [kitex][kitex] gives several simple combinations for reference.
 
 1. [kitex][kitex]:
-    1. 多协议：[thrift][thrift] (推荐)、[protobuf][protobuf]
-    2. 多传输模式：长连接池(推荐)、连接多路复用(mux)
-2. 对比项目:
-    1. [thrift][thrift] 方向，暂时没有找到较为流行的对比框架，后续可以添加。
-    2. [protobuf][protobuf] 方向，提供了 [grpc][grpc]、[rpcx][rpcx] 作为对比项目(均使用连接多路复用)。
-   
-## 使用说明
+	- Multi-protocol: [thrift][thrift] (recommended), [protobuf][protobuf]
+	- Multi-transmission mode: long connection pool (recommended), connection multiplexing (mux)
+2. Comparison Frameworks:
+	- [Thrift][thrift]: Kitex is the only full-featured Thrift Golang Framework at now.
+	- [Protobuf][protobuf]: [grpc][grpc], [rpcx][rpcx], [arpc][arpc] (all use connection multiplexing).
 
-### 快速执行：loopback 模式
+## Usage
 
-执行前请先确认满足[环境要求](#环境要求)。
+### Localhost Mode
+
+Please make sure to meet [Requirements](#Requirements) before execution.
 
 #### Thrift
 
@@ -29,158 +31,116 @@
 ./scripts/benchmark_pb.sh
 ```
 
-### 跨机器执行
+### External Network Mode
 
-loopback 模式数据并未真正进入网卡，未能真实模拟线上服务情况。所以也提供了 Client 与 Server 分别部署执行的方式。
+The packets in loopback network mode don't enter the network card, failing to truly simulate the online services communication. So it also provides an approach to bench the
+client and server individually.
 
-但是需要注意的是，如果执行机器上拥有超过 taskset 设置的核心，网络包会通过 softirq 借道其他未被 taskset 控制的 ksoftirqd 内核线程，进而享受了其他 CPU 的计算。所以需要严格的压测数据时，推荐使用和 taskset 一致的机器配置，或是删除 taskset。
+But it should be noted that if the host machine has more than the CPU cores set by taskset, the process will borrow other ksoftirqd kernel threads that are not controlled by taskset, and shares the computation of other CPUs. Therefore, it is recommended to use the same machine specification as taskset, or delete taskset when you use cross-node mode.
 
 #### Thrift
 
 ```bash
-
+# host A
 ./scripts/run_thrift_servers.sh
 
-./scripts/run_thrift_servers.sh
+# host B
+./scripts/run_thrift_clients.sh
 ```
 
 #### Protobuf
 
 ```bash
-./scripts/benchmark_pb.sh
+# host A
+./scripts/run_pb_servers.sh
+
+# host B
+./scripts/run_pb_clients.sh
 ```
 
-### 更多场景测试
+### Profiling
 
-修改 `./scripts/env.sh` 文件：
+Since the default benchmark will complete quickly, to obtain enough time to do profiling, you can increase the parameter `n` in `./scripts/env.sh`.
+
+#### Profiling Client
 
 ```bash
-# 发送压测请求数
+go tool pprof localhost:18888/debug/pprof/{pprof_type}
+```
+
+#### Profiling Server
+
+Find port mapping of different servers at the corresponding script, such as:
+
+```bash
+cat ./scripts/benchmark_pb.sh
+
+# ...
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "arpc-nbio")
+ports=(8000 8001 8002 8003 8004 8005)
+```
+
+After obtaining the corresponding server port number, execute:
+
+```bash
+go tool pprof localhost:{port}/debug/pprof/{pprof_type}
+```
+
+### More scenarios
+
+Modify the `./scripts/env.sh` file:
+
+```bash
+# Send pressure test request number
 n=5000000
-# 请求体大小
+# Request body size
 body=(1024 5120)
-# 并发度
+# Concurrency
 concurrent=(100 200 400 600 800 1000)
-# server handler sleep 时间(/ms)，默认为 0
+# server handler sleep time (/ms), the default is 0
 sleep=0
 ```
 
-## 环境要求
+## Requirements
 
-OS: Linux
-   * 默认依赖了命令 `taskset`, 限定 client 和 server 运行的 CPU; 如在其他系统执行, 请修改脚本。
+- OS: Linux
+  * By default, it depends on the command `taskset` to limit the CPUs used by the client and server; if it is executed on other systems, please modify the script.
+- CPU: Recommended >=20 cores, minimum >=4 cores
+  * The benchmark script requires 20 CPUs by default, which can be modified or deleted in the `taskset -c ...` part of the script.
 
-CPU: >= 16核心
-   * 默认需要 16核 CPU, 具体在脚本的 `taskset -c ...` 部分, 可以修改或删除。
+## Reference Data
 
-## 参考数据
+**Notes:**
 
-相关说明: 
+The benchmark ensures the caller has sufficient machine resources **overwhelming the server**, and focuses more on server performance. The performance data of the caller will be provided later.
 
-该压测数据是在调用端有充分机器资源压满服务端的情况下测试，更侧重于关注服务端性能。后续会提供调用端性能数据情况。
+### Specification
 
-### 配置
+* CPU: Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz
+    * server 4-CPUs, client 16-CPUs
+* OS: Debian 5.4.56.bsk.1-amd64 x86_64 GNU/Linux
+* Go: 1.15.4
 
-* CPU:    Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz, 48 Cores
-* Mem:    187 GB 
-* OS:     Debian 5.4.56.bsk.1-amd64 x86_64 GNU/Linux
-* Go:     1.15.4
+### Data (echo size 1KB)
 
-### 数据 (echo size 1KB)
+- [Thrift Raw Data](scripts/reports/thrift.csv)
+- [Protobuf Raw Data](scripts/reports/pb.csv)
 
-<table>
-   <tr><th> 并发数 </th><th> thrift </th><th> 传输 </th><th> TPS </th><th> TP99(ms) </th><th> TP999(ms) </th></tr>
-   <tr><td colspan="6"></td></tr>
+#### Thrift
 
-   <tr><td rowspan="3"> 100 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 249586.69 </td><td> 1.39ms </td><td> 9.23ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 223230.54 </td><td> 1.46ms </td><td> 2.46ms </td></tr>
-   <tr><td colspan="6"></td></tr>
+![image](docs/images/thrift_qps.png)
+![image](docs/images/thrift_tp99.png)
+![image](docs/images/thrift_tp999.png)
 
-   <tr><td rowspan="3"> 200 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 251653.10 </td><td> 3.23ms </td><td> 11.56ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 259954.09 </td><td> 2.48ms </td><td> 4.23ms </td></tr>
-   <tr><td colspan="6"></td></tr>
+#### Protobuf
 
-   <tr><td rowspan="3"> 400 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 251758.62 </td><td> 8.05ms </td><td> 13.76ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 284189.41 </td><td> 4.31ms </td><td> 7.57ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="3"> 600 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 252804.29 </td><td> 8.79ms </td><td> 14.17ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 293386.70 </td><td> 5.97ms </td><td> 10.13ms </td></tr>
-
-   <tr><td rowspan="3"> 800 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 249029.06 </td><td> 10.69ms </td><td> 14.75ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 301462.58 </td><td> 7.91ms </td><td> 13.99ms </td></tr>
-
-   <tr><td rowspan="3"> 1000 </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 243720.26 </td><td> 12.35ms </td><td> 16.68ms </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 303662.55 </td><td> 9.37ms </td><td> 14.98ms </td></tr>
-</table>
-
-<table>
-   <tr><th> 并发数 </th><th> protobuf </th><th> 传输 </th><th> TPS </th><th> TP99(ms) </th><th> TP999(ms) </th></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="6"> 100 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 200806.62 </td><td> 1.66ms </td><td> 2.77ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 204468.11 </td><td> 1.78ms </td><td> 4.99ms </td></tr>
-   <tr><td> kitex </td><td> grpc      </td><td> 24339.91 </td><td> 43.73ms </td><td> 45.40ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 178903.63 </td><td> 2.09ms </td><td> 3.03ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 104432.22 </td><td> 3.22ms </td><td> 5.09ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="6"> 200 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 217474.75 </td><td> 2.85ms </td><td> 4.84ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 208105.67 </td><td> 2.62ms </td><td> 7.48ms </td></tr>
-   <tr><td> kitex </td><td> grpc      </td><td> 17639.80 </td><td> 51.98ms </td><td> 88.57ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 176322.84 </td><td> 4.58ms </td><td> 6.35ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110597.72 </td><td> 6.32ms </td><td> 8.97ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="6"> 400 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 237156.98 </td><td> 5.02ms </td><td> 8.22ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 208927.09 </td><td> 4.70ms </td><td> 10.23ms </td></tr>
-   <tr><td> kitex </td><td> grpc      </td><td> 18519.69 </td><td> 92.34ms </td><td> 131.72ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 164350.65 </td><td> 9.46ms </td><td> 13.50ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 112539.80 </td><td> 12.41ms </td><td> 17.37ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="6"> 600 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 248210.98 </td><td> 7.35ms </td><td> 12.27ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 206585.82 </td><td> 6.70ms </td><td> 13.77ms </td></tr>
-   <tr><td> kitex </td><td> grpc      </td><td> 18273.03 </td><td> 110.47ms </td><td> 151.41ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 155863.11 </td><td> 14.95ms </td><td> 21.68ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110447.42 </td><td> 18.83ms </td><td> 26.65ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="6"> 800 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 250869.87 </td><td> 9.61ms </td><td> 16.63ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 202175.99 </td><td> 10.00ms </td><td> 16.73ms </td></tr>
-   <tr><td> kitex </td><td> grpc      </td><td> 19237.47 </td><td> 140.28ms </td><td> 181.85ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 153935.56 </td><td> 19.69ms </td><td> 27.43ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 110728.66 </td><td> 24.74ms </td><td> 34.08ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-   <tr><td rowspan="6"> 1000 </td></tr>
-   <tr><td> kitex </td><td> 连接多路复用 </td><td> 254485.37 </td><td> 12.09ms </td><td> 20.89ms </td></tr>
-   <tr><td> kitex </td><td> 长连接池    </td><td> 198328.16 </td><td> 11.68ms </td><td> 17.25ms </td></tr>
-   <tr><td> kitex </td><td> grpc      </td><td> 21259.33 </td><td> 147.09ms </td><td> 191.21ms </td></tr>
-   <tr><td> rpcx  </td><td> 连接多路复用 </td><td> 154200.48 </td><td> 23.99ms </td><td> 32.87ms </td></tr>
-   <tr><td> grpc  </td><td> 连接多路复用 </td><td> 112437.62 </td><td> 29.55ms </td><td> 41.08ms </td></tr>
-   <tr><td colspan="6"></td></tr>
-
-</table>
-
-| Protocol | QPS                                  | TP99                                  | TP999                                  |
-| :------  | :----------------------------------- | :-----------------------------------: | :------------------------------------: |
-| Thrift   | ![image](docs/images/thrift_qps.png) | ![image](docs/images/thrift_tp99.png) | ![image](docs/images/thrift_tp999.png) |
-| Protobuf | ![image](docs/images/pb_qps.png)     | ![image](docs/images/pb_tp99.png)     | ![image](docs/images/pb_tp999.png)     |
+![image](docs/images/pb_qps.png)
+![image](docs/images/pb_tp99.png)
+![image](docs/images/pb_tp999.png)
 
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc
 [rpcx]: https://github.com/smallnest/rpcx
+[arpc]: https://github.com/lesismal/arpc
 [thrift]: https://thrift.apache.org
 [protobuf]: https://developers.google.com/protocol-buffers/docs/gotutorial

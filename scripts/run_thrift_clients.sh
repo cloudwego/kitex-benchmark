@@ -17,8 +17,8 @@ for b in ${body[@]}; do
       addr="${ip}:${ports[i]}"
 
       # run client
-      echo "Client [$rp] running with [$taskset_client] ..."
-      $taskset_client $CURDIR/../output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      echo "Client [$rp] running with [$cmd_client]"
+      $cmd_client $CURDIR/../output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
     done
   done
 done

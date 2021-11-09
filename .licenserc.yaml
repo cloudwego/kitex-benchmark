@@ -8,6 +8,6 @@ header:
     - '**/*.s'
 
   paths-ignore:
-    - './codec/**/*'
+    - '**/codec/**/*.go'
 
   comment: on-failure

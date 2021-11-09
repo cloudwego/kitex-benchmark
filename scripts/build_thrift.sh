@@ -2,11 +2,13 @@
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
 
+GOEXEC=${GOEXEC:-"go"}
+
 # clean
 rm -rf $CURDIR/../output/ && mkdir -p $CURDIR/../output/bin/ && mkdir -p $CURDIR/../output/log/
 
-go mod edit -replace=github.com/apache/thrift=github.com/apache/thrift@v0.13.0
-go mod tidy
+$GOEXEC mod edit -replace=github.com/apache/thrift=github.com/apache/thrift@v0.13.0
+$GOEXEC mod tidy
 
 # build clients
 go build -v -o $CURDIR/../output/bin/kitex_bencher $CURDIR/../thrift/kitex/client

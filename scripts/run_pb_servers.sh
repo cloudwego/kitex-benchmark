@@ -2,7 +2,7 @@
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
 
-repo=("grpc" "kitex-pb" "kitex-grpc" "kitex-mux" "rpcx" "arpc" "arpc-nbio")
+repo=("grpc" "kitex-pb" "kitex-mux" "rpcx" "arpc" "kitex-grpc")
 
 # build
 source $CURDIR/build_pb.sh

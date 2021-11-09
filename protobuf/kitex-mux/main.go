@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -30,7 +31,7 @@ import (
 )
 
 const (
-	port = ":8002"
+	port = 8002
 )
 
 var recorder = perf.NewRecorder("KITEX-MUX@Server")
@@ -49,7 +50,12 @@ func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response,
 }
 
 func main() {
-	address := &net.UnixAddr{Net: "tcp", Name: port}
+	// start pprof server
+	go func() {
+		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
+	}()
+
+	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", port)}
 	svr := echosvr.NewServer(
 		new(EchoImpl),
 		server.WithServiceAddr(address),

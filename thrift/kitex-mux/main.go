@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -30,7 +31,7 @@ import (
 )
 
 const (
-	port = ":8002"
+	port = 8002
 )
 
 // EchoServerImpl implements the last service interface defined in the IDL.
@@ -49,7 +50,12 @@ func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Res
 }
 
 func main() {
-	address := &net.UnixAddr{Net: "tcp", Name: port}
+	// start pprof server
+	go func() {
+		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
+	}()
+
+	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", port)}
 	svr := echoserver.NewServer(new(EchoServerImpl),
 		server.WithServiceAddr(address),
 		server.WithMuxTransport())
