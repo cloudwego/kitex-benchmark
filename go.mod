@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/apache/thrift v0.14.0
-	github.com/cloudwego/kitex v0.0.5
+	github.com/cloudwego/kitex v0.0.9-0.20211112064313-3590eb2d0b75
 	github.com/gogo/protobuf v1.3.2
 	github.com/lesismal/arpc v1.1.9
 	github.com/lesismal/nbio v1.1.23-0.20210815145206-b106d99bce56

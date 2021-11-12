@@ -19,6 +19,8 @@ package runner
 import (
 	"sync"
 	"time"
+
+	"github.com/smallnest/rpcx/log"
 )
 
 // 为了流量更均匀, 时间间隔设置为 10ms
@@ -54,6 +56,9 @@ func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
 				}
 				begin := r.timer.Now()
 				err := onceFn()
+				if err != nil {
+					log.Warnf("rpc failed: %v", err)
+				}
 				end := r.timer.Now()
 				cost := end - begin
 				r.counter.AddRecord(idx, err, cost)
