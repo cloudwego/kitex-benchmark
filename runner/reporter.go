@@ -25,7 +25,7 @@ import (
 
 func (c *Counter) Report(title string, totalns int64, concurrent int, total int64, echoSize int) error {
 	ms, sec := int64(time.Millisecond), int64(time.Second)
-	logInfo("[%s]: finish benching [%s], took %d ms for %d requests", title, time.Now().String(), totalns/ms, c.Total)
+	logInfo("[%s]: took %d ms for %d requests", title, totalns/ms, c.Total)
 	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
 
 	var tps float64
