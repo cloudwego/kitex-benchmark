@@ -34,7 +34,7 @@ const (
 	port = 8001
 )
 
-var recorder = perf.NewRecorder("KITEX_PB@Server")
+var recorder = perf.NewRecorder("KITEX@Server")
 
 // EchoImpl implements the last service interface defined in the IDL.
 type EchoImpl struct{}

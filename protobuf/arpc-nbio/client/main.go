@@ -22,5 +22,5 @@ import (
 
 // main is use for routing.
 func main() {
-	runner.Main("KITEX_GRPC", NewKClient)
+	runner.Main("ARPC-NBIO", NewPBArpcNbioClient)
 }

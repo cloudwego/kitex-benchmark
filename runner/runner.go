@@ -71,8 +71,8 @@ func (r *Runner) Warmup(onceFn RunOnce, concurrent int, total int64) {
 // 并发测试
 func (r *Runner) Run(title string, onceFn RunOnce, concurrent int, total int64, echoSize, sleepTime int) {
 	logInfo(
-		"%s start benching [%s], concurrent: %d, total: %d, sleep: %d",
-		blueString("["+title+"]"), time.Now().String(), concurrent, total, sleepTime,
+		"%s start benching, concurrent: %d, total: %d, sleep: %d",
+		blueString("["+title+"]"), concurrent, total, sleepTime,
 	)
 
 	start := r.timer.Now()

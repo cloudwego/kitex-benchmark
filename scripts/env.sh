@@ -1,14 +1,8 @@
 #!/bin/bash
-set -e
-
-if ! [ -x "$(command -v taskset)" ]; then
-  echo "Error: taskset is not installed." >&2
-  exit 1
-fi
 
 nprocs=$(getconf _NPROCESSORS_ONLN)
 if [ $nprocs -lt 4 ]; then
-  echo "Error: your environment should have at least 4 processors."
+  echo "Your environment should have at least 4 processors"
   exit 1
 elif [ $nprocs -gt 20 ]; then
   nprocs=20
