@@ -55,6 +55,29 @@
 ./scripts/run_pb_clients.sh
 ```
 
+### 压测数据对比
+
+所有压测结果会被输出在 ./output 目录下，以时间命名，例如:
+
+```bash
+ls output/
+
+2021-12-13-21-40.log # raw output log
+2021-12-13-21-40.csv # processed data
+```
+
+计算两次压测之间的 diff，输出结果为当前的数据加上变化的百分比值:
+
+```bash
+# Usage: python3 ./scripts/reports/diff.py target.csv current.csv
+
+python3 ./scripts/reports/diff.py output/2021-12-13-21-40.csv output/2021-12-13-21-44.csv
+
+# output:
+# [KITEX-MUX]   100            1024           275604.66(+0.4%)     1.13(+0.0%)     2.01(-0.5%)
+# [KITEX]       100            1024           218999.03(-0.4%)     1.28(-3.0%)     3.73(-2.1%)
+```
+
 ### Profiling
 
 由于默认压测参数会比较迅速完成一次压测，为了获得更长采集时间，可以手动在 `./scripts/env.sh` 中调整压测参数 n 大小。

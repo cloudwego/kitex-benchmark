@@ -58,6 +58,29 @@ But it should be noted that if the host machine has more than the CPU cores set 
 ./scripts/run_pb_clients.sh
 ```
 
+### Benchmark Diff
+
+All benchmark result will be written at `./output`, and named as current time:
+
+```bash
+ls output/
+
+2021-12-13-21-40.log # raw output log
+2021-12-13-21-40.csv # processed data
+```
+
+Diff two different benchmark results' csv files:
+
+```bash
+# Usage: python3 ./scripts/reports/diff.py target.csv current.csv
+
+python3 ./scripts/reports/diff.py output/2021-12-13-21-40.csv output/2021-12-13-21-44.csv
+
+# output:
+# [KITEX-MUX]   100            1024           275604.66(+0.4%)     1.13(+0.0%)     2.01(-0.5%)
+# [KITEX]       100            1024           218999.03(-0.4%)     1.28(-3.0%)     3.73(-2.1%)
+```
+
 ### Profiling
 
 Since the default benchmark will complete quickly, to obtain enough time to do profiling, you can increase the parameter `n` in `./scripts/env.sh`.
