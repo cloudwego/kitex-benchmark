@@ -60,13 +60,18 @@ But it should be noted that if the host machine has more than the CPU cores set 
 
 ### Benchmark Diff
 
-All benchmark result will be written at `./output`, and named as current time:
+All benchmark result will be written at `./output`, and named as current time by default(or $REPORT):
 
 ```bash
-ls output/
-
+$ scripts/benchmark_thrift.sh
+$ ls output/
 2021-12-13-21-40.log # raw output log
 2021-12-13-21-40.csv # processed data
+
+$ REPORT=feat-gopool scripts/benchmark_thrift.sh
+$ ls output/
+feat-gopool.log # raw output log
+feat-gopool.csv # processed data
 ```
 
 Diff two different benchmark results' csv files:

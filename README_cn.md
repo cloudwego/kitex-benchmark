@@ -57,21 +57,26 @@
 
 ### 压测数据对比
 
-所有压测结果会被输出在 ./output 目录下，以时间命名，例如:
+压测日志与对应 csv 结果会被输出在 ./output 目录下，默认以时间命名（如果指定了 REPORT 环境变量，会以该变量命名），例如:
 
 ```bash
-ls output/
-
+$ scripts/benchmark_thrift.sh
+$ ls output/
 2021-12-13-21-40.log # raw output log
 2021-12-13-21-40.csv # processed data
+
+$ REPORT=feat-gopool scripts/benchmark_thrift.sh
+$ ls output/
+feat-gopool.log # raw output log
+feat-gopool.csv # processed data
 ```
 
 计算两次压测之间的 diff，输出结果为当前的数据加上变化的百分比值:
 
 ```bash
-# Usage: python3 ./scripts/reports/diff.py target.csv current.csv
+# Usage: python3 ./scripts/reports/diff.py baseline.csv current.csv
 
-python3 ./scripts/reports/diff.py output/2021-12-13-21-40.csv output/2021-12-13-21-44.csv
+python ./scripts/reports/diff.py output/2021-12-13-21-40.csv output/2021-12-13-21-44.csv
 
 # output:
 # [KITEX-MUX]   100            1024           275604.66(+0.4%)     1.13(+0.0%)     2.01(-0.5%)
