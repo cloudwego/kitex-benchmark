@@ -49,16 +49,8 @@ def diff_cell(old, now):
 
 def print_csv(results):
     results.sort(key=lambda result: result[0])
-    cell_size = 15
-    for line in results:
-        result = []
-        for cell in line:
-            padding = cell_size - len(cell)
-            if padding <= 0:
-                padding = 5
-            cell += ' ' * padding
-            result.append(cell)
-        print(''.join(result))
+    for cells in results:
+        print('\t'.join(cells))
 
 
 def main():

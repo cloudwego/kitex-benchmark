@@ -58,11 +58,11 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 	logInfo("[%s]: took %d ms for %d requests", title, totalns/ms, c.Total)
 	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
 
-	var tps float64
+	var tps int64
 	if totalns < sec {
-		tps = float64(c.Total*sec) / float64(totalns)
+		tps = int64(float64(c.Total*sec) / float64(totalns))
 	} else {
-		tps = float64(c.Total) / (float64(totalns) / float64(sec))
+		tps = int64(float64(c.Total) / (float64(totalns) / float64(sec)))
 	}
 
 	var costs = make([]float64, len(c.costs))
@@ -74,10 +74,10 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 
 	var result string
 	if tp999/1000 < 1 {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
+		result = fmt.Sprintf("[%s]: TPS: %d, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
 			title, tps, tp99/1000, tp999/1000, echoSize, concurrent, total)
 	} else {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
+		result = fmt.Sprintf("[%s]: TPS: %d, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
 			title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, total)
 	}
 	logInfo(result)
