@@ -20,7 +20,7 @@ for b in ${body[@]}; do
 
       # run client
       echo "client $rp running with $cmd_client"
-      $cmd_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep
+      $cmd_client ./output/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep | $tee_cmd
 
       # stop server
       pid=$(ps -ef | grep ${rp}_reciever | grep -v grep | awk '{print $2}')
@@ -30,3 +30,5 @@ for b in ${body[@]}; do
     done
   done
 done
+
+finish_cmd

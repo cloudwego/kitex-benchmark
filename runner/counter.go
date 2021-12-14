@@ -17,7 +17,11 @@
 package runner
 
 import (
+	"fmt"
 	"sync/atomic"
+	"time"
+
+	"github.com/montanaflynn/stats"
 )
 
 // 计数器
@@ -47,4 +51,44 @@ func (c *Counter) AddRecord(idx int64, err error, cost int64) {
 // idx < 0 表示用尽
 func (c *Counter) Idx() (idx int64) {
 	return atomic.AddInt64(&c.Total, 1) - 1
+}
+
+func (c *Counter) Report(title string, totalns int64, concurrent int, total int64, echoSize int) error {
+	ms, sec := int64(time.Millisecond), int64(time.Second)
+	logInfo("[%s]: took %d ms for %d requests", title, totalns/ms, c.Total)
+	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
+
+	var tps float64
+	if totalns < sec {
+		tps = float64(c.Total*sec) / float64(totalns)
+	} else {
+		tps = float64(c.Total) / (float64(totalns) / float64(sec))
+	}
+
+	var costs = make([]float64, len(c.costs))
+	for i := range c.costs {
+		costs[i] = float64(c.costs[i])
+	}
+	tp99, _ := stats.Percentile(costs, 99)
+	tp999, _ := stats.Percentile(costs, 99.9)
+
+	var result string
+	if tp999/1000 < 1 {
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
+			title, tps, tp99/1000, tp999/1000, echoSize, concurrent, total)
+	} else {
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
+			title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, total)
+	}
+	logInfo(result)
+	return nil
+}
+
+const blueLayout = "\x1B[1;36;40m%s\x1B[0m"
+
+var infoTitle = "Info: "
+
+func logInfo(format string, a ...interface{}) {
+	s := fmt.Sprintf(format, a...)
+	fmt.Println(infoTitle + s)
 }
