@@ -4,14 +4,13 @@ go 1.15
 
 require (
 	github.com/apache/thrift v0.14.0
-	github.com/cloudwego/kitex v0.0.5
+	github.com/cloudwego/kitex v0.1.1
 	github.com/gogo/protobuf v1.3.2
-	github.com/lesismal/arpc v1.1.9
+	github.com/lesismal/arpc v1.2.4
 	github.com/lesismal/nbio v1.1.23-0.20210815145206-b106d99bce56
 	github.com/montanaflynn/stats v0.6.6
-	github.com/smallnest/rpcx v1.6.7
-	google.golang.org/grpc v1.39.1
-	google.golang.org/grpc/examples v0.0.0-20210927234232-710419d32bfd // indirect
+	github.com/smallnest/rpcx v1.6.11
+	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 )
 
