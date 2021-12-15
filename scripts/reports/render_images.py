@@ -1,8 +1,7 @@
+import matplotlib.pyplot as plt
 import sys
 
-import matplotlib.pyplot as plt
-
-kind = "thrift"
+kind = "pb"
 
 
 # 0-name, 1-concurrency, 2-size, 3-qps, 6-p99, 7-p999
