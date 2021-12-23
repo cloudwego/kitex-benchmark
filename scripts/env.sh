@@ -10,8 +10,8 @@ elif [ $nprocs -gt 20 ]; then
 fi
 scpu=$((nprocs > 16 ? 4 : nprocs / 4)) # max is 4 cpus
 ccpu=$((nprocs-scpu))
-scpu_cmd="taskset -c 0-${scpu-1}"
-ccpu_cmd="taskset -c ${scpu}-${ccpu-1}"
+scpu_cmd="taskset -c 0-$((scpu-1))"
+ccpu_cmd="taskset -c ${scpu}-$((ccpu-1))"
 if [ -x "$(command -v numactl)" ]; then
   # use numa affinity
   node0=$(numactl -H | grep "node 0" | head -n 1 | cut -f "4-$((3+scpu))" -d ' ' --output-delimiter ',')
