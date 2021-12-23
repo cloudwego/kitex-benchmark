@@ -14,10 +14,10 @@ scpu_cmd="taskset -c 0-${scpu-1}"
 ccpu_cmd="taskset -c ${scpu}-${ccpu-1}"
 if [ -x "$(command -v numactl)" ]; then
   # use numa affinity
-  node0=$(numactl -H | grep "node 0" | head -n 1 | cut -f4- -d ' ' --output-delimiter ',')
-  node1=$(numactl -H | grep "node 1" | head -n 1 | cut -f4- -d ' ' --output-delimiter ',')
-  scpu_cmd="numactl -C ${node0:0:scpu*2-1} -m 0"
-  ccpu_cmd="numactl -C ${node1:0:ccpu*2-1} -m 1"
+  node0=$(numactl -H | grep "node 0" | head -n 1 | cut -f4-${3+scpu} -d ' ' --output-delimiter ',')
+  node1=$(numactl -H | grep "node 1" | head -n 1 | cut -f4-${3+ccpu} -d ' ' --output-delimiter ',')
+  scpu_cmd="numactl -C ${node0} -m 0"
+  ccpu_cmd="numactl -C ${node1} -m 1"
 fi
 
 # GO
