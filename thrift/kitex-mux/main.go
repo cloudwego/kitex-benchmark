@@ -49,6 +49,19 @@ func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Res
 	}, nil
 }
 
+// NestedEcho implements the EchoServerImpl interface.
+func (s *EchoServerImpl) NestedEcho(ctx context.Context, req *echo.NestedRequest) (*echo.NestedResponse, error) {
+	resp := runner.ProcessRequest(recorder, req.Request.Action, req.Request.Msg)
+	ret := &echo.NestedResponse{
+		NestedStruct: req.NestedStruct,
+		Response: &echo.Response{
+			Action: resp.Action,
+			Msg:    resp.Msg,
+		},
+	}
+	return ret, nil
+}
+
 func main() {
 	// start pprof server
 	go func() {

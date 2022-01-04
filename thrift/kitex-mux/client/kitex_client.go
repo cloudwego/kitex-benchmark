@@ -21,6 +21,7 @@ import (
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/remote/codec/thrift"
 	"github.com/cloudwego/kitex/transport"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
@@ -31,12 +32,20 @@ import (
 func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 	cli := &thriftKiteXClient{}
 	cli.client = echoserver.MustNewClient("test.echo.kitex",
+		client.WithPayloadCodec(thrift.NewThriftFrugalCodec()),
 		client.WithTransportProtocol(transport.Framed),
 		client.WithHostPorts(opt.Address),
 		client.WithMuxConnection(2))
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &echo.Request{}
+			return &echo.NestedRequest{
+				NestedStruct: &echo.NestedStruct{
+					Struct:     &echo.SimpleStruct{},
+					StructList: []*echo.SimpleStruct{{}, {}, {}, {}, {}},
+					StructMap:  map[string]*echo.SimpleStruct{"0": {}, "1": {}, "2": {}, "3": {}, "4": {}},
+				},
+				Request: &echo.Request{},
+			}
 		},
 	}
 	return cli
@@ -49,15 +58,15 @@ type thriftKiteXClient struct {
 
 func (cli *thriftKiteXClient) Echo(action, msg string) error {
 	ctx := context.Background()
-	req := cli.reqPool.Get().(*echo.Request)
+	req := cli.reqPool.Get().(*echo.NestedRequest)
 	defer cli.reqPool.Put(req)
 
-	req.Action = action
-	req.Msg = msg
+	req.Request.Action = action
+	req.Request.Msg = msg
 
-	reply, err := cli.client.Echo(ctx, req)
+	reply, err := cli.client.NestedEcho(ctx, req)
 	if reply != nil {
-		runner.ProcessResponse(reply.Action, reply.Msg)
+		runner.ProcessResponse(reply.Response.Action, reply.Response.Msg)
 	}
 	return err
 }
