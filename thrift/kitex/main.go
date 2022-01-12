@@ -59,7 +59,6 @@ func main() {
 	svr := echoserver.NewServer(new(EchoServerImpl), server.WithServiceAddr(address))
 
 	err := svr.Run()
-
 	if err != nil {
 		log.Println(err.Error())
 	}

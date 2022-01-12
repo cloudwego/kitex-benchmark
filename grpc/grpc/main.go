@@ -22,30 +22,29 @@ import (
 	"log"
 	"net"
 
-	"github.com/cloudwego/kitex/server"
+	"google.golang.org/grpc"
 
-	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
-	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
+	grpcg "github.com/cloudwego/kitex-benchmark/codec/protobuf/grpc_gen"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
-	port = 8001
+	port = 8000
 )
 
-var recorder = perf.NewRecorder("KITEX@Server")
+var recorder = perf.NewRecorder("GRPC@Server")
 
-// EchoImpl implements the last service interface defined in the IDL.
-type EchoImpl struct{}
+type server struct {
+	grpcg.UnimplementedEchoServer
+}
 
-// Echo implements the EchoImpl interface.
-func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
+func (s *server) Echo(ctx context.Context, req *grpcg.Request) (*grpcg.Response, error) {
 	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
-	return &echo.Response{
-		Action: resp.Action,
+	return &grpcg.Response{
 		Msg:    resp.Msg,
+		Action: resp.Action,
 	}, nil
 }
 
@@ -55,11 +54,15 @@ func main() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
 
-	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", port)}
-	svr := echosvr.NewServer(new(EchoImpl), server.WithServiceAddr(address))
-
-	err := svr.Run()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		log.Println(err.Error())
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	grpcg.RegisterEchoServer(s, &server{})
+	log.Printf("server listening at %v", lis.Addr())
+
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
 }

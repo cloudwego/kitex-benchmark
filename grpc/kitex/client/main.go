@@ -14,35 +14,13 @@
  * limitations under the License.
  */
 
-//go:build darwin || netbsd || freebsd || openbsd || dragonfly
-// +build darwin netbsd freebsd openbsd dragonfly
-
-package cpu
+package main
 
 import (
-	"context"
-	"math/rand"
-	"time"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-func getPidCPUUsage(ctx context.Context, pid int) chan float64 {
-	result := make(chan float64, 1)
-	go func() {
-		ticker := time.NewTicker(defaultInterval)
-		defer func() {
-			ticker.Stop()
-			close(result)
-		}()
-		for {
-			select {
-			case <-ticker.C:
-			case <-ctx.Done():
-				return
-			}
-
-			result <- rand.Float64() * 100
-		}
-	}()
-
-	return result
+// main is use for routing.
+func main() {
+	runner.Main("KITEX", NewKClient)
 }

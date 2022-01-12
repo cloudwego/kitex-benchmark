@@ -22,19 +22,20 @@ import (
 	"log"
 	"net"
 
-	"github.com/cloudwego/kitex/server"
-
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
+	"github.com/cloudwego/kitex/server"
 )
 
-const (
-	port = 8001
-)
+const port = 8006
 
-var recorder = perf.NewRecorder("KITEX@Server")
+var (
+	_ echo.Echo = &EchoImpl{}
+
+	recorder = perf.NewRecorder("KITEX@Server")
+)
 
 // EchoImpl implements the last service interface defined in the IDL.
 type EchoImpl struct{}
@@ -54,12 +55,12 @@ func main() {
 	go func() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
+	svr := echosvr.NewServer(
+		new(EchoImpl),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
+	)
 
-	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", port)}
-	svr := echosvr.NewServer(new(EchoImpl), server.WithServiceAddr(address))
-
-	err := svr.Run()
-	if err != nil {
+	if err := svr.Run(); err != nil {
 		log.Println(err.Error())
 	}
 }

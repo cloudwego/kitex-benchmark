@@ -5,7 +5,8 @@
 由于不同框架使用的 协议、传输模式等 存在差异，不能强行拉齐。[kitex][kitex] 给出了几种简单的组合，可供参考。
 
 1. [kitex][kitex]:
-    - 多协议：[thrift][thrift] (推荐)、[protobuf][protobuf]
+    - 多编解码协议：[thrift][thrift] (推荐)、[protobuf][protobuf]
+    - 多传输协议：[thrift][thrift] (推荐)、[grpc](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md)
     - 多传输模式：长连接池(推荐)、连接多路复用(mux)
 2. 对比项目:
    - [thrift][thrift] 方向，暂时没有找到较为流行的对比框架，后续可以添加。
@@ -27,6 +28,12 @@
 
 ```bash
 ./scripts/benchmark_pb.sh
+```
+
+#### GRPC
+
+```bash
+./scripts/benchmark_grpc.sh
 ```
 
 ### 跨机压测
@@ -53,6 +60,16 @@
 
 # host B
 ./scripts/run_pb_clients.sh
+```
+
+#### GRPC
+
+```bash
+# host A
+./scripts/run_grpc_servers.sh
+
+# host B
+./scripts/run_grpc_clients.sh
 ```
 
 ### 压测数据对比
@@ -150,6 +167,7 @@ sleep=0
 
 - [Thrift Raw Data](scripts/reports/pb.csv)
 - [Protobuf Raw Data](scripts/reports/pb.csv)
+- [GRPC Raw Data](scripts/reports/grpc.csv)
 
 #### Thrift
 
@@ -162,6 +180,12 @@ sleep=0
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)
 ![image](docs/images/pb_tp999.png)
+
+#### GRPC
+
+![image](docs/images/grpc_qps.png)
+![image](docs/images/grpc_tp99.png)
+![image](docs/images/grpc_tp999.png)
 
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc

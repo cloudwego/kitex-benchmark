@@ -1,9 +1,16 @@
 #!/bin/bash
+set -e
+CURDIR=$(cd $(dirname $0); pwd)
+
+if ! [ -x "$(command -v taskset)" ]; then
+  echo "Error: taskset is not installed." >&2
+  exit 1
+fi
 
 # cpu binding
 nprocs=$(getconf _NPROCESSORS_ONLN)
 if [ $nprocs -lt 4 ]; then
-  echo "Your environment should have at least 4 processors"
+  echo "Error: your environment should have at least 4 processors"
   exit 1
 elif [ $nprocs -gt 20 ]; then
   nprocs=20
@@ -11,7 +18,7 @@ fi
 scpu=$((nprocs > 16 ? 4 : nprocs / 4)) # max is 4 cpus
 ccpu=$((nprocs-scpu))
 scpu_cmd="taskset -c 0-$((scpu-1))"
-ccpu_cmd="taskset -c ${scpu}-$((ccpu-1))"
+ccpu_cmd="taskset -c ${scpu}-$((ccpu-1))"cmd_client
 if [ -x "$(command -v numactl)" ]; then
   # use numa affinity
   node0=$(numactl -H | grep "node 0" | head -n 1 | cut -f "4-$((3+scpu))" -d ' ' --output-delimiter ',')
@@ -44,3 +51,8 @@ if [ "$USER" == "root" ]; then
 fi
 cmd_server="${nice_cmd} ${scpu_cmd}"
 cmd_client="${nice_cmd} ${ccpu_cmd}"
+output_dir=$CURDIR/../output
+pb_dir=$CURDIR/../protobuf
+thrift_dir=$CURDIR/../thrift
+grpc_dir=$CURDIR/../grpc
+

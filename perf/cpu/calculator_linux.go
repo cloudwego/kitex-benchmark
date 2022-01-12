@@ -20,6 +20,7 @@ package cpu
 #include <unistd.h>
 */
 import "C"
+
 import (
 	"context"
 	"fmt"
@@ -64,7 +65,7 @@ func getPidCPUUsage(ctx context.Context, pid int) chan float64 {
 			}
 
 			diffPIDTime := pidTime - lastPIDTime
-			period := float64(nowTime.Sub(lastTime).Milliseconds()) / 1000 //seconds in float
+			period := float64(nowTime.Sub(lastTime).Milliseconds()) / 1000 // seconds in float
 			pidCPUUsage := (diffPIDTime) * 100 / (clockTick * period)
 			lastPIDTime = pidTime
 			lastTime = nowTime

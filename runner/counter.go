@@ -55,7 +55,7 @@ func (c *Counter) Idx() (idx int64) {
 
 func (c *Counter) Report(title string, totalns int64, concurrent int, total int64, echoSize int) error {
 	ms, sec := int64(time.Millisecond), int64(time.Second)
-	logInfo("[%s]: took %d ms for %d requests", title, totalns/ms, c.Total)
+	logInfo("[%s]: finish benching [%s], took %d ms for %d requests", title, time.Now().String(), totalns/ms, c.Total)
 	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
 
 	var tps float64
@@ -65,7 +65,7 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 		tps = float64(c.Total) / (float64(totalns) / float64(sec))
 	}
 
-	var costs = make([]float64, len(c.costs))
+	costs := make([]float64, len(c.costs))
 	for i := range c.costs {
 		costs[i] = float64(c.costs[i])
 	}
