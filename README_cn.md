@@ -5,8 +5,7 @@
 由于不同框架使用的 协议、传输模式等 存在差异，不能强行拉齐。[kitex][kitex] 给出了几种简单的组合，可供参考。
 
 1. [kitex][kitex]:
-    - 多编解码协议：[thrift][thrift] (推荐)、[protobuf][protobuf]
-    - 多传输协议：[thrift][thrift] (推荐)、[grpc](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md)
+    - 多协议：[thrift][thrift] (推荐)、[protobuf][protobuf]
     - 多传输模式：长连接池(推荐)、连接多路复用(mux)
 2. 对比项目:
    - [thrift][thrift] 方向，暂时没有找到较为流行的对比框架，后续可以添加。
