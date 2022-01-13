@@ -88,9 +88,7 @@ func main() {
 	<-quit
 }
 
-var (
-	handler = arpc.NewHandler()
-)
+var handler = arpc.NewHandler()
 
 // Session .
 type Session struct {

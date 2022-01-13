@@ -61,7 +61,6 @@ func main() {
 		server.WithMuxTransport())
 
 	err := svr.Run()
-
 	if err != nil {
 		log.Println(err.Error())
 	}

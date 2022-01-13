@@ -1,5 +1,3 @@
-// +build darwin netbsd freebsd openbsd dragonfly
-
 //
 // Copyright 2021 CloudWeGo Authors
 //
@@ -15,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+//go:build darwin || netbsd || freebsd || openbsd || dragonfly
+// +build darwin netbsd freebsd openbsd dragonfly
 
 package mem
 

@@ -20,40 +20,41 @@ import (
 	"context"
 	"sync"
 
-	"github.com/cloudwego/kitex/client"
-
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
 	"github.com/cloudwego/kitex-benchmark/runner"
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/transport"
 )
 
-func NewPBKiteXClient(opt *runner.Options) runner.Client {
-	cli := &pbKitexClient{}
-	cli.client = echosvr.MustNewClient("test.echo.kitex-mux",
-		client.WithHostPorts(opt.Address),
-		// client.WithMuxConnection(opt.PoolSize))
-		// netpoll 设计上，2 个 connection 最优
-		client.WithMuxConnection(2))
-	cli.reqPool = &sync.Pool{
-		New: func() interface{} {
-			return &echo.Request{}
+func NewKClient(opt *runner.Options) runner.Client {
+	klog.SetLevel(klog.LevelWarn)
+	return &kClient{
+		client: echosvr.MustNewClient("test.echo.kitex",
+			client.WithHostPorts(opt.Address),
+			client.WithTransportProtocol(transport.GRPC),
+		),
+		reqPool: &sync.Pool{
+			New: func() interface{} {
+				return &echo.Request{}
+			},
 		},
 	}
-	return cli
 }
 
-type pbKitexClient struct {
+type kClient struct {
 	client  echosvr.Client
 	reqPool *sync.Pool
 }
 
-func (cli *pbKitexClient) Echo(action, msg string) error {
+func (cli *kClient) Echo(action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
-	req.Msg = msg
 	req.Action = action
+	req.Msg = msg
 
 	reply, err := cli.client.Echo(ctx, req)
 	if reply != nil {

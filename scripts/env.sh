@@ -1,9 +1,16 @@
 #!/bin/bash
+set -e
+CURDIR=$(cd $(dirname $0); pwd)
+
+if ! [ -x "$(command -v taskset)" ]; then
+  echo "Error: taskset is not installed." >&2
+  exit 1
+fi
 
 # cpu binding
 nprocs=$(getconf _NPROCESSORS_ONLN)
 if [ $nprocs -lt 4 ]; then
-  echo "Your environment should have at least 4 processors"
+  echo "Error: your environment should have at least 4 processors"
   exit 1
 elif [ $nprocs -gt 20 ]; then
   nprocs=20
@@ -44,3 +51,8 @@ if [ "$USER" == "root" ]; then
 fi
 cmd_server="${nice_cmd} ${scpu_cmd}"
 cmd_client="${nice_cmd} ${ccpu_cmd}"
+output_dir=$CURDIR/../output
+pb_dir=$CURDIR/../protobuf
+thrift_dir=$CURDIR/../thrift
+grpc_dir=$CURDIR/../grpc
+

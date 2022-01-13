@@ -31,6 +31,12 @@ Please make sure to meet [Requirements](#Requirements) before execution.
 ./scripts/benchmark_pb.sh
 ```
 
+#### GRPC
+
+```bash
+./scripts/benchmark_grpc.sh
+```
+
 ### External Network Mode
 
 The packets in loopback network mode don't enter the network card, failing to truly simulate the online services communication. So it also provides an approach to bench the
@@ -56,6 +62,15 @@ But it should be noted that if the host machine has more than the CPU cores set 
 
 # host B
 ./scripts/run_pb_clients.sh
+```
+
+#### GRPC
+
+```bash
+# host A
+./scripts/run_grpc_servers.sh
+# host B
+./scripts/run_grpc_clients.sh
 ```
 
 ### Benchmark Diff
@@ -153,6 +168,7 @@ The benchmark ensures the caller has sufficient machine resources **overwhelming
 
 - [Thrift Raw Data](scripts/reports/thrift.csv)
 - [Protobuf Raw Data](scripts/reports/pb.csv)
+- [GRPC Raw Data](scripts/reports/grpc.csv)
 
 #### Thrift
 
@@ -165,6 +181,12 @@ The benchmark ensures the caller has sufficient machine resources **overwhelming
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)
 ![image](docs/images/pb_tp999.png)
+
+#### GRPC
+
+![image](docs/images/grpc_qps.png)
+![image](docs/images/grpc_tp99.png)
+![image](docs/images/grpc_tp999.png)
 
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc

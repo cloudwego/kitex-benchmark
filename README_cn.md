@@ -29,6 +29,12 @@
 ./scripts/benchmark_pb.sh
 ```
 
+#### GRPC
+
+```bash
+./scripts/benchmark_grpc.sh
+```
+
 ### 跨机压测
 
 同机回环压测时数据并未真正进入网卡，未能真实模拟线上服务情况。所以也提供了 Client 与 Server 分别部署执行的方式。
@@ -53,6 +59,16 @@
 
 # host B
 ./scripts/run_pb_clients.sh
+```
+
+#### GRPC
+
+```bash
+# host A
+./scripts/run_grpc_servers.sh
+
+# host B
+./scripts/run_grpc_clients.sh
 ```
 
 ### 压测数据对比
@@ -150,6 +166,7 @@ sleep=0
 
 - [Thrift Raw Data](scripts/reports/pb.csv)
 - [Protobuf Raw Data](scripts/reports/pb.csv)
+- [GRPC Raw Data](scripts/reports/grpc.csv)
 
 #### Thrift
 
@@ -162,6 +179,12 @@ sleep=0
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)
 ![image](docs/images/pb_tp999.png)
+
+#### GRPC
+
+![image](docs/images/grpc_qps.png)
+![image](docs/images/grpc_tp99.png)
+![image](docs/images/grpc_tp999.png)
 
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc
