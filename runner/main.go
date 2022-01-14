@@ -22,6 +22,9 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/bytedance/gopkg/util/gctuner"
+	sigar "github.com/cloudfoundry/gosigar"
+
 	"github.com/cloudwego/kitex-benchmark/perf"
 )
 
@@ -49,6 +52,16 @@ type Client interface {
 type Response struct {
 	Action string
 	Msg    string
+}
+
+func init() {
+	mem := sigar.Mem{}
+	mem.Get()
+	limit := mem.Total
+	threshold := uint64(float64(limit) * 0.7)
+	fmt.Printf("mem limit: %d\n", limit)
+	fmt.Printf("mem threshold: %d\n", threshold)
+	gctuner.Tuning(threshold)
 }
 
 func initFlags() {
