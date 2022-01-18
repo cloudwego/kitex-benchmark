@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"sync"
+	"time"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
@@ -49,13 +50,14 @@ type kClient struct {
 }
 
 func (cli *kClient) Echo(action, msg string) error {
-	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
 	req.Action = action
 	req.Msg = msg
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 	reply, err := cli.client.Echo(ctx, req)
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)

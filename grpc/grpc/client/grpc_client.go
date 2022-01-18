@@ -52,7 +52,6 @@ type pbGrpcClient struct {
 }
 
 func (cli *pbGrpcClient) Echo(action, msg string) error {
-	ctx := context.Background()
 	req := cli.reqPool.Get().(*grpcg.Request)
 	defer cli.reqPool.Put(req)
 
