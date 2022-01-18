@@ -4,10 +4,9 @@ go 1.15
 
 require (
 	github.com/apache/thrift v0.14.0
-	github.com/bytedance/gopkg v0.0.0-20210910103821-e4efae9c17c3
-	github.com/cloudfoundry/gosigar v1.3.3 // indirect
+	github.com/bytedance/gopkg v0.0.0-20220118032842-3e42f757196d
+	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/kitex v0.1.3
-	github.com/elastic/gosigar v0.14.2 // indirect
 	github.com/gogo/protobuf v1.3.2
 	github.com/lesismal/arpc v1.2.4
 	github.com/lesismal/nbio v1.1.23-0.20210815145206-b106d99bce56
@@ -18,5 +17,3 @@ require (
 )
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
-
-replace github.com/bytedance/gopkg => github.com/joway/gopkg v0.0.0-20220114092017-b3f912595255
