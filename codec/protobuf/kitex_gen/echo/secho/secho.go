@@ -49,11 +49,11 @@ type sEchoechoClient struct {
 	streaming.Stream
 }
 
-func (x *sEchoechoClient) Send(m *echo.SRequest) error {
+func (x *sEchoechoClient) Send(m *echo.Request) error {
 	return x.Stream.SendMsg(m)
 }
-func (x *sEchoechoClient) Recv() (*echo.SResponse, error) {
-	m := new(echo.SResponse)
+func (x *sEchoechoClient) Recv() (*echo.Response, error) {
+	m := new(echo.Response)
 	return m, x.Stream.RecvMsg(m)
 }
 
@@ -61,12 +61,12 @@ type sEchoechoServer struct {
 	streaming.Stream
 }
 
-func (x *sEchoechoServer) Send(m *echo.SResponse) error {
+func (x *sEchoechoServer) Send(m *echo.Response) error {
 	return x.Stream.SendMsg(m)
 }
 
-func (x *sEchoechoServer) Recv() (*echo.SRequest, error) {
-	m := new(echo.SRequest)
+func (x *sEchoechoServer) Recv() (*echo.Request, error) {
+	m := new(echo.Request)
 	return m, x.Stream.RecvMsg(m)
 }
 
@@ -79,7 +79,7 @@ func newEchoResult() interface{} {
 }
 
 type EchoArgs struct {
-	Req *echo.SRequest
+	Req *echo.Request
 }
 
 func (p *EchoArgs) Marshal(out []byte) ([]byte, error) {
@@ -90,7 +90,7 @@ func (p *EchoArgs) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *EchoArgs) Unmarshal(in []byte) error {
-	msg := new(echo.SRequest)
+	msg := new(echo.Request)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -98,9 +98,9 @@ func (p *EchoArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var EchoArgs_Req_DEFAULT *echo.SRequest
+var EchoArgs_Req_DEFAULT *echo.Request
 
-func (p *EchoArgs) GetReq() *echo.SRequest {
+func (p *EchoArgs) GetReq() *echo.Request {
 	if !p.IsSetReq() {
 		return EchoArgs_Req_DEFAULT
 	}
@@ -112,10 +112,10 @@ func (p *EchoArgs) IsSetReq() bool {
 }
 
 type EchoResult struct {
-	Success *echo.SResponse
+	Success *echo.Response
 }
 
-var EchoResult_Success_DEFAULT *echo.SResponse
+var EchoResult_Success_DEFAULT *echo.Response
 
 func (p *EchoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
@@ -125,7 +125,7 @@ func (p *EchoResult) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *EchoResult) Unmarshal(in []byte) error {
-	msg := new(echo.SResponse)
+	msg := new(echo.Response)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func (p *EchoResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *EchoResult) GetSuccess() *echo.SResponse {
+func (p *EchoResult) GetSuccess() *echo.Response {
 	if !p.IsSetSuccess() {
 		return EchoResult_Success_DEFAULT
 	}
@@ -141,7 +141,7 @@ func (p *EchoResult) GetSuccess() *echo.SResponse {
 }
 
 func (p *EchoResult) SetSuccess(x interface{}) {
-	p.Success = x.(*echo.SResponse)
+	p.Success = x.(*echo.Response)
 }
 
 func (p *EchoResult) IsSetSuccess() bool {

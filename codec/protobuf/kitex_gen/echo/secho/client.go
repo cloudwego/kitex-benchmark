@@ -18,8 +18,8 @@ type Client interface {
 
 type SEcho_echoClient interface {
 	streaming.Stream
-	Send(*echo.SRequest) error
-	Recv() (*echo.SResponse, error)
+	Send(*echo.Request) error
+	Recv() (*echo.Response, error)
 }
 
 // NewClient creates a client for the service defined in IDL.

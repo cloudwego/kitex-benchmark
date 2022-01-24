@@ -21,21 +21,8 @@ service Echo {
 }
 
 // === streaming ===
-
-//--------------------request & response--------------
-
-message SRequest {
-  string Action = 1;
-  string Msg = 2;
-}
-
-message SResponse {
-  string Action = 1;
-  string Msg = 2;
-}
-
 //----------------------service-------------------
 service SEcho {
-  rpc echo (stream SRequest) returns (stream SResponse) {
+  rpc echo (stream Request) returns (stream Response) {
   }
 }
