@@ -56,6 +56,8 @@ github.com/cloudfoundry/gosigar v1.3.3 h1:aR9qIZ/Njb4GYPUGnoJMfXdhz+AOy80r4r3LUQ
 github.com/cloudfoundry/gosigar v1.3.3/go.mod h1:4TGthjsfIxe6Svlzn48EUw9xTTjT/2NnWyeRrferFP0=
 github.com/cloudwego/kitex v0.1.3 h1:fWVZR4TuKbLTK6JxWbHhmUyOAqyEmhW+CqnOrx674nU=
 github.com/cloudwego/kitex v0.1.3/go.mod h1:qxxpIUl5zvbcvcQeKrlm2t2f1BBxt4EPMksBUFwr6QA=
+github.com/cloudwego/kitex v0.1.4 h1:fxCH6yN3IrDeVPX62d2O01wwIbUOtT0Piu/VDK7yQm8=
+github.com/cloudwego/kitex v0.1.4/go.mod h1:qxxpIUl5zvbcvcQeKrlm2t2f1BBxt4EPMksBUFwr6QA=
 github.com/cloudwego/netpoll v0.1.0/go.mod h1:rZOiNI0FYjuvNybXKKhAPUja03loJi/cdv2F55AE6E8=
 github.com/cloudwego/netpoll v0.1.2 h1:NSvqHfCmmR3g0ASshwAB0F2RJvXK8v7ToFmhWzh/ukY=
 github.com/cloudwego/netpoll v0.1.2/go.mod h1:rZOiNI0FYjuvNybXKKhAPUja03loJi/cdv2F55AE6E8=

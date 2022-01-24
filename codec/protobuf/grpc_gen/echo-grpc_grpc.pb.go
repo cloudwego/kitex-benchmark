@@ -99,3 +99,121 @@ var Echo_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "echo-grpc.proto",
 }
+
+// SEchoClient is the client API for SEcho service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SEchoClient interface {
+	Echo(ctx context.Context, opts ...grpc.CallOption) (SEcho_EchoClient, error)
+}
+
+type sEchoClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSEchoClient(cc grpc.ClientConnInterface) SEchoClient {
+	return &sEchoClient{cc}
+}
+
+func (c *sEchoClient) Echo(ctx context.Context, opts ...grpc.CallOption) (SEcho_EchoClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SEcho_ServiceDesc.Streams[0], "/protobuf.SEcho/echo", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &sEchoEchoClient{stream}
+	return x, nil
+}
+
+type SEcho_EchoClient interface {
+	Send(*Request) error
+	Recv() (*Response, error)
+	grpc.ClientStream
+}
+
+type sEchoEchoClient struct {
+	grpc.ClientStream
+}
+
+func (x *sEchoEchoClient) Send(m *Request) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *sEchoEchoClient) Recv() (*Response, error) {
+	m := new(Response)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// SEchoServer is the server API for SEcho service.
+// All implementations must embed UnimplementedSEchoServer
+// for forward compatibility
+type SEchoServer interface {
+	Echo(SEcho_EchoServer) error
+	mustEmbedUnimplementedSEchoServer()
+}
+
+// UnimplementedSEchoServer must be embedded to have forward compatible implementations.
+type UnimplementedSEchoServer struct {
+}
+
+func (UnimplementedSEchoServer) Echo(SEcho_EchoServer) error {
+	return status.Errorf(codes.Unimplemented, "method Echo not implemented")
+}
+func (UnimplementedSEchoServer) mustEmbedUnimplementedSEchoServer() {}
+
+// UnsafeSEchoServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SEchoServer will
+// result in compilation errors.
+type UnsafeSEchoServer interface {
+	mustEmbedUnimplementedSEchoServer()
+}
+
+func RegisterSEchoServer(s grpc.ServiceRegistrar, srv SEchoServer) {
+	s.RegisterService(&SEcho_ServiceDesc, srv)
+}
+
+func _SEcho_Echo_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SEchoServer).Echo(&sEchoEchoServer{stream})
+}
+
+type SEcho_EchoServer interface {
+	Send(*Response) error
+	Recv() (*Request, error)
+	grpc.ServerStream
+}
+
+type sEchoEchoServer struct {
+	grpc.ServerStream
+}
+
+func (x *sEchoEchoServer) Send(m *Response) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *sEchoEchoServer) Recv() (*Request, error) {
+	m := new(Request)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// SEcho_ServiceDesc is the grpc.ServiceDesc for SEcho service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SEcho_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "protobuf.SEcho",
+	HandlerType: (*SEchoServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "echo",
+			Handler:       _SEcho_Echo_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
+	Metadata: "echo-grpc.proto",
+}
