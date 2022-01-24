@@ -42,11 +42,11 @@ func NewKClient(opt *runner.Options) runner.Client {
 		stream: stream,
 		reqPool: &sync.Pool{
 			New: func() interface{} {
-				return &echo.SRequest{}
+				return &echo.Request{}
 			},
 		},
-		reqQueue:  make(chan *echo.SRequest, 10240),
-		respQueue: make(chan *echo.SResponse, 10240),
+		reqQueue:  make(chan *echo.Request, 10240),
+		respQueue: make(chan *echo.Response, 10240),
 	}
 	go func() {
 		for req := range cli.reqQueue {
@@ -79,12 +79,12 @@ func NewKClient(opt *runner.Options) runner.Client {
 type kClient struct {
 	stream    sechosvr.SEcho_echoClient
 	reqPool   *sync.Pool
-	reqQueue  chan *echo.SRequest
-	respQueue chan *echo.SResponse
+	reqQueue  chan *echo.Request
+	respQueue chan *echo.Response
 }
 
 func (cli *kClient) Echo(action, msg string) error {
-	req := cli.reqPool.Get().(*echo.SRequest)
+	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
 	req.Action = action
