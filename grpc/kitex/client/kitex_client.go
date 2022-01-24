@@ -20,12 +20,13 @@ import (
 	"context"
 	"sync"
 
-	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
-	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
-	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/transport"
+
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
+	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewKClient(opt *runner.Options) runner.Client {
