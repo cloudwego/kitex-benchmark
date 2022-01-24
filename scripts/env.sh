@@ -51,8 +51,10 @@ if [ "$USER" == "root" ]; then
 fi
 cmd_server="${nice_cmd} ${scpu_cmd}"
 cmd_client="${nice_cmd} ${ccpu_cmd}"
+
+# set dirs
 output_dir=$CURDIR/../output
 pb_dir=$CURDIR/../protobuf
 thrift_dir=$CURDIR/../thrift
 grpc_dir=$CURDIR/../grpc
-
+streaming_dir=$CURDIR/../streaming
