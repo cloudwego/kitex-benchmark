@@ -56,17 +56,16 @@ func NewGrpcClient(opt *runner.Options) runner.Client {
 				cli.respQueue <- nil
 			}
 		}
-		cli.stream.CloseSend()
 	}()
 	go func() {
 		for {
 			resp, err := cli.stream.Recv()
-			if err == io.EOF {
-				close(cli.respQueue)
-				close(cli.reqQueue)
-				return
-			}
 			if err != nil {
+				if err == io.EOF {
+					close(cli.respQueue)
+					close(cli.reqQueue)
+					return
+				}
 				cli.respQueue <- nil
 			} else {
 				cli.respQueue <- resp

@@ -49,6 +49,7 @@ func (s *server) Echo(stream grpcg.SEcho_EchoServer) error {
 			return err
 		}
 		resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+
 		err = stream.Send(&grpcg.Response{
 			Msg:    resp.Msg,
 			Action: resp.Action,
