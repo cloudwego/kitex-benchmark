@@ -9,7 +9,7 @@ echo "Check finished."
 repo=("grpc" "kitex")
 ports=(8000 8001)
 
-echo "Building grpc services by exec build_streaming.sh..."
+echo "Building streaming services by exec build_streaming.sh..."
 source $CURDIR/build_streaming.sh
 echo "Build finished."
 # benchmark
