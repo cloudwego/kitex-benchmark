@@ -7,6 +7,7 @@ source $CURDIR/env.sh
 echo "Check finished."
 
 repo=("grpc" "kitex")
+cli_repo=("grpc" "kitex")
 ports=(8000 8001)
 
 echo "Building streaming services by exec build_streaming.sh..."
@@ -17,6 +18,7 @@ for b in ${body[@]}; do
   for c in ${concurrent[@]}; do
     for ((i = 0; i < ${#repo[@]}; i++)); do
       rp=${repo[i]}
+      crp=${cli_repo[i]}
       addr="127.0.0.1:${ports[i]}"
       # server start
       echo "Starting server [$rp], if failed please check [output/log/nohup.log] for detail."
@@ -25,8 +27,8 @@ for b in ${body[@]}; do
       echo "Server [$rp] running with [$cmd_server]"
 
       # run client
-      echo "Client [$rp] running with [$cmd_client]"
-      $cmd_client $output_dir/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep | $tee_cmd
+      echo "Client [$crp] running with [$cmd_client]"
+      $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep | $tee_cmd
 
       # stop server
       pid=$(ps -ef | grep ${rp}_reciever | grep -v grep | awk '{print $2}')
