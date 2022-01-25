@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protobuf;
-option go_package = "github.com/cloudwego/kitex-benchmark/common/protobuf/grpc";
+option go_package = "github.com/cloudwego/kitex-benchmark/common/protobuf";
 
 //--------------------request & response--------------
 
