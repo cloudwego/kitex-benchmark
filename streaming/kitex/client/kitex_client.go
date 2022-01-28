@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"runtime"
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
@@ -39,6 +40,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 		streampool: &sync.Pool{
 			New: func() interface{} {
 				stream, _ := c.Echo(context.Background())
+				runtime.SetFinalizer(stream, stream.Close)
 				return stream
 			},
 		},
