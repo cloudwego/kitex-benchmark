@@ -36,7 +36,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 		client.WithTransportProtocol(transport.GRPC))
 	cli := &kClient{
 		client: c,
-		connpool: &sync.Pool{
+		streampool: &sync.Pool{
 			New: func() interface{} {
 				stream, _ := c.Echo(context.Background())
 				return stream
@@ -52,16 +52,17 @@ func NewKClient(opt *runner.Options) runner.Client {
 }
 
 type kClient struct {
-	client   sechosvr.Client
-	connpool *sync.Pool
-	reqPool  *sync.Pool
+	client     sechosvr.Client
+	streampool *sync.Pool
+	reqPool    *sync.Pool
 }
 
 func (cli *kClient) Echo(action, msg string) error {
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
-	stream := cli.connpool.Get().(sechosvr.SEcho_echoClient)
+	stream := cli.streampool.Get().(sechosvr.SEcho_echoClient)
+	defer cli.streampool.Put(stream)
 	req.Action = action
 	req.Msg = msg
 	err := stream.Send(req)
