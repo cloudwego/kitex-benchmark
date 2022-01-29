@@ -75,6 +75,27 @@ type EchoArgs struct {
 	Req *echo.Request
 }
 
+func (p *EchoArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = &echo.Request{}
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *EchoArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *EchoArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
 func (p *EchoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, fmt.Errorf("No req in EchoArgs")
