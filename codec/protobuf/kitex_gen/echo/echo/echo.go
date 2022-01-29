@@ -131,6 +131,27 @@ type EchoResult struct {
 
 var EchoResult_Success_DEFAULT *echo.Response
 
+func (p *EchoResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = &echo.Response{}
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *EchoResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *EchoResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
 func (p *EchoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, fmt.Errorf("No req in EchoResult")

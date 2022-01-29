@@ -31,3 +31,31 @@ func (x *Request) fastWriteMsg(buf []byte) int {
 	}
 	return offset
 }
+
+func (x *Response) FastWrite(buf []byte) int {
+	offset := 0
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteAction(buf[offset:])
+	offset += x.fastWriteMsg(buf[offset:])
+	return offset
+}
+
+// string
+func (x *Response) fastWriteAction(buf []byte) int {
+	offset := 0
+	if x.Action != "" {
+		offset += bprotoc.Binary.WriteString(buf[offset:], 1, x.Action)
+	}
+	return offset
+}
+
+// string
+func (x *Response) fastWriteMsg(buf []byte) int {
+	offset := 0
+	if x.Msg != "" {
+		offset += bprotoc.Binary.WriteString(buf[offset:], 2, x.Msg)
+	}
+	return offset
+}
