@@ -19,7 +19,6 @@ package main
 import (
 	"context"
 	"log"
-	"runtime"
 	"sync"
 
 	"google.golang.org/grpc"
@@ -38,7 +37,6 @@ func NewGrpcClient(opt *runner.Options) runner.Client {
 		client: client,
 		streampool: &sync.Pool{New: func() interface{} {
 			stream, _ := client.Echo(context.Background())
-			runtime.SetFinalizer(stream, stream.CloseSend)
 			return stream
 		}},
 		reqPool: &sync.Pool{
