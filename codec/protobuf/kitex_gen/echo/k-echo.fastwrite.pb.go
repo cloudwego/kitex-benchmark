@@ -10,7 +10,7 @@ func (x *Request) FastWrite(buf []byte) int {
 		return offset
 	}
 	offset += x.fastWriteAction(buf[offset:])
-	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteMsg(buf[offset:])
 	return offset
 }
 
