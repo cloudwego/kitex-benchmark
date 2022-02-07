@@ -22,6 +22,8 @@ import (
 	"os"
 	"sort"
 	"time"
+
+	sigar "github.com/cloudfoundry/gosigar"
 )
 
 const (
@@ -45,25 +47,41 @@ func (u Usage) String() string {
 	)
 }
 
+// RecordUsage return the final Usage when context canceled
 func RecordUsage(ctx context.Context) (Usage, error) {
 	pid := os.Getpid()
-	return RecordPidUsage(ctx, pid)
+	return RecordUsageWithPid(ctx, pid)
 }
 
-func RecordPidUsage(ctx context.Context, pid int) (Usage, error) {
-	if err := isPIDExist(pid); err != nil {
-		return Usage{}, err
+// RecordUsageWithPid return the final Usage when context canceled
+func RecordUsageWithPid(ctx context.Context, pid int) (usage Usage, err error) {
+	if _, err = os.FindProcess(pid); err != nil {
+		return
 	}
+
 	var cpuUsageList []float64
-	for percent := range getPidCPUUsage(ctx, pid) {
-		if percent > defaultUsageThreshold {
-			cpuUsageList = append(cpuUsageList, percent)
+	var procCpu = sigar.ProcCpu{}
+	var ticker = time.NewTicker(defaultInterval)
+	defer ticker.Stop()
+	for {
+		if err = procCpu.Get(pid); err != nil {
+			return
+		}
+
+		cpuUsage := procCpu.Percent * 100
+		if cpuUsage > defaultUsageThreshold {
+			cpuUsageList = append(cpuUsageList, cpuUsage)
+		}
+
+		select {
+		case <-ctx.Done():
+			return calcUsage(cpuUsageList), nil
+		case <-ticker.C:
 		}
 	}
-	return statistic(cpuUsageList), nil
 }
 
-func statistic(stats []float64) Usage {
+func calcUsage(stats []float64) Usage {
 	if len(stats) == 0 {
 		return Usage{}
 	}
@@ -104,9 +122,4 @@ func statistic(stats []float64) Usage {
 	usage.Max = stats[length-1]
 
 	return usage
-}
-
-func isPIDExist(pid int) error {
-	_, err := os.FindProcess(pid)
-	return err
 }

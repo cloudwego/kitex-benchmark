@@ -20,100 +20,67 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"regexp"
-	"strconv"
-	"strings"
 	"time"
+
+	sigar "github.com/cloudfoundry/gosigar"
 )
 
 const (
-	defaultInterval       = time.Second * 3
-	defaultUsageThreshold = 1024 // KB
+	defaultInterval     = time.Second * 3
+	defaultRssThreshold = 1024 // KB
 )
 
-type Stats struct {
-	Rss int64
-	Pss int64
-}
-
 type Usage struct {
-	MaxRss int64
-	AvgRss int64
+	MaxRss uint64
+	AvgRss uint64
 }
 
 func (u Usage) String() string {
 	return fmt.Sprintf("AVG: %d KB, MAX: %d KB", u.AvgRss, u.MaxRss)
 }
 
+// RecordUsage return the final Usage when context canceled
 func RecordUsage(ctx context.Context) (usage Usage, err error) {
 	pid := os.Getpid()
-	return RecordPidUsage(ctx, pid)
+	return RecordUsageWithPid(ctx, pid)
 }
 
-func RecordPidUsage(ctx context.Context, pid int) (usage Usage, err error) {
-	ticker := time.NewTicker(defaultInterval)
-	defer ticker.Stop()
-	if pid < 0 {
-		pid = os.Getpid()
+// RecordUsageWithPid return the final Usage when context canceled
+func RecordUsageWithPid(ctx context.Context, pid int) (usage Usage, err error) {
+	if _, err = os.FindProcess(pid); err != nil {
+		return
 	}
-	var (
-		stats  Stats
-		bucket []Stats
-	)
+	var procMem = sigar.ProcMem{}
+	var rssList []uint64
+	var ticker = time.NewTicker(defaultInterval)
+	defer ticker.Stop()
 	for {
-		stats, err = getStats(pid)
-		if err != nil {
+		if err = procMem.Get(pid); err != nil {
 			return
 		}
-		if stats.Rss > defaultUsageThreshold {
-			bucket = append(bucket, stats)
+		rss := procMem.Resident
+		if rss > defaultRssThreshold {
+			rssList = append(rssList, rss)
 		}
 
 		select {
 		case <-ctx.Done():
-			return calcStats(bucket), nil
+			return calcUsage(rssList), nil
 		case <-ticker.C:
 		}
 	}
 }
 
-func calcStats(bucket []Stats) Usage {
-	var (
-		totalRss int64
-		maxRss   int64
-	)
-	for _, s := range bucket {
-		totalRss += s.Rss
-		if s.Rss > maxRss {
-			maxRss = s.Rss
+func calcUsage(rssList []uint64) Usage {
+	var totalRss, maxRss uint64
+	for _, rss := range rssList {
+		totalRss += rss
+		if rss > maxRss {
+			maxRss = rss
 		}
 	}
 	return Usage{
 		MaxRss: maxRss,
-		AvgRss: totalRss / int64(len(bucket)),
+		AvgRss: totalRss / uint64(len(rssList)),
 	}
-}
-
-func parseSmaps(data string) Stats {
-	lines := strings.Split(data, "\n")
-	reg := regexp.MustCompile("(\\w+): +(\\d+) kB")
-	stats := Stats{}
-	for _, line := range lines {
-		params := reg.FindStringSubmatch(line)
-		if len(params) < 3 {
-			continue
-		}
-		field, value := params[1], params[2]
-		var err error
-		switch strings.ToLower(field) {
-		case "rss":
-			stats.Rss, err = strconv.ParseInt(value, 10, 64)
-		case "pss":
-			stats.Pss, err = strconv.ParseInt(value, 10, 64)
-		}
-		if err != nil {
-			panic(fmt.Sprintf("parse mem field: %s failed: %v", field, err))
-		}
-	}
-	return stats
 }
