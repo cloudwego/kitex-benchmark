@@ -36,7 +36,7 @@ type Usage struct {
 }
 
 func (u Usage) String() string {
-	return fmt.Sprintf("AVG: %d KB, MAX: %d KB", u.AvgRss, u.MaxRss)
+	return fmt.Sprintf("AVG: %d MB, MAX: %d KB", u.AvgRss/1024/1024, u.MaxRss/1024/1024)
 }
 
 // RecordUsage return the final Usage when context canceled
