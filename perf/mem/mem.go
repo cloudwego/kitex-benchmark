@@ -27,7 +27,7 @@ import (
 
 const (
 	defaultInterval     = time.Second * 3
-	defaultRssThreshold = 1024 // KB
+	defaultRssThreshold = 1024 * 1024 // bytes
 )
 
 type Usage struct {
