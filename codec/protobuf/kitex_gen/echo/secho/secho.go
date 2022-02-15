@@ -10,6 +10,7 @@ import (
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 	"github.com/cloudwego/kitex/pkg/streaming"
 	"google.golang.org/protobuf/proto"
+	"time"
 )
 
 func serviceInfo() *kitex.ServiceInfo {
@@ -49,10 +50,20 @@ type sEchoechoClient struct {
 	streaming.Stream
 }
 
+func timeCost(funcName string) func() {
+	start := time.Now()
+	return func() {
+		tc:=time.Since(start)
+		fmt.Printf("%s cost = %v\n", funcName, tc)
+	}
+}
+
 func (x *sEchoechoClient) Send(m *echo.Request) error {
+	defer timeCost("Send")()
 	return x.Stream.SendMsg(m)
 }
 func (x *sEchoechoClient) Recv() (*echo.Response, error) {
+	defer timeCost("Recv")()
 	m := new(echo.Response)
 	return m, x.Stream.RecvMsg(m)
 }

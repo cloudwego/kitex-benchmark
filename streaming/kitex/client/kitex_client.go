@@ -18,11 +18,10 @@ package main
 
 import (
 	"context"
-	"sync"
-
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/transport"
+	"sync"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	sechosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/secho"
@@ -66,6 +65,7 @@ func (cli *kClient) Echo(action, msg string) error {
 	defer cli.streampool.Put(stream)
 	req.Action = action
 	req.Msg = msg
+
 	err := stream.Send(req)
 	if err != nil {
 		return err

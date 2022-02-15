@@ -4,9 +4,11 @@ package grpc
 
 import (
 	context "context"
+	"fmt"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	"time"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -134,11 +136,21 @@ type sEchoEchoClient struct {
 	grpc.ClientStream
 }
 
+func timeCost(funcName string) func() {
+	start := time.Now()
+	return func() {
+		tc:=time.Since(start)
+		fmt.Printf("%s cost = %v\n", funcName, tc)
+	}
+}
+
 func (x *sEchoEchoClient) Send(m *Request) error {
+	defer timeCost("Send")()
 	return x.ClientStream.SendMsg(m)
 }
 
 func (x *sEchoEchoClient) Recv() (*Response, error) {
+	defer timeCost("Recv")()
 	m := new(Response)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
