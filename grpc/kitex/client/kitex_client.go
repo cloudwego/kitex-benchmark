@@ -21,6 +21,7 @@ import (
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/remote"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/transport"
 
@@ -34,6 +35,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 	return &kClient{
 		client: echosvr.MustNewClient("test.echo.kitex",
 			client.WithHostPorts(opt.Address),
+			client.WithDialer(remote.NewDefaultDialer()),
 			client.WithTransportProtocol(transport.GRPC),
 		),
 		reqPool: &sync.Pool{

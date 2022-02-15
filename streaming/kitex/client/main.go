@@ -17,10 +17,16 @@
 package main
 
 import (
+	"fmt"
 	"github.com/cloudwego/kitex-benchmark/runner"
+	"github.com/cloudwego/kitex-benchmark/perf"
 )
 
 // main is use for routing.
 func main() {
+	// start pprof server
+	go func() {
+		perf.ServeMonitor(fmt.Sprintf(":%d", 10010))
+	}()
 	runner.Main("KITEX", NewKClient)
 }

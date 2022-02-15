@@ -22,6 +22,8 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+
+//	"github.com/felixge/fgprof"
 )
 
 func init() {
@@ -36,5 +38,6 @@ func init() {
 }
 
 func ServeMonitor(addr string) error {
+//	http.DefaultServeMux.Handle("/debug/fgprof", fgprof.Handler())
 	return http.ListenAndServe(addr, nil)
 }
