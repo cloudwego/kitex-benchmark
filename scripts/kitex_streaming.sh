@@ -4,7 +4,11 @@
 #go mod edit --replace github.com/cloudwego/netpoll-http2=github.com/sinnera/netpoll-http2@perf/grpc_streaming
 #go mod tidy
 
-go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/remove_nhttp2
+#go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/remove_nhttp2
+#go mod tidy
+
+
+go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/merge_all_prs
 go mod tidy
 
 set -e

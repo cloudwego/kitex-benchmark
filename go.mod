@@ -16,8 +16,6 @@ require (
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
-replace github.com/grpc/grpc-go => github.com/sinnera/grpc-go v1.45.0-dev.0.20220210034429-c941a6974fcf
+replace github.com/cloudwego/kitex => github.com/sinnera/kitex v0.0.4-0.20220216092555-831e8f34cd33
 
-replace google.golang.org/grpc => github.com/sinnera/grpc-go v1.45.0-dev.0.20220215063013-b060b20e6fc7
-
-replace github.com/cloudwego/kitex => github.com/sinnera/kitex v0.0.4-0.20220215085259-70f4e3a6c5af
+replace google.golang.org/grpc => github.com/sinnera/grpc-go v1.45.0-dev.0.20220216092540-33f7497c01d8
