@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
-CURDIR=$(cd $(dirname $0); pwd)
 
+# benchmark params
+repo=("kitex")
+cli_repo=("kitex")
+ports=(8001)
+
+CURDIR=$(cd $(dirname $0); pwd)
 echo "Checking whether the environment meets the requirements ..."
 source $CURDIR/env.sh
 echo "Check finished."
-
-repo=("grpc" "kitex")
-cli_repo=("grpc" "kitex")
-ports=(8000 8001)
 
 echo "Building streaming services by exec build_streaming.sh..."
 source $CURDIR/build_streaming.sh

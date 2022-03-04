@@ -1,5 +1,12 @@
 #!/bin/bash
 set -e
+
+# benchmark params
+n=20000000
+body=(1024)
+concurrent=(100 1000)
+sleep=0
+
 CURDIR=$(cd $(dirname $0); pwd)
 
 if ! [ -x "$(command -v taskset)" ]; then
@@ -33,10 +40,6 @@ GOROOT=$GOROOT
 
 USER=$(whoami)
 REPORT=${REPORT:-"$(date +%F-%H-%M)"}
-n=5000000
-body=(1024)
-concurrent=(100 200 400 600 800 1000)
-sleep=0
 
 nice_cmd=''
 tee_cmd="tee -a output/${REPORT}.log"
