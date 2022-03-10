@@ -33,7 +33,9 @@ func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 	c := sechosvr.MustNewClient("test.echo.kitex",
 		client.WithHostPorts(opt.Address),
-		client.WithTransportProtocol(transport.GRPC))
+		client.WithTransportProtocol(transport.GRPC),
+		client.WithGRPCConnPoolSize(1),
+	)
 	cli := &kClient{
 		client: c,
 		streampool: &sync.Pool{
