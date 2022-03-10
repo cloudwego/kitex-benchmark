@@ -5,23 +5,12 @@ package secho
 import (
 	"context"
 	"fmt"
-
-	"github.com/bytedance/gopkg/util/autopool"
+	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 	"github.com/cloudwego/kitex/pkg/streaming"
 	"google.golang.org/protobuf/proto"
-
-	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
 )
-
-var responsePool = autopool.New(func() interface{} {
-	return &echo.Response{}
-})
-
-var requestPool = autopool.New(func() interface{} {
-	return &echo.Request{}
-})
 
 func serviceInfo() *kitex.ServiceInfo {
 	return sEchoServiceInfo
@@ -63,9 +52,8 @@ type sEchoechoClient struct {
 func (x *sEchoechoClient) Send(m *echo.Request) error {
 	return x.Stream.SendMsg(m)
 }
-
 func (x *sEchoechoClient) Recv() (*echo.Response, error) {
-	m := responsePool.Get().(*echo.Response)
+	m := new(echo.Response)
 	return m, x.Stream.RecvMsg(m)
 }
 
@@ -78,7 +66,7 @@ func (x *sEchoechoServer) Send(m *echo.Response) error {
 }
 
 func (x *sEchoechoServer) Recv() (*echo.Request, error) {
-	m := requestPool.Get().(*echo.Request)
+	m := new(echo.Request)
 	return m, x.Stream.RecvMsg(m)
 }
 
@@ -102,7 +90,7 @@ func (p *EchoArgs) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *EchoArgs) Unmarshal(in []byte) error {
-	msg := requestPool.Get().(*echo.Request)
+	msg := new(echo.Request)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -137,7 +125,7 @@ func (p *EchoResult) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *EchoResult) Unmarshal(in []byte) error {
-	msg := responsePool.Get().(*echo.Response)
+	msg := new(echo.Response)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}

@@ -16,5 +16,3 @@ require (
 )
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
-
-replace github.com/bytedance/gopkg => github.com/joway/gopkg v0.0.0-20220303031135-33fe16b8d57f
