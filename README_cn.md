@@ -160,7 +160,7 @@ sleep=0
 * CPU:    Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz
     * 运行限定 server 4-CPUs, client 16-CPUs
 * OS:     Debian 5.4.56.bsk.1-amd64 x86_64 GNU/Linux
-* Go:     1.15.4
+* Go:     1.17
 
 ### 数据 (echo size 1KB)
 
