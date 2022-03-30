@@ -6,16 +6,29 @@ option go_package = "github.com/cloudwego/kitex-benchmark/common/protobuf/grpc";
 
 message Request {
     string Action = 1;
-    string Msg = 2;
+    string field1 = 2;
+    string field2 = 3;
+    string field3 = 4;
+    string field4 = 5;
+    string field5 = 6;
+    string field6 = 7;
+    string field7 = 8;
+    string field8 = 9;
+    string field9 = 10;
+    string field10 = 11;
+    int64 time = 12;
 }
 
 message Response {
     string Action = 1;
-    string Msg = 2;
+    string msg = 2;
+    bool isEnd = 3;
 }
 
 //----------------------service-------------------
 service Echo {
-    rpc echo (Request) returns (Response) {
-    }
+    rpc Send(Request) returns (Response) {}
+    rpc StreamTest(stream Request) returns (stream Response) {}
 }
+
+

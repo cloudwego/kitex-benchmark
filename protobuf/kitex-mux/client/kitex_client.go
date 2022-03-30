@@ -47,15 +47,40 @@ type pbKitexClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *pbKitexClient) Echo(action, msg string) error {
+func (cli *pbKitexClient) Echo(action, msg string, field, latency, payload int64) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
-	req.Msg = msg
 	req.Action = action
+	req.Time = latency
 
-	reply, err := cli.client.Echo(ctx, req)
+	if req.Action == runner.EchoAction {
+		if field == 1 {
+			req.Field1 = msg
+		} else if field == 5 {
+			averageLen := (payload) / field
+			req.Field1 = msg[0: averageLen]
+			req.Field2 = msg[averageLen: 2 * averageLen]
+			req.Field3 = msg[averageLen * 2: 3 * averageLen]
+			req.Field4 = msg[averageLen * 3: 4 * averageLen]
+			req.Field5 = msg[averageLen * 4:]
+		} else if field == 10 {
+			averageLen := (payload) / field
+			req.Field1 = msg[0: averageLen]
+			req.Field2 = msg[averageLen: 2 * averageLen]
+			req.Field3 = msg[averageLen * 2: 3 * averageLen]
+			req.Field4 = msg[averageLen * 3: 4 * averageLen]
+			req.Field5 = msg[averageLen * 4: 5 * averageLen]
+			req.Field6 = msg[averageLen * 5: 6 * averageLen]
+			req.Field7 = msg[averageLen * 6: 7 * averageLen]
+			req.Field8 = msg[averageLen * 7: 8 * averageLen]
+			req.Field9 = msg[averageLen * 8: 9 * averageLen]
+			req.Field10 = msg[averageLen * 9:]
+		}
+	}
+
+	reply, err := cli.client.Send(ctx, req)
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)
 	}

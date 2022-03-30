@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/cloudwego/kitex/server"
 
@@ -40,13 +41,18 @@ var recorder = perf.NewRecorder("KITEX@Server")
 type EchoImpl struct{}
 
 // Echo implements the EchoImpl interface.
-func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+func (s *EchoImpl) Send(ctx context.Context, req *echo.Request) (*echo.Response, error) {
+	time.Sleep(time.Duration(req.Time) * time.Millisecond)
+	resp := runner.ProcessRequest(recorder, req.Action, "")
 
 	return &echo.Response{
 		Action: resp.Action,
 		Msg:    resp.Msg,
 	}, nil
+}
+
+func (s *EchoImpl) StreamTest(stream echo.Echo_StreamTestServer) (err error) {
+	return nil
 }
 
 func main() {

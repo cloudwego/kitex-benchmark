@@ -37,6 +37,7 @@ func NewPBGrpcClient(opt *runner.Options) runner.Client {
 	}
 	cli.connpool = runner.NewPool(func() interface{} {
 		// Set up a connection to the server.
+		// 配置参数
 		conn, err := grpc.Dial(opt.Address, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
@@ -51,18 +52,43 @@ type pbGrpcClient struct {
 	connpool *runner.Pool
 }
 
-func (cli *pbGrpcClient) Echo(action, msg string) error {
+func (cli *pbGrpcClient) Echo(action, msg string, field, latency, payload int64) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*grpcg.Request)
 	defer cli.reqPool.Put(req)
 
 	req.Action = action
-	req.Msg = msg
+	req.Time = latency
+
+	if req.Action == runner.EchoAction {
+		if field == 1 {
+			req.Field1 = msg
+		} else if field == 5 {
+			averageLen := (payload) / field
+			req.Field1 = msg[0: averageLen]
+			req.Field2 = msg[averageLen: 2 * averageLen]
+			req.Field3 = msg[averageLen * 2: 3 * averageLen]
+			req.Field4 = msg[averageLen * 3: 4 * averageLen]
+			req.Field5 = msg[averageLen * 4:]
+		} else if field == 10 {
+			averageLen := (payload) / field
+			req.Field1 = msg[0: averageLen]
+			req.Field2 = msg[averageLen: 2 * averageLen]
+			req.Field3 = msg[averageLen * 2: 3 * averageLen]
+			req.Field4 = msg[averageLen * 3: 4 * averageLen]
+			req.Field5 = msg[averageLen * 4: 5 * averageLen]
+			req.Field6 = msg[averageLen * 5: 6 * averageLen]
+			req.Field7 = msg[averageLen * 6: 7 * averageLen]
+			req.Field8 = msg[averageLen * 7: 8 * averageLen]
+			req.Field9 = msg[averageLen * 8: 9 * averageLen]
+			req.Field10 = msg[averageLen * 9:]
+		}
+	}
 
 	pbcli := cli.connpool.Get().(grpcg.EchoClient)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	reply, err := pbcli.Echo(ctx, req)
+	reply, err := pbcli.Send(ctx, req)
 
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)

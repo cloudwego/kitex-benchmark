@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -39,8 +40,10 @@ type server struct {
 	grpcg.UnimplementedEchoServer
 }
 
-func (s *server) Echo(ctx context.Context, req *grpcg.Request) (*grpcg.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+func (s *server) Send(ctx context.Context, req *grpcg.Request) (*grpcg.Response, error) {
+	time.Sleep(time.Duration(req.Time) * time.Millisecond)
+	// 正常只需要返回一个空的msg
+	resp := runner.ProcessRequest(recorder, req.Action, "")
 
 	return &grpcg.Response{
 		Msg:    resp.Msg,
