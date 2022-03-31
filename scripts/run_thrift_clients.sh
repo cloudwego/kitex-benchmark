@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
-
-source $CURDIR/env.sh
 repo=("kitex" "kitex-mux")
 ports=(8001 8002)
 ip=${IP:-"127.0.0.1"}
 
+# build
+source $CURDIR/env.sh
 source $CURDIR/build_thrift.sh
 
 # benchmark
