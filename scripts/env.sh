@@ -1,10 +1,14 @@
 #!/bin/bash
 set -e
+
 CURDIR=$(cd $(dirname $0); pwd)
 
+# check required command
 if ! [ -x "$(command -v taskset)" ]; then
-  echo "Error: taskset is not installed." >&2
-  exit 1
+  if ! [ -x "$(command -v numactl)" ]; then
+    echo "Error: taskset/numactl is not installed." >&2
+    exit 1
+  fi
 fi
 
 # cpu binding
@@ -55,4 +59,3 @@ output_dir=$CURDIR/../output
 pb_dir=$CURDIR/../protobuf
 thrift_dir=$CURDIR/../thrift
 grpc_dir=$CURDIR/../grpc
-
