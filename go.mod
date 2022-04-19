@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/apache/thrift v0.14.0
 	github.com/cloudfoundry/gosigar v1.3.3
+	github.com/cloudwego/frugal v0.0.0-20220413100753-a7ae85af5c25
 	github.com/cloudwego/kitex v0.2.2-0.20220411125638-972bb37c20c4
 	github.com/gogo/protobuf v1.3.2
 	github.com/lesismal/arpc v1.2.4
