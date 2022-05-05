@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
-
 repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc")
 
 # build
+source $CURDIR/env.sh
 source $CURDIR/build_pb.sh
 
 # benchmark

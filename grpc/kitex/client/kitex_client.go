@@ -35,6 +35,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 		client: echosvr.MustNewClient("test.echo.kitex",
 			client.WithHostPorts(opt.Address),
 			client.WithTransportProtocol(transport.GRPC),
+			client.WithGRPCConnPoolSize(6), // the cpu cores of server is 4, and 4*3/2 = 6
 		),
 		reqPool: &sync.Pool{
 			New: func() interface{} {
