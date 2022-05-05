@@ -1,14 +1,17 @@
 #!/bin/bash
 set -e
 
+# benchmark params
+n=20000000
+body=(1024)
+concurrent=(100 1000)
+sleep=0
+
 CURDIR=$(cd $(dirname $0); pwd)
 
-# check required command
 if ! [ -x "$(command -v taskset)" ]; then
-  if ! [ -x "$(command -v numactl)" ]; then
-    echo "Error: taskset/numactl is not installed." >&2
-    exit 1
-  fi
+  echo "Error: taskset is not installed." >&2
+  exit 1
 fi
 
 # cpu binding
@@ -37,10 +40,6 @@ GOROOT=$GOROOT
 
 USER=$(whoami)
 REPORT=${REPORT:-"$(date +%F-%H-%M)"}
-n=5000000
-body=(1024)
-concurrent=(100 200 400 600 800 1000)
-sleep=0
 
 nice_cmd=''
 tee_cmd="tee -a output/${REPORT}.log"
@@ -55,7 +54,10 @@ if [ "$USER" == "root" ]; then
 fi
 cmd_server="${nice_cmd} ${scpu_cmd}"
 cmd_client="${nice_cmd} ${ccpu_cmd}"
+
+# set dirs
 output_dir=$CURDIR/../output
 pb_dir=$CURDIR/../protobuf
 thrift_dir=$CURDIR/../thrift
 grpc_dir=$CURDIR/../grpc
+streaming_dir=$CURDIR/../streaming

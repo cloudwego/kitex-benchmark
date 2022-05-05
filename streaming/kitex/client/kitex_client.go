@@ -25,42 +25,56 @@ import (
 	"github.com/cloudwego/kitex/transport"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
-	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
+	sechosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/secho"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
-	return &kClient{
-		client: echosvr.MustNewClient("test.echo.kitex",
-			client.WithHostPorts(opt.Address),
-			client.WithTransportProtocol(transport.GRPC),
-			client.WithGRPCConnPoolSize(6), // the cpu cores of server is 4, and 4*3/2 = 6
-		),
+	c := sechosvr.MustNewClient("test.echo.kitex",
+		client.WithHostPorts(opt.Address),
+		client.WithTransportProtocol(transport.GRPC),
+		client.WithGRPCConnPoolSize(1),
+	)
+	cli := &kClient{
+		client: c,
+		streampool: &sync.Pool{
+			New: func() interface{} {
+				stream, _ := c.Echo(context.Background())
+				return stream
+			},
+		},
 		reqPool: &sync.Pool{
 			New: func() interface{} {
 				return &echo.Request{}
 			},
 		},
 	}
+	return cli
 }
 
 type kClient struct {
-	client  echosvr.Client
-	reqPool *sync.Pool
+	client     sechosvr.Client
+	streampool *sync.Pool
+	reqPool    *sync.Pool
 }
 
 func (cli *kClient) Echo(action, msg string) error {
-	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
+	stream := cli.streampool.Get().(sechosvr.SEcho_echoClient)
+	defer cli.streampool.Put(stream)
 	req.Action = action
 	req.Msg = msg
-
-	reply, err := cli.client.Echo(ctx, req)
-	if reply != nil {
-		runner.ProcessResponse(reply.Action, reply.Msg)
+	err := stream.Send(req)
+	if err != nil {
+		return err
 	}
-	return err
+	resp, err := stream.Recv()
+	if err != nil {
+		return err
+	}
+	runner.ProcessResponse(resp.Action, resp.Msg)
+	return nil
 }

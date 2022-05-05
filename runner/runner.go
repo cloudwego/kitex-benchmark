@@ -19,6 +19,8 @@ package runner
 import (
 	"sync"
 	"time"
+
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 // 为了流量更均匀, 时间间隔设置为 10ms
@@ -55,6 +57,9 @@ func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
 				begin := r.timer.Now()
 				err := onceFn()
 				end := r.timer.Now()
+				if err != nil {
+					klog.Warnf("No.%d request failed: %v", idx, err)
+				}
 				cost := end - begin
 				r.counter.AddRecord(idx, err, cost)
 			}

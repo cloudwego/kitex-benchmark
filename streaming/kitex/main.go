@@ -17,7 +17,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -25,15 +24,15 @@ import (
 	"github.com/cloudwego/kitex/server"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
-	echosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/echo"
+	sechosvr "github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo/secho"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-const port = 8006
+const port = 8001
 
 var (
-	_ echo.Echo = &EchoImpl{}
+	_ echo.SEcho = &EchoImpl{}
 
 	recorder = perf.NewRecorder("KITEX@Server")
 )
@@ -42,13 +41,22 @@ var (
 type EchoImpl struct{}
 
 // Echo implements the EchoImpl interface.
-func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+func (s *EchoImpl) Echo(stream echo.SEcho_EchoServer) error {
+	for {
+		req, err := stream.Recv()
+		if err != nil {
+			return err
+		}
+		resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
-	return &echo.Response{
-		Action: resp.Action,
-		Msg:    resp.Msg,
-	}, nil
+		err = stream.Send(&echo.Response{
+			Action: resp.Action,
+			Msg:    resp.Msg,
+		})
+		if err != nil {
+			return err
+		}
+	}
 }
 
 func main() {
@@ -56,7 +64,7 @@ func main() {
 	go func() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
-	svr := echosvr.NewServer(
+	svr := sechosvr.NewServer(
 		new(EchoImpl),
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
 	)

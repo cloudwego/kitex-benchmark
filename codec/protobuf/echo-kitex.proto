@@ -5,17 +5,24 @@ option go_package = "echo";
 //--------------------request & response--------------
 
 message Request {
-    string Action = 1;
-    string Msg = 2;
+  string Action = 1;
+  string Msg = 2;
 }
 
 message Response {
-    string Action = 1;
-    string Msg = 2;
+  string Action = 1;
+  string Msg = 2;
 }
 
 //----------------------service-------------------
 service Echo {
-    rpc echo (Request) returns (Response) {
-    }
+  rpc echo (Request) returns (Response) {
+  }
+}
+
+// === streaming ===
+//----------------------service-------------------
+service SEcho {
+  rpc echo (stream Request) returns (stream Response) {
+  }
 }
