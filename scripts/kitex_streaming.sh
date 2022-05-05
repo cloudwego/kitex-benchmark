@@ -8,7 +8,11 @@
 #go mod tidy
 
 
-go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/merge_all_prs
+#go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/merge_all_prs
+
+#go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@fix/fix_framer_rw
+#go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@fix/fix_framer_rw_without_nhttp2
+go mod edit -replace github.com/apache/thrift=github.com/apache/thrift@v0.13.0
 go mod tidy
 
 set -e

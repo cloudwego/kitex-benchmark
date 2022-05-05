@@ -33,9 +33,9 @@ GOROOT=$GOROOT
 
 USER=$(whoami)
 REPORT=${REPORT:-"$(date +%F-%H-%M)"}
-n=15000000
+n=150000
 body=(1024)
-concurrent=(100)
+concurrent=(100 200 400 600 800 1000)
 sleep=0
 
 nice_cmd=''
