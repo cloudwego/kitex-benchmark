@@ -36,7 +36,11 @@ func NewGrpcClient(opt *runner.Options) runner.Client {
 	return &grpcClient{
 		client: client,
 		streampool: &sync.Pool{New: func() interface{} {
-			stream, _ := client.Echo(context.Background())
+			stream, err := client.Echo(context.Background())
+			if err != nil {
+				log.Printf("client new stream failed: %v", err)
+				return nil
+			}
 			return stream
 		}},
 		reqPool: &sync.Pool{
@@ -53,11 +57,14 @@ type grpcClient struct {
 	reqPool    *sync.Pool
 }
 
-func (cli *grpcClient) Echo(action, msg string) error {
+func (cli *grpcClient) Echo(action, msg string) (err error) {
 	req := cli.reqPool.Get().(*grpcg.Request)
 	defer cli.reqPool.Put(req)
 
-	stream := cli.streampool.Get().(grpcg.SEcho_EchoClient)
+	stream, ok := cli.streampool.Get().(grpcg.SEcho_EchoClient)
+	if !ok {
+		return
+	}
 	defer cli.streampool.Put(stream)
 	req.Action = action
 	req.Msg = msg

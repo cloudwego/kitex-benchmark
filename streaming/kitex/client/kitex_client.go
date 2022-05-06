@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"sync"
 
 	"github.com/cloudwego/kitex/client"
@@ -40,7 +41,11 @@ func NewKClient(opt *runner.Options) runner.Client {
 		client: c,
 		streampool: &sync.Pool{
 			New: func() interface{} {
-				stream, _ := c.Echo(context.Background())
+				stream, err := c.Echo(context.Background())
+				if err != nil {
+					log.Printf("client new stream failed: %v", err)
+					return nil
+				}
 				return stream
 			},
 		},
@@ -63,7 +68,10 @@ func (cli *kClient) Echo(action, msg string) error {
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)
 
-	stream := cli.streampool.Get().(sechosvr.SEcho_echoClient)
+	stream, ok := cli.streampool.Get().(sechosvr.SEcho_echoClient)
+	if !ok {
+		return nil
+	}
 	defer cli.streampool.Put(stream)
 	req.Action = action
 	req.Msg = msg
