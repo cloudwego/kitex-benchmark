@@ -33,7 +33,7 @@ GOROOT=$GOROOT
 
 USER=$(whoami)
 REPORT=${REPORT:-"$(date +%F-%H-%M)"}
-n=150000
+n=2000000
 body=(1024)
 concurrent=(100 200 400 600 800 1000)
 sleep=0

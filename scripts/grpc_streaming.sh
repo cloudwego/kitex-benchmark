@@ -1,5 +1,5 @@
 #!/bin/bash
-go mod edit --replace google.golang.org/grpc=github.com/sinnera/grpc-go@feat/jxw
+#go mod edit --replace google.golang.org/grpc=github.com/sinnera/grpc-go@feat/jxw
 go mod tidy
 
 set -e

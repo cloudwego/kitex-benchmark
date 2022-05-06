@@ -5,14 +5,20 @@
 #go mod tidy
 
 #go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/remove_nhttp2
+#go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@hotfix/validate_grpc_option #最早的优化commit
 #go mod tidy
 
-
+go mod edit --replace github.com/cloudwego/kitex=github.com/cloudwego/kitex@bb1260b48c482c2a1012ddc88589ff7f233deef4
+#go mod edit --replace github.com/cloudwego/kitex=github.com/cloudwego/kitex@6c033d991c18de59e106ca5d94e0543f6de94008
+#go mod edit --replace github.com/cloudwego/kitex=github.com/cloudwego/kitex@4b5390de7460a5e0d7a670e2d79e7b196bc93478
+#go mod edit --replace github.com/cloudwego/kitex=github.com/cloudwego/kitex@706250705e679be1afcbb49f6c369fdd5106432f
 #go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@perf/merge_all_prs
+#go mod edit --replace github.com/cloudwego/kitex=github.com/cloudwego/kitex@main
+#go mod edit --replace github.com/cloudwego/kitex=github.com/cloudwego/kitex@v0.2.1
 
 #go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@fix/fix_framer_rw
 #go mod edit --replace github.com/cloudwego/kitex=github.com/sinnera/kitex@fix/fix_framer_rw_without_nhttp2
-go mod edit -replace github.com/apache/thrift=github.com/apache/thrift@v0.13.0
+#go mod edit -replace github.com/apache/thrift=github.com/apache/thrift@v0.13.0
 go mod tidy
 
 set -e
