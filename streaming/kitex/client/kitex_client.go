@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"sync"
 
@@ -70,7 +71,7 @@ func (cli *kClient) Echo(action, msg string) error {
 
 	stream, ok := cli.streampool.Get().(sechosvr.SEcho_echoClient)
 	if !ok {
-		return nil
+		return errors.New("new stream error")
 	}
 	defer cli.streampool.Put(stream)
 	req.Action = action
