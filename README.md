@@ -162,7 +162,7 @@ The benchmark ensures the caller has sufficient machine resources **overwhelming
 * CPU: Intel(R) Xeon(R) Gold 5118 CPU @ 2.30GHz
     * server 4-CPUs, client 16-CPUs
 * OS: Debian 5.4.56.bsk.1-amd64 x86_64 GNU/Linux
-* Go: 1.17
+* Go: 1.17.2
 
 ### Data (echo size 1KB)
 
