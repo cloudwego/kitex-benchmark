@@ -4,6 +4,10 @@ CURDIR=$(cd $(dirname $0); pwd)
 GOEXEC=${GOEXEC:-"go"}
 
 # clean
+if [ -z "$output_dir" ]; then
+  echo "output_dir is empty"
+  exit 1
+fi
 rm -rf $output_dir/bin/ && mkdir -p $output_dir/bin/
 rm -rf $output_dir/log/ && mkdir -p $output_dir/log/
 
