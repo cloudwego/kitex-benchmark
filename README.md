@@ -7,11 +7,11 @@ This project shows several simple uses of [kitex][kitex] and provides several co
 Due to the differences in the protocols and transmission modes used by different frameworks, it's difficult to benchmark them all under the same baseline. [kitex][kitex] gives several simple combinations for reference.
 
 1. [kitex][kitex]:
-	- Multi-protocol: [thrift][thrift] (recommended), [protobuf][protobuf]
-	- Multi-transmission mode: long connection pool (recommended), connection multiplexing (mux)
+	- Multi-Message Protocol: Thrift(recommended), KitexProtobuf(Customized Protobuf Message Protocol), GRPC(Same with gRPC)
+	- Multi-Transmission Mode: long connection pool (recommended), connection multiplexing (mux)
 2. Comparison Frameworks:
 	- [Thrift][thrift]: Kitex is the only full-featured Thrift Golang Framework at now.
-	- [Protobuf][protobuf]: [grpc][grpc], [rpcx][rpcx], [arpc][arpc] (all use connection multiplexing).
+	- [Protobuf][protobuf]: [grpc][grpc], [rpcx][rpcx], [arpc][arpc] (all use connection multiplexing), but note that there are differences in message protocols.
 
 ## Usage
 
@@ -171,6 +171,7 @@ The benchmark ensures the caller has sufficient machine resources **overwhelming
 - [GRPC Raw Data](scripts/reports/grpc.csv)
 
 #### Thrift
+Note: the message protocols used by each framework are different. About GRPC, the next part has comparison.
 
 ![image](docs/images/thrift_qps.png)
 ![image](docs/images/thrift_tp99.png)
