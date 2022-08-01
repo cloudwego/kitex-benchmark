@@ -5,11 +5,11 @@
 由于不同框架使用的 协议、传输模式等 存在差异，不能强行拉齐。[kitex][kitex] 给出了几种简单的组合，可供参考。
 
 1. [kitex][kitex]:
-    - 多协议：[thrift][thrift] (推荐)、[protobuf][protobuf]
+    - 多消息协议：Thrift(推荐)、KitexProtobuf（自定义 Protobuf 消息协议）、GRPC（与 gRPC 官方对齐，为方便区分作为消息协议概念）
     - 多传输模式：长连接池(推荐)、连接多路复用(mux)
 2. 对比项目:
    - [thrift][thrift] 方向，暂时没有找到较为流行的对比框架，后续可以添加。
-   - [protobuf][protobuf] 方向，提供了 [grpc][grpc]、[rpcx][rpcx] 作为对比项目(均使用连接多路复用)。
+   - [protobuf][protobuf] 方向，提供了 [grpc][grpc]、[rpcx][rpcx] 作为对比项目(均使用连接多路复用)，但注意消息协议存在差异。
 
 ## 使用说明
 
@@ -175,6 +175,7 @@ sleep=0
 ![image](docs/images/thrift_tp999.png)
 
 #### Protobuf
+注意：各框架使用的消息协议不同，gRPC 下面有专门的对比
 
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)
