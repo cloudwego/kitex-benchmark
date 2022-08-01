@@ -171,13 +171,13 @@ The benchmark ensures the caller has sufficient machine resources **overwhelming
 - [GRPC Raw Data](scripts/reports/grpc.csv)
 
 #### Thrift
-Note: the message protocols used by each framework are different. About GRPC, the next part has comparison.
 
 ![image](docs/images/thrift_qps.png)
 ![image](docs/images/thrift_tp99.png)
 ![image](docs/images/thrift_tp999.png)
 
 #### Protobuf
+Note: the message protocols used by each framework are different. About GRPC, the next part has comparison.
 
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)
