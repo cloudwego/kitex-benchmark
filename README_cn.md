@@ -187,6 +187,12 @@ sleep=0
 ![image](docs/images/grpc_tp99.png)
 ![image](docs/images/grpc_tp999.png)
 
+#### Streaming
+
+![image](docs/images/streaming_qps.png)
+![image](docs/images/streaming_tp99.png)
+![image](docs/images/streaming_tp999.png)
+
 [kitex]: https://github.com/cloudwego/kitex
 [grpc]: https://github.com/grpc/grpc
 [rpcx]: https://github.com/smallnest/rpcx
