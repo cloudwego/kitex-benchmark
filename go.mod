@@ -6,7 +6,7 @@ require (
 	github.com/apache/thrift v0.14.0
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.2
-	github.com/cloudwego/kitex v0.3.5-0.20220819080849-d19ff0111efa
+	github.com/cloudwego/kitex v0.4.1
 	github.com/gogo/protobuf v1.3.2
 	github.com/lesismal/arpc v1.2.4
 	github.com/lesismal/nbio v1.1.23-0.20210815145206-b106d99bce56
