@@ -6,8 +6,8 @@ echo "Checking whether the environment meets the requirements ..."
 source $CURDIR/env.sh
 echo "Check finished."
 
-srepo=("kitex" "kitex-mux")
-crepo=("kitex" "kitex-mux")
+srepo=("kitex")# "kitex-mux")
+crepo=("kitex")# "kitex-mux")
 ports=(8001 8002)
 
 echo "Building thrift services by exec build_thrift.sh ..."

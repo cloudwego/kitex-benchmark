@@ -36,7 +36,7 @@ func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 		client.WithTransportProtocol(transport.Framed),
 		client.WithHostPorts(opt.Address),
 		client.WithLongConnection(
-			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute, MinIdlePerAddress: 10}),
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
