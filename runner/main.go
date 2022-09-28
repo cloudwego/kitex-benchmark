@@ -111,6 +111,7 @@ func Main(name string, newer ClientNewer) {
 }
 
 func periodicalTest(name string, handler func() error, concurrency int, totalReq int64) {
+	fmt.Printf("Start periodical test\n")
 	var (
 		round = 10
 		reqNum = totalReq / int64(round)
@@ -131,11 +132,11 @@ func periodicalTest(name string, handler func() error, concurrency int, totalReq
 		time.Sleep(2 * maxIdleTimeout)
 	}
 
-	res := report(name, totalns, actualTotal, costs, concurrency)
+	res := report(name, totalns, actualTotal, failed, costs, concurrency)
 	fmt.Printf("%s\n", res)
 }
 
-func report(name string, totalns, total int64, costs []int64, concurrency int) string {
+func report(name string, totalns, total, failed int64, costs []int64, concurrency int) string {
 	sec := int64(time.Second)
 	var tps float64
 	if totalns < sec {
@@ -151,11 +152,11 @@ func report(name string, totalns, total int64, costs []int64, concurrency int) s
 	tp999, _ := stats.Percentile(fcosts, 99.9)
 	var result string
 	if tp999/1000 < 1 {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
-			name, tps, tp99/1000, tp999/1000, echoSize, concurrency, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d, failed=%d)",
+			name, tps, tp99/1000, tp999/1000, echoSize, concurrency, total, failed)
 	} else {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
-			name, tps, tp99/1000000, tp999/1000000, echoSize, concurrency, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d, failed=%d)",
+			name, tps, tp99/1000000, tp999/1000000, echoSize, concurrency, total, failed)
 	}
 	return result
 }
