@@ -21,6 +21,9 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
+
+	"github.com/montanaflynn/stats"
 
 	"github.com/cloudwego/kitex-benchmark/perf"
 )
@@ -97,19 +100,62 @@ func Main(name string, newer ClientNewer) {
 	if err := cli.Echo(BeginAction, ""); err != nil {
 		log.Fatalf("beginning server failed: %v", err)
 	}
-	recorder := perf.NewRecorder(fmt.Sprintf("%s@Client", name))
-	recorder.Begin()
+	// periodical test
+	periodicalTest(name, handler, concurrent, total)
 
-	// === benching ===
-	r.Run(name, handler, concurrent, total, echoSize, sleepTime)
-
-	// == ending ===
-	recorder.End()
 	if err := cli.Echo(EndAction, ""); err != nil {
 		log.Fatalf("ending server failed: %v", err)
 	}
 
-	// === reporting ===
-	recorder.Report() // report client
 	fmt.Printf("\n\n")
+}
+
+func periodicalTest(name string, handler func() error, concurrency int, totalReq int64) {
+	var (
+		round = 10
+		reqNum = totalReq / int64(round)
+		maxIdleTimeout = 3 * time.Second
+	)
+
+	var costs []int64
+	var totalns, actualTotal, failed int64
+
+	for i := 0; i < round; i++ {
+		roundRunner := NewRunner()
+		t, counter := roundRunner.Run(name, handler, concurrency, reqNum, echoSize, 0, false)
+		costs = append(costs, counter.Costs()...)
+		totalns += t
+		actualTotal += counter.Total
+		failed += counter.Failed
+
+		time.Sleep(2 * maxIdleTimeout)
+	}
+
+	res := report(name, totalns, actualTotal, costs, concurrency)
+	fmt.Printf("%s\n", res)
+}
+
+func report(name string, totalns, total int64, costs []int64, concurrency int) string {
+	sec := int64(time.Second)
+	var tps float64
+	if totalns < sec {
+		tps = float64(total*sec) / float64(totalns)
+	} else {
+		tps = float64(total) / (float64(totalns) / float64(sec))
+	}
+	fcosts := make([]float64, len(costs))
+	for i := range costs {
+		fcosts[i] = float64(costs[i])
+	}
+	tp99, _ := stats.Percentile(fcosts, 99)
+	tp999, _ := stats.Percentile(fcosts, 99.9)
+	var result string
+	if tp999/1000 < 1 {
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d)",
+			name, tps, tp99/1000, tp999/1000, echoSize, concurrency, total)
+	} else {
+		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d)",
+			name, tps, tp99/1000000, tp999/1000000, echoSize, concurrency, total)
+	}
+	return result
 }

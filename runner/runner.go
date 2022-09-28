@@ -74,14 +74,19 @@ func (r *Runner) Warmup(onceFn RunOnce, concurrent int, total int64) {
 }
 
 // 并发测试
-func (r *Runner) Run(title string, onceFn RunOnce, concurrent int, total int64, echoSize, sleepTime int) {
-	logInfo(
-		"%s start benching [%s], concurrent: %d, total: %d, sleep: %d",
-		"["+title+"]", time.Now().String(), concurrent, total, sleepTime,
-	)
+func (r *Runner) Run(title string, onceFn RunOnce, concurrent int, total int64, echoSize, sleepTime int, report bool) (int64, Counter) {
+	if report {
+		logInfo(
+			"%s start benching [%s], concurrent: %d, total: %d, sleep: %d",
+			"["+title+"]", time.Now().String(), concurrent, total, sleepTime,
+		)
+	}
 
 	start := r.timer.Now()
 	r.benching(onceFn, concurrent, total)
 	stop := r.timer.Now()
-	r.counter.Report(title, stop-start, concurrent, total, echoSize)
+	if report {
+		r.counter.Report(title, stop-start, concurrent, total, echoSize)
+	}
+	return stop-start, *r.counter
 }

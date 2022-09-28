@@ -35,6 +35,10 @@ func NewCounter() *Counter {
 	return &Counter{}
 }
 
+func (c *Counter) Costs() []int64 {
+	return c.costs
+}
+
 func (c *Counter) Reset(total int64) {
 	atomic.StoreInt64(&c.Total, 0)
 	atomic.StoreInt64(&c.Failed, 0)
