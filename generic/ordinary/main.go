@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 CloudWeGo Authors
+ * Copyright 2022 CloudWeGo Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net"
 
+	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
@@ -35,7 +35,7 @@ const (
 	port = 8001
 )
 
-var recorder = perf.NewRecorder("KITEX@Server")
+var recorder = perf.NewRecorder("GenericOrdinary@Server")
 
 // EchoServerImpl implements the last service interface defined in the IDL.
 type EchoServerImpl struct{}
@@ -51,7 +51,16 @@ func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Res
 }
 
 func (s *EchoServerImpl) TestObj(ctx context.Context, req *echo.ObjReq) (*echo.ObjResp, error) {
-	return nil, errors.New("not implemented")
+	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+
+	return &echo.ObjResp{
+		Action:  resp.Action,
+		Msg:     resp.Msg,
+		MsgMap:  req.MsgMap,
+		SubMsgs: req.SubMsgs,
+		MsgSet:  req.MsgSet,
+		FlagMsg: req.FlagMsg,
+	}, nil
 }
 
 func main() {
@@ -61,7 +70,7 @@ func main() {
 	}()
 
 	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", port)}
-	svr := echoserver.NewServer(new(EchoServerImpl), server.WithServiceAddr(address))
+	svr := echoserver.NewServer(new(EchoServerImpl), server.WithServiceAddr(address), server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
 
 	err := svr.Run()
 	if err != nil {

@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -47,6 +48,10 @@ func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Res
 		Action: resp.Action,
 		Msg:    resp.Msg,
 	}, nil
+}
+
+func (s *EchoServerImpl) TestObj(ctx context.Context, req *echo.ObjReq) (*echo.ObjResp, error) {
+	return nil, errors.New("not implemented")
 }
 
 func main() {
