@@ -16,8 +16,10 @@ $GOEXEC mod tidy
 
 # build clients
 $GOEXEC build -v -o $output_dir/bin/generic_map_bencher $generic_dir/map/client
+$GOEXEC build -v -o $output_dir/bin/generic_json_bencher $generic_dir/json/client
 $GOEXEC build -v -o $output_dir/bin/generic_ordinary_bencher $generic_dir/ordinary/client
 
 # build servers
 $GOEXEC build -v -o $output_dir/bin/generic_map_reciever $generic_dir/map
+$GOEXEC build -v -o $output_dir/bin/generic_json_reciever $generic_dir/json
 $GOEXEC build -v -o $output_dir/bin/generic_ordinary_reciever $generic_dir/ordinary

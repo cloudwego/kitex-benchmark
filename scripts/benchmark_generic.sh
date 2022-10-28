@@ -6,9 +6,9 @@ echo "Checking whether the environment meets the requirements ..."
 source $CURDIR/env.sh
 echo "Check finished."
 
-srepo=("generic_map" "generic_ordinary")
-crepo=("generic_map" "generic_ordinary")
-ports=(8001 8002)
+srepo=("generic_json" "generic_map" "generic_ordinary")
+crepo=("generic_json" "generic_map" "generic_ordinary")
+ports=(8001 8002 8003)
 
 echo "Building generic services by exec build_generic.sh ..."
 source $CURDIR/build_generic.sh
