@@ -17,12 +17,12 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
-	"strings"
+	"fmt"
+	"net/http"
 	"time"
 
-	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/connpool"
@@ -33,11 +33,8 @@ import (
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-var (
-	requestData = `
+var requestData = []byte(`
 {
-    "action":"",
-    "msg":"",
     "msgMap":{
         "v1":{
             "id":123,
@@ -103,30 +100,19 @@ var (
         ]
     }
 }
-`
-	actionidx, msgidx int
-)
+`)
 
-func init() {
-	actionidx = strings.Index(requestData, `"action":""`) + len(`"action":""`) - 1
-	msgidx = strings.Index(requestData, `"msg":""`) + len(`"msg":""`) - 1
-}
-
-func GetJsonString(action, msg string) string {
-	return requestData[:actionidx] + action + requestData[actionidx:msgidx] + msg + requestData[msgidx:]
-}
-
-func NewGenericJSONClient(opt *runner.Options) runner.Client {
+func NewGenericHTTPClient(opt *runner.Options) runner.Client {
 	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
-	// 构造json 请求和返回类型的泛化调用
-	g, err := generic.JSONThriftGeneric(p)
+	// 构造http 请求和返回类型的泛化调用
+	g, err := generic.HTTPThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}
-	cli := &genericJSONClient{}
+	cli := &genericHTTPClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
 		client.WithHostPorts(opt.Address),
@@ -140,22 +126,30 @@ func NewGenericJSONClient(opt *runner.Options) runner.Client {
 	return cli
 }
 
-type genericJSONClient struct {
+type genericHTTPClient struct {
 	client genericclient.Client
 }
 
-func (cli *genericJSONClient) Echo(action, msg string) error {
+func (cli *genericHTTPClient) Echo(action, msg string) error {
 	ctx := context.Background()
 
-	reply, err := cli.client.GenericCall(ctx, "TestObj", GetJsonString(action, msg))
+	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
+	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestData))
+	if err != nil {
+		return err
+	}
+	httpRequest.Header.Set("msg", msg)
+
+	// send the request
+	customReq, err := generic.FromHTTPRequest(httpRequest)
+	if err != nil {
+		return err
+	}
+
+	reply, err := cli.client.GenericCall(ctx, "", customReq)
 	if reply != nil {
-		repl := reply.(string)
-		var rep echo.Request
-		err = json.Unmarshal([]byte(repl), &rep)
-		if err != nil {
-			return err
-		}
-		runner.ProcessResponse(rep.Action, rep.Msg)
+		resp := reply.(*generic.HTTPResponse)
+		runner.ProcessResponse(resp.Header.Get("action"), resp.Header.Get("msg"))
 	}
 	return err
 }

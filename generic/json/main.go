@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	port = 8001
+	port = 8002
 )
 
 var recorder = perf.NewRecorder("GenericJSON@Server")

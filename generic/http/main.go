@@ -32,10 +32,10 @@ import (
 )
 
 const (
-	port = 8004
+	port = 8001
 )
 
-var recorder = perf.NewRecorder("GenericOrdinary@Server")
+var recorder = perf.NewRecorder("GenericHTTP@Server")
 
 // EchoServerImpl implements the last service interface defined in the IDL.
 type EchoServerImpl struct{}
