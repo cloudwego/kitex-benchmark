@@ -22,6 +22,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/cloudwego/kitex/pkg/remote/codec/thrift"
 	"github.com/cloudwego/kitex/server"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
@@ -56,7 +57,10 @@ func main() {
 	}()
 
 	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", port)}
-	svr := echoserver.NewServer(new(EchoServerImpl), server.WithServiceAddr(address))
+	svr := echoserver.NewServer(new(EchoServerImpl),
+		server.WithServiceAddr(address),
+		server.WithPayloadCodec(thrift.NewThriftCodecDisableFastMode(true, false)),
+	)
 
 	err := svr.Run()
 	if err != nil {

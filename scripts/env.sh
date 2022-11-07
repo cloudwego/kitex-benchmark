@@ -3,7 +3,7 @@ set -e
 
 # benchmark params
 n=20000000
-body=(1024)
+body=(5120) # 5k (test writeDirect)
 concurrent=(100 200 400 600 800 1000)
 sleep=0
 

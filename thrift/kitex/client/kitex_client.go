@@ -23,6 +23,7 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/connpool"
+	"github.com/cloudwego/kitex/pkg/remote/codec/thrift"
 	"github.com/cloudwego/kitex/transport"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
@@ -37,6 +38,7 @@ func NewThriftKiteXClient(opt *runner.Options) runner.Client {
 		client.WithHostPorts(opt.Address),
 		client.WithLongConnection(
 			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+		client.WithPayloadCodec(thrift.NewThriftCodecDisableFastMode(true, false)),
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
