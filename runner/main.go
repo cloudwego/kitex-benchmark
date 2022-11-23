@@ -94,7 +94,7 @@ func Main(name string, newer ClientNewer) {
 	r.Warmup(handler, concurrent, 100*1000)
 
 	// === beginning ===
-	if err := cli.Echo(BeginAction, ""); err != nil {
+	if err := cli.Echo(BeginAction, "empty"); err != nil {
 		log.Fatalf("beginning server failed: %v", err)
 	}
 	recorder := perf.NewRecorder(fmt.Sprintf("%s@Client", name))
@@ -105,7 +105,7 @@ func Main(name string, newer ClientNewer) {
 
 	// == ending ===
 	recorder.End()
-	if err := cli.Echo(EndAction, ""); err != nil {
+	if err := cli.Echo(EndAction, "empty"); err != nil {
 		log.Fatalf("ending server failed: %v", err)
 	}
 
