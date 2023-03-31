@@ -21,18 +21,18 @@ $GOEXEC build -v -o $output_dir/bin/generic_http_default_10KB_bencher $generic_d
 $GOEXEC build -v -o $output_dir/bin/generic_http_fallback_1KB_bencher $generic_dir/http/client/fallback/small
 $GOEXEC build -v -o $output_dir/bin/generic_http_fallback_5KB_bencher $generic_dir/http/client/fallback/medium
 $GOEXEC build -v -o $output_dir/bin/generic_http_fallback_10KB_bencher $generic_dir/http/client/fallback/large
-$GOEXEC build -v -o $output_dir/bin/generic_map_1K_bencher $generic_dir/map/client
-$GOEXEC build -v -o $output_dir/bin/generic_map_5K_bencher $generic_dir/map/client
-$GOEXEC build -v -o $output_dir/bin/generic_map_10K_bencher $generic_dir/map/client
+$GOEXEC build -v -o $output_dir/bin/generic_map_1K_bencher $generic_dir/map/client/small
+$GOEXEC build -v -o $output_dir/bin/generic_map_5K_bencher $generic_dir/map/client/medium
+$GOEXEC build -v -o $output_dir/bin/generic_map_10K_bencher $generic_dir/map/client/large
 $GOEXEC build -v -o $output_dir/bin/generic_json_default_1KB_bencher $generic_dir/json/client/default/small
 $GOEXEC build -v -o $output_dir/bin/generic_json_default_5KB_bencher $generic_dir/json/client/default/medium
 $GOEXEC build -v -o $output_dir/bin/generic_json_default_10KB_bencher $generic_dir/json/client/default/large
 $GOEXEC build -v -o $output_dir/bin/generic_json_fallback_10KB_bencher $generic_dir/json/client/fallback/small
 $GOEXEC build -v -o $output_dir/bin/generic_json_fallback_10KB_bencher $generic_dir/json/client/fallback/medium
 $GOEXEC build -v -o $output_dir/bin/generic_json_fallback_10KB_bencher $generic_dir/json/client/fallback/large
-$GOEXEC build -v -o $output_dir/bin/generic_ordinary_1K_bencher $generic_dir/ordinary/client
-$GOEXEC build -v -o $output_dir/bin/generic_ordinary_5K_bencher $generic_dir/ordinary/client
-$GOEXEC build -v -o $output_dir/bin/generic_ordinary_10K_bencher $generic_dir/ordinary/client
+$GOEXEC build -v -o $output_dir/bin/generic_ordinary_1K_bencher $generic_dir/ordinary/client/small
+$GOEXEC build -v -o $output_dir/bin/generic_ordinary_5K_bencher $generic_dir/ordinary/client/medium
+$GOEXEC build -v -o $output_dir/bin/generic_ordinary_10K_bencher $generic_dir/ordinary/client/large
 
 # build servers
 $GOEXEC build -v -o $output_dir/bin/generic_http_1KB_reciever $generic_dir/http
