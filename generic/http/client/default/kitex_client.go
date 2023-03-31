@@ -68,7 +68,7 @@ func (cli *genericHTTPSmallClient) Echo(action, msg string) error {
 	ctx := context.Background()
 
 	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
-	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.SmallData)))
+	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.SmallString)))
 	if err != nil {
 		return err
 	}
@@ -122,7 +122,7 @@ func (cli *genericHTTPMediumClient) Echo(action, msg string) error {
 	ctx := context.Background()
 
 	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
-	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.MediumData)))
+	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.MediumString)))
 	if err != nil {
 		return err
 	}
@@ -176,7 +176,7 @@ func (cli *genericHTTPLargeClient) Echo(action, msg string) error {
 	ctx := context.Background()
 
 	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
-	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.LargeData)))
+	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.LargeString)))
 	if err != nil {
 		return err
 	}

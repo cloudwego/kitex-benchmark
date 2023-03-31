@@ -25,44 +25,60 @@ import (
 )
 
 var (
-	SmallData, MediumData, LargeData                              string
+	SmallReq, MediumReq, LargeReq                                 *echo.ObjReq
+	SmallMap, MediumMap, LargeMap                                 map[string]interface{}
+	SmallString, MediumString, LargeString                        string
 	actionSidx, msgSidx, actionMidx, msgMidx, actionLidx, msgLidx int
 )
 
 type Size int
 
 const (
-	Small Size = iota
-	Medium
-	Large
+	Small  Size = 6
+	Medium Size = 33
+	Large  Size = 67
 )
 
 func init() {
-	//TODO: omit action and msg for http?
-	SmallData = getReqValue(1)
-	MediumData = getReqValue(10)
-	LargeData = getReqValue(100)
-	actionSidx = strings.Index(SmallData, `"action":""`) + len(`"action":""`) - 1
-	actionMidx = strings.Index(MediumData, `"action":""`) + len(`"action":""`) - 1
-	actionLidx = strings.Index(LargeData, `"action":""`) + len(`"action":""`) - 1
-	msgSidx = strings.Index(SmallData, `"msg":""`) + len(`"msg":""`) - 1
-	msgMidx = strings.Index(MediumData, `"msg":""`) + len(`"msg":""`) - 1
-	msgLidx = strings.Index(LargeData, `"msg":""`) + len(`"msg":""`) - 1
+	// data size: small 1027B, medium 5035B, large 10101B
+	SmallReq = getReqValue(int(Small))
+	MediumReq = getReqValue(int(Medium))
+	LargeReq = getReqValue(int(Large))
+	SmallString = reqToString(SmallReq)
+	MediumString = reqToString(MediumReq)
+	LargeString = reqToString(LargeReq)
+	SmallMap = getReqMap(int(Small))
+	MediumMap = getReqMap(int(Medium))
+	LargeMap = getReqMap(int(Large))
+	actionSidx = strings.Index(SmallString, `"action":""`) + len(`"action":""`) - 1
+	actionMidx = strings.Index(MediumString, `"action":""`) + len(`"action":""`) - 1
+	actionLidx = strings.Index(LargeString, `"action":""`) + len(`"action":""`) - 1
+	msgSidx = strings.Index(SmallString, `"msg":""`) + len(`"msg":""`) - 1
+	msgMidx = strings.Index(MediumString, `"msg":""`) + len(`"msg":""`) - 1
+	msgLidx = strings.Index(LargeString, `"msg":""`) + len(`"msg":""`) - 1
 }
 
 func GetJsonString(action, msg string, size Size) string {
 	switch size {
 	case Small:
-		return SmallData[:actionSidx] + action + SmallData[actionSidx:msgSidx] + msg + SmallData[msgSidx:]
+		return SmallString[:actionSidx] + action + SmallString[actionSidx:msgSidx] + msg + SmallString[msgSidx:]
 	case Medium:
-		return MediumData[:actionMidx] + action + MediumData[actionMidx:msgMidx] + msg + MediumData[msgMidx:]
+		return MediumString[:actionMidx] + action + MediumString[actionMidx:msgMidx] + msg + MediumString[msgMidx:]
 	case Large:
-		return LargeData[:actionLidx] + action + LargeData[actionLidx:msgLidx] + msg + LargeData[msgLidx:]
+		return LargeString[:actionLidx] + action + LargeString[actionLidx:msgLidx] + msg + LargeString[msgLidx:]
 	}
 	return ""
 }
 
-func getReqValue(size int) string {
+func reqToString(req *echo.ObjReq) string {
+	data, err := json.Marshal(req)
+	if err != nil {
+		panic(err)
+	}
+	return string(data)
+}
+
+func getReqValue(size int) *echo.ObjReq {
 	req := &echo.ObjReq{
 		Action:  "",
 		Msg:     "",
@@ -79,8 +95,7 @@ func getReqValue(size int) string {
 		req.FlagMsg = getMessage(int64(i))
 	}
 
-	data, _ := json.Marshal(req)
-	return string(data)
+	return req
 }
 
 func getSubMessage(i int64) *echo.SubMessage {
@@ -101,4 +116,38 @@ func getMessage(i int64) *echo.Message {
 	ret.SubMessages = append(ret.SubMessages, getSubMessage(1))
 	ret.SubMessages = append(ret.SubMessages, getSubMessage(2))
 	return ret
+}
+
+func getReqMap(size int) map[string]interface{} {
+	var msgMap map[interface{}]interface{}
+	var subMsgs []interface{}
+	var msgSet []interface{}
+	var flagMsg map[string]interface{}
+	for i := 0; i < size; i++ {
+		msgMap[strconv.Itoa(i)] = getSubMessageMap(int64(i))
+		subMsgs = append(subMsgs, getSubMessageMap(int64(i)))
+		msgSet = append(msgSet, getMessageMap(int64(i)))
+		flagMsg = getMessageMap(int64(i))
+	}
+	return map[string]interface{}{
+		"msgMap":  msgMap,
+		"subMsgs": subMsgs,
+		"msgSet":  msgSet,
+		"flagMsg": flagMsg,
+	}
+}
+
+func getSubMessageMap(i int64) map[string]interface{} {
+	return map[string]interface{}{
+		"id":    i,
+		"value": "hello",
+	}
+}
+
+func getMessageMap(i int64) map[string]interface{} {
+	return map[string]interface{}{
+		"id":          i,
+		"value":       "hello",
+		"subMessages": []interface{}{getSubMessageMap(1), getSubMessageMap(2)},
+	}
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package main
+package kclient
 
 import (
 	"context"
@@ -28,31 +28,11 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
 
+	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-var (
-	subMsg1 = map[string]interface{}{
-		"id":    int64(123),
-		"value": "hello",
-	}
-	subMsg2 = map[string]interface{}{
-		"id":    int64(321),
-		"value": "world",
-	}
-	msg1 = map[string]interface{}{
-		"id":          int64(123),
-		"value":       "hello",
-		"subMessages": []interface{}{subMsg1, subMsg2},
-	}
-	msg2 = map[string]interface{}{
-		"id":          int64(321),
-		"value":       "world",
-		"subMessages": []interface{}{subMsg2, subMsg1},
-	}
-)
-
-func NewGenericMapClient(opt *runner.Options) runner.Client {
+func NewGenericMapSmallClient(opt *runner.Options) runner.Client {
 	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
@@ -75,15 +55,65 @@ func NewGenericMapClient(opt *runner.Options) runner.Client {
 	}
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return map[string]interface{}{
-				"msgMap": map[interface{}]interface{}{
-					"v1": subMsg1,
-					"v2": subMsg2,
-				},
-				"subMsgs": []interface{}{subMsg1, subMsg2},
-				"msgSet":  []interface{}{msg1, msg2},
-				"flagMsg": msg1,
-			}
+			return data.SmallMap
+		},
+	}
+	return cli
+}
+
+func NewGenericMapMediumClient(opt *runner.Options) runner.Client {
+	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	if err != nil {
+		panic(err)
+	}
+	// 构造map 请求和返回类型的泛化调用
+	g, err := generic.MapThriftGeneric(p)
+	if err != nil {
+		panic(err)
+	}
+	cli := &genericMapClient{}
+	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
+		client.WithTransportProtocol(transport.TTHeader),
+		client.WithHostPorts(opt.Address),
+		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	cli.reqPool = &sync.Pool{
+		New: func() interface{} {
+			return data.MediumMap
+		},
+	}
+	return cli
+}
+
+func NewGenericMapLargeClient(opt *runner.Options) runner.Client {
+	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	if err != nil {
+		panic(err)
+	}
+	// 构造map 请求和返回类型的泛化调用
+	g, err := generic.MapThriftGeneric(p)
+	if err != nil {
+		panic(err)
+	}
+	cli := &genericMapClient{}
+	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
+		client.WithTransportProtocol(transport.TTHeader),
+		client.WithHostPorts(opt.Address),
+		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	cli.reqPool = &sync.Pool{
+		New: func() interface{} {
+			return data.LargeMap
 		},
 	}
 	return cli

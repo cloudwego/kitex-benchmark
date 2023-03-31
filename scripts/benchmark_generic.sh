@@ -11,17 +11,14 @@ crepo=("generic_http_default" "generic_http_fallback" "generic_json_default" "ge
 ports=(8001 8001 8002 8003 8004 8005)
 data=("1KB" "5KB" "10KB")
 
-#srepo=("generic_http" "generic_json" "generic_map" "generic_ordinary")
-#crepo=("generic_http" "generic_json" "generic_map" "generic_ordinary")
-#ports=(8001 8002 8003 8004)
-
 echo "Building generic services by exec build_generic.sh ..."
 source $CURDIR/build_generic.sh
 echo "Build finished."
 
 # benchmark
 for d in ${data[@]}; do
-  echo "Data size: $d"
+  echo "------------------------------" | $tee_cmd
+  echo "Data size: $d" | $tee_cmd
   for b in ${body[@]}; do
     for c in ${concurrent[@]}; do
       for ((i = 0; i < ${#srepo[@]}; i++)); do
@@ -39,7 +36,7 @@ for d in ${data[@]}; do
         $cmd_client $output_dir/bin/${crp}_${d}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep | $tee_cmd
 
         # stop server
-        pid=$(ps -ef | grep ${srp}_reciever | grep -v grep | awk '{print $2}')
+        pid=$(ps -ef | grep ${srp}_${d}_reciever | grep -v grep | awk '{print $2}')
         disown $pid
         kill -9 $pid
         echo "Server [$srp] stopped, pid [$pid]."
@@ -47,7 +44,6 @@ for d in ${data[@]}; do
       done
     done
   done
-  echo "------------------------------"
 done
 
 finish_cmd

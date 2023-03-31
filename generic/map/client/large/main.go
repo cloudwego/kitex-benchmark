@@ -17,10 +17,11 @@
 package main
 
 import (
+	kclient "github.com/cloudwego/kitex-benchmark/generic/map/client"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 // main is use for routing.
 func main() {
-	runner.Main("GenericOrdinary", NewGenericOrdinaryClient)
+	runner.Main("GenericMap", kclient.NewGenericMapLargeClient)
 }
