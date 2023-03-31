@@ -119,10 +119,10 @@ func getMessage(i int64) *echo.Message {
 }
 
 func getReqMap(size int) map[string]interface{} {
-	var msgMap map[interface{}]interface{}
-	var subMsgs []interface{}
-	var msgSet []interface{}
-	var flagMsg map[string]interface{}
+	msgMap := make(map[interface{}]interface{})
+	subMsgs := make([]interface{}, 0, size)
+	msgSet := make([]interface{}, 0, size)
+	flagMsg := make(map[string]interface{})
 	for i := 0; i < size; i++ {
 		msgMap[strconv.Itoa(i)] = getSubMessageMap(int64(i))
 		subMsgs = append(subMsgs, getSubMessageMap(int64(i)))
