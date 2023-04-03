@@ -23,5 +23,5 @@ import (
 
 // main is use for routing.
 func main() {
-	runner.Main("GenericJSON", kclient.NewGenericJSONLargeClient)
+	runner.Main("GenericJSONFallback", kclient.NewGenericJSONLargeClient)
 }
