@@ -47,9 +47,6 @@ func init() {
 	SmallString = reqToString(SmallReq)
 	MediumString = reqToString(MediumReq)
 	LargeString = reqToString(LargeReq)
-	SmallMap = getReqMap(int(Small))
-	MediumMap = getReqMap(int(Medium))
-	LargeMap = getReqMap(int(Large))
 	actionSidx = strings.Index(SmallString, `"action":""`) + len(`"action":""`) - 1
 	actionMidx = strings.Index(MediumString, `"action":""`) + len(`"action":""`) - 1
 	actionLidx = strings.Index(LargeString, `"action":""`) + len(`"action":""`) - 1
@@ -118,7 +115,7 @@ func getMessage(i int64) *echo.Message {
 	return ret
 }
 
-func getReqMap(size int) map[string]interface{} {
+func GetReqMap(size int) map[string]interface{} {
 	msgMap := make(map[interface{}]interface{})
 	subMsgs := make([]interface{}, 0, size)
 	msgSet := make([]interface{}, 0, size)

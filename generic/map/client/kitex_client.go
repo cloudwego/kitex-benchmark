@@ -55,7 +55,7 @@ func NewGenericMapSmallClient(opt *runner.Options) runner.Client {
 	}
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return data.SmallMap
+			return data.GetReqMap(int(data.Small))
 		},
 	}
 	return cli
@@ -84,7 +84,7 @@ func NewGenericMapMediumClient(opt *runner.Options) runner.Client {
 	}
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return data.MediumMap
+			return data.GetReqMap(int(data.Medium))
 		},
 	}
 	return cli
@@ -113,7 +113,7 @@ func NewGenericMapLargeClient(opt *runner.Options) runner.Client {
 	}
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return data.LargeMap
+			return data.GetReqMap(int(data.Large))
 		},
 	}
 	return cli
