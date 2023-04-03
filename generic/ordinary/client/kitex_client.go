@@ -60,7 +60,7 @@ func NewGenericOrdinaryMediumClient(opt *runner.Options) runner.Client {
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return data.SmallReq
+			return data.MediumReq
 		},
 	}
 	return cli
@@ -77,7 +77,7 @@ func NewGenericOrdinaryLargeClient(opt *runner.Options) runner.Client {
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return data.SmallReq
+			return data.LargeReq
 		},
 	}
 	return cli
