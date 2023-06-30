@@ -36,12 +36,12 @@ func main() {
 	}()
 
 	// CurDir: ./scripts
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	// enable dynamicgo
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
-	// enable dynamicgo
-	g, err := generic.JSONThriftGeneric(p, generic.Options{EnableBasicDynamicgoConvOpts: true})
+	g, err := generic.JSONThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}

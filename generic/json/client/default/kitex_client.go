@@ -34,13 +34,13 @@ import (
 )
 
 func NewGenericJSONSmallClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	// enable dynamicgo
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造json 请求和返回类型的泛化调用
-	// enable dynamicgo
-	g, err := generic.JSONThriftGeneric(p, generic.Options{EnableBasicDynamicgoConvOpts: true})
+	g, err := generic.JSONThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}
@@ -79,13 +79,13 @@ func (cli *genericJSONSmallClient) Echo(action, msg string) error {
 }
 
 func NewGenericJSONMediumClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	// enable dynamicgo
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造json 请求和返回类型的泛化调用
-	// enable dynamicgo
-	g, err := generic.JSONThriftGeneric(p, generic.Options{EnableBasicDynamicgoConvOpts: true})
+	g, err := generic.JSONThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}
@@ -124,13 +124,13 @@ func (cli *genericJSONMediumClient) Echo(action, msg string) error {
 }
 
 func NewGenericJSONLargeClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	// enable dynamicgo
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造json 请求和返回类型的泛化调用
-	// enable dynamicgo
-	g, err := generic.JSONThriftGeneric(p, generic.Options{EnableBasicDynamicgoConvOpts: true})
+	g, err := generic.JSONThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}
