@@ -6,8 +6,8 @@ echo "Checking whether the environment meets the requirements ..."
 source $CURDIR/env.sh
 echo "Check finished."
 
-srepo=("generic_http" "generic_http" "generic_json_default" "generic_json_fallback" "generic_map" "generic_ordinary")
-crepo=("generic_http_default" "generic_http_fallback" "generic_json_default" "generic_json_fallback" "generic_map" "generic_ordinary")
+srepo=("generic_http" "generic_http" "generic_json" "generic_json_dynamicgo" "generic_map" "generic_ordinary")
+crepo=("generic_http" "generic_http_dynamicgo" "generic_json" "generic_json_dynamicgo" "generic_map" "generic_ordinary")
 ports=(8001 8001 8002 8003 8004 8005)
 data=("1KB" "5KB" "10KB")
 

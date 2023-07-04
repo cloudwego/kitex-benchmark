@@ -23,5 +23,5 @@ import (
 
 // main is use for routing.
 func main() {
-	runner.Main("GenericHTTPDefault", kclient.NewGenericHTTPLargeClient)
+	runner.Main("GenericHTTP", kclient.NewGenericHTTPLargeClient)
 }

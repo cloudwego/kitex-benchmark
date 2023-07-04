@@ -17,11 +17,11 @@
 package main
 
 import (
-	kclient "github.com/cloudwego/kitex-benchmark/generic/json/client/fallback"
+	kclient "github.com/cloudwego/kitex-benchmark/generic/http/client/dynamicgo"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 // main is use for routing.
 func main() {
-	runner.Main("GenericJSONFallback", kclient.NewGenericJSONLargeClient)
+	runner.Main("GenericHTTPDynamicGo", kclient.NewGenericHTTPLargeClient)
 }

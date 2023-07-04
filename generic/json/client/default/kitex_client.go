@@ -21,8 +21,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
-	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/connpool"
@@ -30,12 +28,13 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
 
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
+	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewGenericJSONSmallClient(opt *runner.Options) runner.Client {
-	// enable dynamicgo
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
@@ -79,8 +78,7 @@ func (cli *genericJSONSmallClient) Echo(action, msg string) error {
 }
 
 func NewGenericJSONMediumClient(opt *runner.Options) runner.Client {
-	// enable dynamicgo
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
@@ -124,8 +122,7 @@ func (cli *genericJSONMediumClient) Echo(action, msg string) error {
 }
 
 func NewGenericJSONLargeClient(opt *runner.Options) runner.Client {
-	// enable dynamicgo
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}

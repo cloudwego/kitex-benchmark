@@ -21,22 +21,24 @@ import (
 	"log"
 	"net"
 
-	kserver "github.com/cloudwego/kitex-benchmark/generic/json/server"
-	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
+
+	kserver "github.com/cloudwego/kitex-benchmark/generic/json/server"
+	"github.com/cloudwego/kitex-benchmark/perf"
 )
 
 func main() {
 	// start pprof server
 	go func() {
-		perf.ServeMonitor(fmt.Sprintf(":%d", kserver.FallbackPort+10000))
+		perf.ServeMonitor(fmt.Sprintf(":%d", kserver.DynamicGoPort+10000))
 	}()
 
 	// CurDir: ./scripts
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	// enable dynamicgo
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
@@ -44,8 +46,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", kserver.FallbackPort)}
-	svr := genericserver.NewServer(new(kserver.GenericServerLargeImpl), g, server.WithServiceAddr(address), server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
+	address := &net.UnixAddr{Net: "tcp", Name: fmt.Sprintf(":%d", kserver.DynamicGoPort)}
+	svr := genericserver.NewServer(new(kserver.GenericServerMediumImpl), g, server.WithServiceAddr(address), server.WithMetaHandler(transmeta.ServerTTHeaderHandler))
 
 	err = svr.Run()
 	if err != nil {

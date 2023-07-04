@@ -21,12 +21,13 @@ import (
 	"log"
 	"net"
 
-	kserver "github.com/cloudwego/kitex-benchmark/generic/json/server"
-	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
+
+	kserver "github.com/cloudwego/kitex-benchmark/generic/json/server"
+	"github.com/cloudwego/kitex-benchmark/perf"
 )
 
 func main() {
@@ -36,8 +37,7 @@ func main() {
 	}()
 
 	// CurDir: ./scripts
-	// enable dynamicgo
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}

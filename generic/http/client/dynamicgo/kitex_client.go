@@ -23,7 +23,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/connpool"
@@ -31,16 +30,20 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
 
+	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 func NewGenericHTTPSmallClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造http 请求和返回类型的泛化调用
-	g, err := generic.HTTPThriftGeneric(p)
+	// enable dynamicgo
+	var opts []generic.Option
+	opts = append(opts, generic.UseRawBodyForHTTPResp(true))
+	g, err := generic.HTTPThriftGeneric(p, opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -87,12 +90,15 @@ func (cli *genericHTTPSmallClient) Echo(action, msg string) error {
 }
 
 func NewGenericHTTPMediumClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造http 请求和返回类型的泛化调用
-	g, err := generic.HTTPThriftGeneric(p)
+	// enable dynamicgo
+	var opts []generic.Option
+	opts = append(opts, generic.UseRawBodyForHTTPResp(true))
+	g, err := generic.HTTPThriftGeneric(p, opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -139,12 +145,15 @@ func (cli *genericHTTPMediumClient) Echo(action, msg string) error {
 }
 
 func NewGenericHTTPLargeClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造http 请求和返回类型的泛化调用
-	g, err := generic.HTTPThriftGeneric(p)
+	// enable dynamicgo
+	var opts []generic.Option
+	opts = append(opts, generic.UseRawBodyForHTTPResp(true))
+	g, err := generic.HTTPThriftGeneric(p, opts...)
 	if err != nil {
 		panic(err)
 	}

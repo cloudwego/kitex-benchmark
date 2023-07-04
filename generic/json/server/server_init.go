@@ -28,8 +28,8 @@ import (
 )
 
 const (
-	DefaultPort  = 8002
-	FallbackPort = 8003
+	DefaultPort   = 8002
+	DynamicGoPort = 8003
 )
 
 var recorder = perf.NewRecorder("GenericJSON@Server")
