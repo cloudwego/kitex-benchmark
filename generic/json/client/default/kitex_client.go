@@ -33,16 +33,26 @@ import (
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-func NewGenericJSONSmallClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+var (
+	p generic.DescriptorProvider
+	g generic.Generic
+)
+
+func init() {
+	var err error
+	p, err = generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
 	// 构造json 请求和返回类型的泛化调用
-	g, err := generic.JSONThriftGeneric(p)
+	g, err = generic.JSONThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func NewGenericJSONSmallClient(opt *runner.Options) runner.Client {
+	var err error
 	cli := &genericJSONSmallClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
@@ -62,9 +72,7 @@ type genericJSONSmallClient struct {
 }
 
 func (cli *genericJSONSmallClient) Echo(action, msg string) error {
-	ctx := context.Background()
-
-	reply, err := cli.client.GenericCall(ctx, "TestObj", data.GetJsonString(action, msg, data.Small))
+	reply, err := cli.client.GenericCall(context.Background(), "TestObj", data.GetJsonString(action, msg, data.Small))
 	if reply != nil {
 		repl := reply.(string)
 		var rep echo.Request
@@ -78,15 +86,7 @@ func (cli *genericJSONSmallClient) Echo(action, msg string) error {
 }
 
 func NewGenericJSONMediumClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
-	if err != nil {
-		panic(err)
-	}
-	// 构造json 请求和返回类型的泛化调用
-	g, err := generic.JSONThriftGeneric(p)
-	if err != nil {
-		panic(err)
-	}
+	var err error
 	cli := &genericJSONMediumClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
@@ -106,9 +106,7 @@ type genericJSONMediumClient struct {
 }
 
 func (cli *genericJSONMediumClient) Echo(action, msg string) error {
-	ctx := context.Background()
-
-	reply, err := cli.client.GenericCall(ctx, "TestObj", data.GetJsonString(action, msg, data.Medium))
+	reply, err := cli.client.GenericCall(context.Background(), "TestObj", data.GetJsonString(action, msg, data.Medium))
 	if reply != nil {
 		repl := reply.(string)
 		var rep echo.Request
@@ -122,15 +120,7 @@ func (cli *genericJSONMediumClient) Echo(action, msg string) error {
 }
 
 func NewGenericJSONLargeClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
-	if err != nil {
-		panic(err)
-	}
-	// 构造json 请求和返回类型的泛化调用
-	g, err := generic.JSONThriftGeneric(p)
-	if err != nil {
-		panic(err)
-	}
+	var err error
 	cli := &genericJSONLargeClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
@@ -150,9 +140,7 @@ type genericJSONLargeClient struct {
 }
 
 func (cli *genericJSONLargeClient) Echo(action, msg string) error {
-	ctx := context.Background()
-
-	reply, err := cli.client.GenericCall(ctx, "TestObj", data.GetJsonString(action, msg, data.Large))
+	reply, err := cli.client.GenericCall(context.Background(), "TestObj", data.GetJsonString(action, msg, data.Large))
 	if reply != nil {
 		repl := reply.(string)
 		var rep echo.Request

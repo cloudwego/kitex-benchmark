@@ -34,8 +34,14 @@ import (
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-func NewGenericHTTPSmallClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
+var (
+	p generic.DescriptorProvider
+	g generic.Generic
+)
+
+func init() {
+	var err error
+	p, err = generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
@@ -43,10 +49,14 @@ func NewGenericHTTPSmallClient(opt *runner.Options) runner.Client {
 	// enable dynamicgo
 	var opts []generic.Option
 	opts = append(opts, generic.UseRawBodyForHTTPResp(true))
-	g, err := generic.HTTPThriftGeneric(p, opts...)
+	g, err = generic.HTTPThriftGeneric(p, opts...)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func NewGenericHTTPSmallClient(opt *runner.Options) runner.Client {
+	var err error
 	cli := &genericHTTPSmallClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
@@ -66,22 +76,13 @@ type genericHTTPSmallClient struct {
 }
 
 func (cli *genericHTTPSmallClient) Echo(action, msg string) error {
-	ctx := context.Background()
-
-	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
-	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.SmallString)))
+	customReq, err := createCustomRequest(action, msg, data.SmallString)
 	if err != nil {
 		return err
 	}
-	httpRequest.Header.Set("msg", msg)
 
 	// send the request
-	customReq, err := generic.FromHTTPRequest(httpRequest)
-	if err != nil {
-		return err
-	}
-
-	reply, err := cli.client.GenericCall(ctx, "", customReq)
+	reply, err := cli.client.GenericCall(context.Background(), "", customReq)
 	if reply != nil {
 		resp := reply.(*generic.HTTPResponse)
 		runner.ProcessResponse(resp.Header.Get("action"), resp.Header.Get("msg"))
@@ -90,18 +91,7 @@ func (cli *genericHTTPSmallClient) Echo(action, msg string) error {
 }
 
 func NewGenericHTTPMediumClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
-	if err != nil {
-		panic(err)
-	}
-	// 构造http 请求和返回类型的泛化调用
-	// enable dynamicgo
-	var opts []generic.Option
-	opts = append(opts, generic.UseRawBodyForHTTPResp(true))
-	g, err := generic.HTTPThriftGeneric(p, opts...)
-	if err != nil {
-		panic(err)
-	}
+	var err error
 	cli := &genericHTTPMediumClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
@@ -121,22 +111,13 @@ type genericHTTPMediumClient struct {
 }
 
 func (cli *genericHTTPMediumClient) Echo(action, msg string) error {
-	ctx := context.Background()
-
-	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
-	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.MediumString)))
+	customReq, err := createCustomRequest(action, msg, data.MediumString)
 	if err != nil {
 		return err
 	}
-	httpRequest.Header.Set("msg", msg)
 
 	// send the request
-	customReq, err := generic.FromHTTPRequest(httpRequest)
-	if err != nil {
-		return err
-	}
-
-	reply, err := cli.client.GenericCall(ctx, "", customReq)
+	reply, err := cli.client.GenericCall(context.Background(), "", customReq)
 	if reply != nil {
 		resp := reply.(*generic.HTTPResponse)
 		runner.ProcessResponse(resp.Header.Get("action"), resp.Header.Get("msg"))
@@ -145,18 +126,7 @@ func (cli *genericHTTPMediumClient) Echo(action, msg string) error {
 }
 
 func NewGenericHTTPLargeClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
-	if err != nil {
-		panic(err)
-	}
-	// 构造http 请求和返回类型的泛化调用
-	// enable dynamicgo
-	var opts []generic.Option
-	opts = append(opts, generic.UseRawBodyForHTTPResp(true))
-	g, err := generic.HTTPThriftGeneric(p, opts...)
-	if err != nil {
-		panic(err)
-	}
+	var err error
 	cli := &genericHTTPLargeClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
@@ -176,25 +146,31 @@ type genericHTTPLargeClient struct {
 }
 
 func (cli *genericHTTPLargeClient) Echo(action, msg string) error {
-	ctx := context.Background()
-
-	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
-	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data.LargeString)))
+	customReq, err := createCustomRequest(action, msg, data.LargeString)
 	if err != nil {
 		return err
 	}
-	httpRequest.Header.Set("msg", msg)
 
 	// send the request
-	customReq, err := generic.FromHTTPRequest(httpRequest)
-	if err != nil {
-		return err
-	}
-
-	reply, err := cli.client.GenericCall(ctx, "", customReq)
+	reply, err := cli.client.GenericCall(context.Background(), "", customReq)
 	if reply != nil {
 		resp := reply.(*generic.HTTPResponse)
 		runner.ProcessResponse(resp.Header.Get("action"), resp.Header.Get("msg"))
 	}
 	return err
+}
+
+func createCustomRequest(action, msg, data string) (*generic.HTTPRequest, error) {
+	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
+	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(data)))
+	if err != nil {
+		return nil, err
+	}
+	httpRequest.Header.Set("msg", msg)
+
+	customReq, err := generic.FromHTTPRequest(httpRequest)
+	if err != nil {
+		return nil, err
+	}
+	return customReq, nil
 }
