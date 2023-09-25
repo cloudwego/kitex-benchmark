@@ -177,7 +177,9 @@ The benchmark ensures the caller has sufficient machine resources **overwhelming
 ![image](docs/images/thrift_tp999.png)
 
 #### Protobuf
-Note: the message protocols used by each framework are different. About GRPC, the next part has comparison.
+Note: 
+1. The message protocols used by each framework are different. About GRPC, the next part has comparison.
+2. Some frameworks (such as ARPC) use multiplexing, so should refer to the result of KITEX-MUX for comparison.
 
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)

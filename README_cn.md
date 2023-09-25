@@ -175,7 +175,9 @@ sleep=0
 ![image](docs/images/thrift_tp999.png)
 
 #### Protobuf
-注意：各框架使用的消息协议不同，gRPC 下面有专门的对比
+注意：
+1. 各框架使用的消息协议不同，gRPC 下面有专门的对比
+2. 部分框架(如 ARPC) 采用了多路复用方式访问，需要参考 KITEX-MUX 结果对比
 
 ![image](docs/images/pb_qps.png)
 ![image](docs/images/pb_tp99.png)

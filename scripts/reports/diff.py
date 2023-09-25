@@ -23,6 +23,7 @@ class bcolors:
 def diff(from_csv, to_csv):
     from_reader = list(csv.reader(open(from_csv)))
     to_reader = csv.reader(open(to_csv))
+    title = ['Kind', 'Concurrency', 'Data Size', 'QPS', 'P99', 'P999']
     results = []
 
     for line_num, line in enumerate(to_reader):
@@ -37,6 +38,8 @@ def diff(from_csv, to_csv):
 
         results.append(result)
 
+    results.sort(key=lambda result: result[0])
+    results.insert(0, title)
     print_csv(results)
 
 
@@ -48,7 +51,6 @@ def diff_cell(old, now):
 
 
 def print_csv(results):
-    results.sort(key=lambda result: result[0])
     cell_size = 15
     for line in results:
         result = []
