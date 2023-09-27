@@ -7,7 +7,7 @@ source $CURDIR/env.sh
 echo "Check finished."
 
 srepo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc")
-crepo=$srepo
+crepo=${srepo[@]}
 ports=(8000 8001 8002 8003 8004)
 
 echo "Building pb services by exec build_pb.sh..."
