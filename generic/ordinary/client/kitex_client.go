@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package main
+package kclient
 
 import (
 	"context"
@@ -28,31 +28,11 @@ import (
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
+	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-var (
-	subMsg1 = &echo.SubMessage{
-		Id:    &(&struct{ x int64 }{int64(123)}).x,
-		Value: &(&struct{ x string }{"hello"}).x,
-	}
-	subMsg2 = &echo.SubMessage{
-		Id:    &(&struct{ x int64 }{int64(321)}).x,
-		Value: &(&struct{ x string }{"world"}).x,
-	}
-	msg1 = &echo.Message{
-		Id:          &(&struct{ x int64 }{int64(123)}).x,
-		Value:       &(&struct{ x string }{"hello"}).x,
-		SubMessages: []*echo.SubMessage{subMsg1, subMsg2},
-	}
-	msg2 = &echo.Message{
-		Id:          &(&struct{ x int64 }{int64(321)}).x,
-		Value:       &(&struct{ x string }{"world"}).x,
-		SubMessages: []*echo.SubMessage{subMsg2, subMsg1},
-	}
-)
-
-func NewGenericOrdinaryClient(opt *runner.Options) runner.Client {
+func NewGenericOrdinarySmallClient(opt *runner.Options) runner.Client {
 	cli := &genericOrdinaryClient{}
 	cli.client = echoserver.MustNewClient("test.echo.kitex",
 		client.WithTransportProtocol(transport.TTHeader),
@@ -63,15 +43,41 @@ func NewGenericOrdinaryClient(opt *runner.Options) runner.Client {
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &echo.ObjReq{
-				MsgMap: map[string]*echo.SubMessage{
-					"v1": subMsg1,
-					"v2": subMsg2,
-				},
-				SubMsgs: []*echo.SubMessage{subMsg1, subMsg2},
-				MsgSet:  []*echo.Message{msg1, msg2},
-				FlagMsg: msg1,
-			}
+			return data.SmallReq
+		},
+	}
+	return cli
+}
+
+func NewGenericOrdinaryMediumClient(opt *runner.Options) runner.Client {
+	cli := &genericOrdinaryClient{}
+	cli.client = echoserver.MustNewClient("test.echo.kitex",
+		client.WithTransportProtocol(transport.TTHeader),
+		client.WithHostPorts(opt.Address),
+		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	cli.reqPool = &sync.Pool{
+		New: func() interface{} {
+			return data.MediumReq
+		},
+	}
+	return cli
+}
+
+func NewGenericOrdinaryLargeClient(opt *runner.Options) runner.Client {
+	cli := &genericOrdinaryClient{}
+	cli.client = echoserver.MustNewClient("test.echo.kitex",
+		client.WithTransportProtocol(transport.TTHeader),
+		client.WithHostPorts(opt.Address),
+		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	cli.reqPool = &sync.Pool{
+		New: func() interface{} {
+			return data.LargeReq
 		},
 	}
 	return cli

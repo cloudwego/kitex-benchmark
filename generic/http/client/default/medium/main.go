@@ -17,10 +17,11 @@
 package main
 
 import (
+	kclient "github.com/cloudwego/kitex-benchmark/generic/http/client/default"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 // main is use for routing.
 func main() {
-	runner.Main("GenericHTTP", NewGenericHTTPClient)
+	runner.Main("GenericHTTP", kclient.NewGenericHTTPMediumClient)
 }

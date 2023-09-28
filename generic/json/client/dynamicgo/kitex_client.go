@@ -18,7 +18,7 @@ package kclient
 
 import (
 	"context"
-	"sync"
+	"encoding/json"
 	"time"
 
 	"github.com/cloudwego/kitex/client"
@@ -28,21 +28,33 @@ import (
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
 
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/generic/data"
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
-func NewGenericMapSmallClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
+var (
+	p generic.DescriptorProvider
+	g generic.Generic
+)
+
+func init() {
+	var err error
+	// enable dynamicgo
+	p, err = generic.NewThriftFileProviderWithDynamicGo("./codec/thrift/echo.thrift")
 	if err != nil {
 		panic(err)
 	}
-	// 构造map 请求和返回类型的泛化调用
-	g, err := generic.MapThriftGeneric(p)
+	// 构造json 请求和返回类型的泛化调用
+	g, err = generic.JSONThriftGeneric(p)
 	if err != nil {
 		panic(err)
 	}
-	cli := &genericMapClient{}
+}
+
+func NewGenericJSONSmallClient(opt *runner.Options) runner.Client {
+	var err error
+	cli := &genericJSONSmallClient{}
 	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
 		client.WithTransportProtocol(transport.TTHeader),
 		client.WithHostPorts(opt.Address),
@@ -53,89 +65,91 @@ func NewGenericMapSmallClient(opt *runner.Options) runner.Client {
 	if err != nil {
 		panic(err)
 	}
-	cli.reqPool = &sync.Pool{
-		New: func() interface{} {
-			return data.GetReqMap(int(data.Small))
-		},
-	}
 	return cli
 }
 
-func NewGenericMapMediumClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
-	if err != nil {
-		panic(err)
-	}
-	// 构造map 请求和返回类型的泛化调用
-	g, err := generic.MapThriftGeneric(p)
-	if err != nil {
-		panic(err)
-	}
-	cli := &genericMapClient{}
-	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
-		client.WithTransportProtocol(transport.TTHeader),
-		client.WithHostPorts(opt.Address),
-		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
-		client.WithLongConnection(
-			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
-	)
-	if err != nil {
-		panic(err)
-	}
-	cli.reqPool = &sync.Pool{
-		New: func() interface{} {
-			return data.GetReqMap(int(data.Medium))
-		},
-	}
-	return cli
+type genericJSONSmallClient struct {
+	client genericclient.Client
 }
 
-func NewGenericMapLargeClient(opt *runner.Options) runner.Client {
-	p, err := generic.NewThriftFileProvider("./codec/thrift/echo.thrift")
-	if err != nil {
-		panic(err)
-	}
-	// 构造map 请求和返回类型的泛化调用
-	g, err := generic.MapThriftGeneric(p)
-	if err != nil {
-		panic(err)
-	}
-	cli := &genericMapClient{}
-	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
-		client.WithTransportProtocol(transport.TTHeader),
-		client.WithHostPorts(opt.Address),
-		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
-		client.WithLongConnection(
-			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
-	)
-	if err != nil {
-		panic(err)
-	}
-	cli.reqPool = &sync.Pool{
-		New: func() interface{} {
-			return data.GetReqMap(int(data.Large))
-		},
-	}
-	return cli
-}
-
-type genericMapClient struct {
-	client  genericclient.Client
-	reqPool *sync.Pool
-}
-
-func (cli *genericMapClient) Echo(action, msg string) error {
-	ctx := context.Background()
-	req := cli.reqPool.Get().(map[string]interface{})
-	defer cli.reqPool.Put(req)
-
-	req["action"] = action
-	req["msg"] = msg
-
-	reply, err := cli.client.GenericCall(ctx, "TestObj", req)
+func (cli *genericJSONSmallClient) Echo(action, msg string) error {
+	reply, err := cli.client.GenericCall(context.Background(), "TestObj", data.GetJsonString(action, msg, data.Small))
 	if reply != nil {
-		repl := reply.(map[string]interface{})
-		runner.ProcessResponse(repl["action"].(string), repl["msg"].(string))
+		repl := reply.(string)
+		var rep echo.Request
+		err = json.Unmarshal([]byte(repl), &rep)
+		if err != nil {
+			return err
+		}
+		runner.ProcessResponse(rep.Action, rep.Msg)
+	}
+	return err
+}
+
+func NewGenericJSONMediumClient(opt *runner.Options) runner.Client {
+	var err error
+	cli := &genericJSONMediumClient{}
+	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
+		client.WithTransportProtocol(transport.TTHeader),
+		client.WithHostPorts(opt.Address),
+		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	return cli
+}
+
+type genericJSONMediumClient struct {
+	client genericclient.Client
+}
+
+func (cli *genericJSONMediumClient) Echo(action, msg string) error {
+	reply, err := cli.client.GenericCall(context.Background(), "TestObj", data.GetJsonString(action, msg, data.Medium))
+	if reply != nil {
+		repl := reply.(string)
+		var rep echo.Request
+		err = json.Unmarshal([]byte(repl), &rep)
+		if err != nil {
+			return err
+		}
+		runner.ProcessResponse(rep.Action, rep.Msg)
+	}
+	return err
+}
+
+func NewGenericJSONLargeClient(opt *runner.Options) runner.Client {
+	var err error
+	cli := &genericJSONLargeClient{}
+	cli.client, err = genericclient.NewClient("test.echo.kitex", g,
+		client.WithTransportProtocol(transport.TTHeader),
+		client.WithHostPorts(opt.Address),
+		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	return cli
+}
+
+type genericJSONLargeClient struct {
+	client genericclient.Client
+}
+
+func (cli *genericJSONLargeClient) Echo(action, msg string) error {
+	reply, err := cli.client.GenericCall(context.Background(), "TestObj", data.GetJsonString(action, msg, data.Large))
+	if reply != nil {
+		repl := reply.(string)
+		var rep echo.Request
+		err = json.Unmarshal([]byte(repl), &rep)
+		if err != nil {
+			return err
+		}
+		runner.ProcessResponse(rep.Action, rep.Msg)
 	}
 	return err
 }
