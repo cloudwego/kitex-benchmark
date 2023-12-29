@@ -62,3 +62,17 @@ thrift_dir=$CURDIR/../thrift
 grpc_dir=$CURDIR/../grpc
 streaming_dir=$CURDIR/../streaming
 generic_dir=$CURDIR/../generic
+
+function kill_pid_listening_on_port() {
+    port=$1
+    if [ -z "$port" ]; then
+        echo "invalid port"
+        exit 1
+    fi
+    pids=`lsof -i ":$port" | grep LISTEN | awk '{print $2}' | uniq`
+    for p in $pids; do
+        echo killing $p...
+        kill $p
+    done
+    sleep 1
+}

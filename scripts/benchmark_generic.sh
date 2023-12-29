@@ -21,6 +21,7 @@ for b in ${body[@]}; do
       srp=${srepo[i]}
       crp=${crepo[i]}
       addr="127.0.0.1:${ports[i]}"
+      kill_pid_listening_on_port ${ports[i]}
       # server start
       echo "Starting server [$srp], if failed please check [output/log/nohup.log] for detail"
       nohup $cmd_server $output_dir/bin/${srp}_reciever >> $output_dir/log/nohup.log 2>&1 &
@@ -32,11 +33,7 @@ for b in ${body[@]}; do
       $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -n=$n --sleep=$sleep | $tee_cmd
 
       # stop server
-      pid=$(ps -ef | grep ${srp}_reciever | grep -v grep | awk '{print $2}')
-      disown $pid
-      kill -9 $pid
-      echo "Server [$srp] stopped, pid [$pid]."
-      sleep 1
+      kill_pid_listening_on_port ${ports[i]}
     done
   done
 done
