@@ -17,9 +17,11 @@
 package runner
 
 import (
+	"errors"
 	"sync"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -58,6 +60,10 @@ func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
 				err := onceFn()
 				end := r.timer.Now()
 				if err != nil {
+					if errors.Is(err, kerrors.ErrCircuitBreak) {
+						klog.Warnf("No.%d request failed: %v, circuit break happens, stop test!", idx, err)
+						break
+					}
 					klog.Warnf("No.%d request failed: %v", idx, err)
 				}
 				cost := end - begin
