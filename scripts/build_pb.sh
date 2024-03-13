@@ -24,6 +24,12 @@ $GOEXEC mod tidy
 $GOEXEC build -v -o $output_dir/bin/grpc_bencher $pb_dir/grpc/client
 $GOEXEC build -v -o $output_dir/bin/rpcx_bencher $pb_dir/rpcx/client
 $GOEXEC build -v -o $output_dir/bin/arpc_bencher $pb_dir/arpc/client
+$GOEXEC build -v -o $output_dir/bin/arpc_bencher $pb_dir/arpc/client
+$GOEXEC build -v -o $output_dir/bin/hessian_bencher $pb_dir/hessian/client
+$GOEXEC build -v -o $output_dir/bin/triple_bencher $pb_dir/triple/client
+
+$GOEXEC build -v -o $output_dir/bin/hessian_reciever $pb_dir/hessian
+$GOEXEC build -v -o $output_dir/bin/triple_reciever $pb_dir/triple
 $GOEXEC build -v -o $output_dir/bin/grpc_reciever $pb_dir/grpc
 $GOEXEC build -v -o $output_dir/bin/rpcx_reciever $pb_dir/rpcx
 $GOEXEC build -v -o $output_dir/bin/arpc_reciever $pb_dir/arpc

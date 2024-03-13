@@ -1,0 +1,13 @@
+dubbo:
+  consumer:
+    references:
+      EchoClientImpl:
+        protocol: tri
+        url: "tri://localhost:8006"
+        interface: "" # read from pb
+#dubbo:
+#  consumer:
+#    references:
+#      GreeterClientImpl:
+#        url: tri://localhost:20000
+#        protocol: tri

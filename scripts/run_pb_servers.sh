@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
-repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc")
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "hessian" "triple")
 
 # build
 source $CURDIR/env.sh

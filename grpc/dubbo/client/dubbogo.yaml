@@ -1,0 +1,7 @@
+dubbo:
+  consumer:
+    references:
+      EchoClientImpl:
+        protocol: tri
+        url: "tri://localhost:8006"
+        interface: "" # read from pb

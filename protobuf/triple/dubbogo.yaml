@@ -1,0 +1,20 @@
+dubbo:
+  protocols:
+    triple:
+      name: tri
+      port: 8006
+  provider:
+    services:
+      EchoProvider:
+        interface: "" # read from pb
+
+
+#dubbo:
+#  protocols:
+#    triple:
+#      name: tri
+#      port: 20000
+#  provider:
+#    services:
+#      GreeterProvider:
+#        interface: "" # read interface from pb
