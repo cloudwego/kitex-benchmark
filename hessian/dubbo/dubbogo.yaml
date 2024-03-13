@@ -6,5 +6,5 @@ dubbo:
   provider:
     services:
       EchoProvider:
-        interface: "com.fz.EchoProvider"
+        interface: "com.kitex.EchoProvider"
 
