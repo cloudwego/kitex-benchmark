@@ -4,4 +4,4 @@ dubbo:
       EchoProvider:
         protocol: dubbo
         url: "dubbo://localhost:8005"
-        interface: "com.fz.EchoProvider" # read from pb
+        interface: "com.fz.EchoProvider"
