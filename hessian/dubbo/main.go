@@ -8,7 +8,6 @@ import (
 	"os"
 )
 
-// export DUBBO_GO_CONFIG_PATH= PATH_TO_SAMPLES/helloworld/go-server/conf/dubbogo.yaml
 func main() {
 	os.Setenv("DUBBO_GO_CONFIG_PATH", "./protobuf/hessian/dubbogo.yaml")
 	hessian.RegisterPOJO(&pkg.Message{})
