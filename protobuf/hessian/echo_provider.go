@@ -13,7 +13,7 @@ type EchoProvider struct {
 type CommonEchoProvider struct {
 }
 
-var recorder = perf.NewRecorder("Dubbo@Server")
+var recorder = perf.NewRecorder("Hessian@Server")
 
 func (c *CommonEchoProvider) Echo(ctx context.Context, in *pkg.Message) (*pkg.Message, error) {
 	resp := runner.ProcessRequest(recorder, in.Action, in.Msg)

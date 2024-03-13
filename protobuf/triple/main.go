@@ -21,7 +21,6 @@ func (s *EchoProvider) EchoHello(ctx context.Context, in *api.Request) (*api.Res
 	return &api.Response{Action: resp.Action, Msg: resp.Msg}, nil
 }
 
-// export DUBBO_GO_CONFIG_PATH= PATH_TO_SAMPLES/helloworld/go-server/conf/dubbogo.yaml
 func main() {
 	os.Setenv("DUBBO_GO_CONFIG_PATH", "./protobuf/triple/dubbogo.yaml")
 	config.SetProviderService(&EchoProvider{})

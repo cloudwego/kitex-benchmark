@@ -6,15 +6,5 @@ dubbo:
   provider:
     services:
       EchoProvider:
-        interface: "" # read from pb
+        interface: ""
 
-
-#dubbo:
-#  protocols:
-#    triple:
-#      name: tri
-#      port: 20000
-#  provider:
-#    services:
-#      GreeterProvider:
-#        interface: "" # read interface from pb

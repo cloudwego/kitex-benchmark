@@ -27,19 +27,15 @@ func NewTripleClient(opt *runner.Options) runner.Client {
 		panic(err)
 	}
 
-	cli.client = echoClientImpl
-	//cli.connpool = runner.NewPool(func() interface{} {
-	//
-	//	//return grpcg.NewPoolEchoClient(conn)
-	//	return echoClientImpl
-	//}, opt.PoolSize)
+	cli.connpool = runner.NewPool(func() interface{} {
+		return echoClientImpl
+	}, opt.PoolSize)
 	return cli
 }
 
 type pbTripleClient struct {
-	reqPool *sync.Pool
-	//connpool *runner.Pool
-	client *api.EchoClientImpl
+	reqPool  *sync.Pool
+	connpool *runner.Pool
 }
 
 func (cli *pbTripleClient) Echo(action, msg string) error {
@@ -49,11 +45,11 @@ func (cli *pbTripleClient) Echo(action, msg string) error {
 	req.Action = action
 	req.Msg = msg
 
-	//tripleCli := cli.connpool.Get().(*api.EchoClientImpl)
+	tripleCli := cli.connpool.Get().(*api.EchoClientImpl)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	reply, err3 := cli.client.EchoHello(ctx, req)
+	reply, err3 := tripleCli.EchoHello(ctx, req)
 
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)
@@ -64,23 +60,3 @@ func (cli *pbTripleClient) Echo(action, msg string) error {
 func main() {
 	runner.Main("tri", NewTripleClient)
 }
-
-//func main() {
-//	os.Setenv("DUBBO_GO_CONFIG_PATH", "./protobuf/triple/client/dubbogo.yaml")
-//	//runner.Main("tri", NewTripleClient)
-//	config.SetConsumerService(echoClientImpl)
-//	if err := config.Load(); err != nil {
-//		panic(err)
-//	}
-//
-//	logger.Info("start to test dubbo")
-//	req := &api.Request{
-//		Action: "dubbo",
-//		Msg:    "hello,dubbo",
-//	}
-//	reply, err := echoClientImpl.EchoHello(context.Background(), req)
-//	if err != nil {
-//		logger.Error(err)
-//	}
-//	logger.Infof("client response result: %v\n", reply)
-//}

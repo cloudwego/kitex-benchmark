@@ -24,7 +24,6 @@ $GOEXEC mod tidy
 $GOEXEC build -v -o $output_dir/bin/grpc_bencher $pb_dir/grpc/client
 $GOEXEC build -v -o $output_dir/bin/rpcx_bencher $pb_dir/rpcx/client
 $GOEXEC build -v -o $output_dir/bin/arpc_bencher $pb_dir/arpc/client
-$GOEXEC build -v -o $output_dir/bin/arpc_bencher $pb_dir/arpc/client
 $GOEXEC build -v -o $output_dir/bin/hessian_bencher $pb_dir/hessian/client
 $GOEXEC build -v -o $output_dir/bin/triple_bencher $pb_dir/triple/client
 
