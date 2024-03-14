@@ -6,4 +6,4 @@ dubbo:
   provider:
     services:
       EchoProvider:
-        interface: "com.kitex.EchoProvider"
+        interface: "com.kitex.EchoProvider"#
