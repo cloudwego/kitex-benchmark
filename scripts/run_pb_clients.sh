@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
-repo=("grpc" "kitex" "hessian" "triple")
-ports=(8000 8001 8005 8006)
+repo=("grpc" "kitex" "kitex-mux" "rpcx" "arpc" "hessian" "triple")
+ports=(8000 8001 8002 8003 8004 8005 8006)
 ip=${IP:-"127.0.0.1"}
 
 # build
