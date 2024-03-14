@@ -32,6 +32,7 @@ var (
 	concurrent int
 	poolSize   int
 	sleepTime  int
+	complex    bool
 )
 
 type Options struct {
@@ -58,6 +59,8 @@ func initFlags() {
 	flag.Int64Var(&total, "n", 1024*100, "call total nums")
 	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
 	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
+	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
+	flag.BoolVar(&complex, "complex", false, "send complex request")
 	flag.Parse()
 }
 
@@ -87,6 +90,8 @@ func Main(name string, newer ClientNewer) {
 		action = SleepAction
 		st := strconv.Itoa(sleepTime)
 		payload = fmt.Sprintf("%s,%s", st, payload[len(st)+1:])
+	} else if complex {
+		action = ComplexAction
 	}
 	handler := func() error { return cli.Echo(action, payload) }
 

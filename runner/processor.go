@@ -18,22 +18,44 @@ package runner
 
 import (
 	"fmt"
+	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/cloudwego/kitex-benchmark/perf"
 )
 
 const (
-	EchoAction   = "echo"
-	BeginAction  = "begin"
-	EndAction    = "end"
-	SleepAction  = "sleep"
-	ReportAction = "report"
+	EchoAction    = "echo"
+	BeginAction   = "begin"
+	EndAction     = "end"
+	SleepAction   = "sleep"
+	ComplexAction = "complex"
+	ReportAction  = "report"
 )
 
+// complexProcess will consume CPU and Memory, and create more GC work
+func complexProcess(concurrency, size int) []byte {
+	var wg sync.WaitGroup
+	heap := make([][]byte, concurrency)
+	for c := 0; c < concurrency; c++ {
+		wg.Add(1)
+		go func(c int) {
+			defer wg.Done()
+			heap[c] = make([]byte, size)
+			for i := 0; i < len(heap[c]); i++ {
+				heap[c][i] = byte('a' + ((i + c) % 26))
+			}
+		}(c)
+	}
+	wg.Wait()
+	return heap[concurrency/2]
+}
+
 func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
+	respMsg := msg
 	switch action {
 	case BeginAction:
 		recorder.Begin()
@@ -54,13 +76,15 @@ func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
 				time.Sleep(ms)
 			}
 		}
+	case ComplexAction:
+		respMsg = string(complexProcess(runtime.GOMAXPROCS(0), len(msg)))
 	default:
 		// do business logic
 	}
 
 	return &Response{
 		Action: action,
-		Msg:    msg,
+		Msg:    respMsg,
 	}
 }
 
