@@ -1,0 +1,9 @@
+dubbo:
+  protocols:
+    dubbo:
+      name: dubbo
+      port: 8005
+  provider:
+    services:
+      EchoProvider:
+        interface: "com.kitex.EchoProvider"#

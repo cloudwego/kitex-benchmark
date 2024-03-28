@@ -1,0 +1,7 @@
+dubbo:
+  consumer:
+    references:
+      EchoProvider:
+        protocol: dubbo
+        url: "dubbo://localhost:8005"
+        interface: "com.kitex.EchoProvider"
