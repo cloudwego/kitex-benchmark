@@ -15,6 +15,8 @@
 cd `dirname $0`/..
 PROJECT_ROOT=`pwd`
 
+source $PROJECT_ROOT/scripts/util.sh && check_supported_env
+
 old=$1
 new=$2
 

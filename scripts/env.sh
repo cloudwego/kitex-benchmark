@@ -9,6 +9,8 @@ sleep=0
 
 CURDIR=$(cd $(dirname $0); pwd)
 
+source $CURDIR/util.sh && check_supported_env
+
 if ! [ -x "$(command -v taskset)" ]; then
   echo "Error: taskset is not installed." >&2
   exit 1
