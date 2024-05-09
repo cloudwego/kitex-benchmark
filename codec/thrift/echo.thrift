@@ -14,13 +14,21 @@ struct SubMessage {
     1: optional i64 id;
     2: optional string value;
 }
+
 struct Message {
     1: optional i64 id;
     2: optional string value;
     3: optional list<SubMessage> subMessages;
 }
 
-// 复杂参数
+struct LargeMessage {
+    1: required string action,
+    2: required string msg,
+    3: required map<string, Message> map,
+    4: required list<Message> list,
+    5: optional set<Message> set,
+}
+
 struct ObjReq {
     1: required string action(api.path = 'action')
     2: required string msg(api.header = 'msg')
@@ -42,5 +50,6 @@ struct ObjResp {
 
 service EchoServer {
     Response Echo(1: Request req)
+    LargeMessage EchoLarge(1: LargeMessage msg)
     ObjResp TestObj(1: ObjReq req)(api.post = '/test/obj/:action', api.baseurl = 'example.com', api.param = 'true', api.serializer = 'json')
 }

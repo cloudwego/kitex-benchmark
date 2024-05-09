@@ -43,10 +43,20 @@ type EchoServerImpl struct{}
 // Echo implements the EchoServerImpl interface.
 func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
 	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
-
 	return &echo.Response{
 		Action: resp.Action,
 		Msg:    resp.Msg,
+	}, nil
+}
+
+func (s *EchoServerImpl) EchoLarge(ctx context.Context, msg *echo.LargeMessage) (r *echo.LargeMessage, err error) {
+	resp := runner.ProcessRequest(recorder, msg.Action, msg.Msg)
+	return &echo.LargeMessage{
+		Action: resp.Action,
+		Msg:    resp.Msg,
+		Map:    msg.Map,
+		List:   msg.List,
+		Set:    msg.Set,
 	}, nil
 }
 
