@@ -35,12 +35,12 @@ func serviceInfo() *kitex.ServiceInfo {
 	return echoServiceInfo
 }
 
-// for client
+// for stream client
 func serviceInfoForStreamClient() *kitex.ServiceInfo {
 	return echoServiceInfoForStreamClient
 }
 
-// for stream client
+// for client
 func serviceInfoForClient() *kitex.ServiceInfo {
 	return echoServiceInfoForClient
 }
