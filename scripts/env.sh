@@ -5,6 +5,7 @@ set -e
 n=20000000
 body=(1024)
 concurrent=(100 200 400 600 800 1000)
+qps=(0)
 sleep=0
 
 CURDIR=$(cd $(dirname $0); pwd)
