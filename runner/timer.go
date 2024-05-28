@@ -22,14 +22,23 @@ import (
 	"time"
 )
 
-func NewTimer(window time.Duration) *Timer {
-	t := &Timer{window: window}
+type Timer interface {
+	Now() int64
+}
+
+// NewTimer returns a Timer.
+// window=0 means using the native timer.
+func NewTimer(window time.Duration) Timer {
+	if window == 0 {
+		return &nativeTimer{}
+	}
+	t := &timer{window: window}
 	t.refresh()
 	return t
 }
 
 // 全局 Timer, 共享时间周期, 并在到期时执行回调
-type Timer struct {
+type timer struct {
 	sync.Once
 	now    int64
 	window time.Duration
@@ -37,7 +46,7 @@ type Timer struct {
 }
 
 // refresh time
-func (t *Timer) refresh() {
+func (t *timer) refresh() {
 	t.Do(func() {
 		atomic.StoreInt64(&t.now, time.Now().UnixNano())
 		go func() {
@@ -48,11 +57,17 @@ func (t *Timer) refresh() {
 	})
 }
 
-func (t *Timer) Window() time.Duration {
+func (t *timer) Window() time.Duration {
 	return t.window
 }
 
 // Timer 为共享计时器, 减少系统时间调用
-func (t *Timer) Now() int64 {
+func (t *timer) Now() int64 {
 	return atomic.LoadInt64(&t.now)
+}
+
+type nativeTimer struct{}
+
+func (*nativeTimer) Now() int64 {
+	return time.Now().UnixNano()
 }

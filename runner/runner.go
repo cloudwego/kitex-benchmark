@@ -23,6 +23,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/juju/ratelimit"
 )
 
 // 为了流量更均匀, 时间间隔设置为 10ms
@@ -33,21 +34,29 @@ type RunOnce func() error
 
 type Runner struct {
 	counter *Counter // 计数器
-	timer   *Timer   // 计时器
+	timer   Timer    // 计时器
 }
 
 func NewRunner() *Runner {
 	r := &Runner{
 		counter: NewCounter(),
-		timer:   NewTimer(time.Microsecond),
+	}
+	if qps == 0 {
+		r.timer = NewTimer(time.Microsecond)
+	} else {
+		r.timer = NewTimer(0)
 	}
 	return r
 }
 
-func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
+func (r *Runner) benching(onceFn RunOnce, concurrent, qps int, total int64) {
 	var wg sync.WaitGroup
 	wg.Add(concurrent)
 	r.counter.Reset(total)
+	var qpsLimiter *ratelimit.Bucket
+	if qps > 0 {
+		qpsLimiter = ratelimit.NewBucketWithRate(float64(qps), int64(concurrent))
+	}
 	for i := 0; i < concurrent; i++ {
 		go func() {
 			defer wg.Done()
@@ -55,6 +64,9 @@ func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
 				idx := r.counter.Idx()
 				if idx >= total {
 					return
+				}
+				if qpsLimiter != nil {
+					qpsLimiter.Wait(1)
 				}
 				begin := r.timer.Now()
 				err := onceFn()
@@ -75,19 +87,19 @@ func (r *Runner) benching(onceFn RunOnce, concurrent int, total int64) {
 	r.counter.Total = total
 }
 
-func (r *Runner) Warmup(onceFn RunOnce, concurrent int, total int64) {
-	r.benching(onceFn, concurrent, total)
+func (r *Runner) Warmup(onceFn RunOnce, concurrent, qps int, total int64) {
+	r.benching(onceFn, concurrent, qps, total)
 }
 
 // 并发测试
-func (r *Runner) Run(title string, onceFn RunOnce, concurrent int, total int64, echoSize, sleepTime int) {
+func (r *Runner) Run(title string, onceFn RunOnce, concurrent, qps int, total int64, echoSize, sleepTime int) {
 	logInfo(
-		"%s start benching [%s], concurrent: %d, total: %d, sleep: %d",
-		"["+title+"]", time.Now().String(), concurrent, total, sleepTime,
+		"%s start benching [%s], concurrent: %d, qps: %d, total: %d, sleep: %d",
+		"["+title+"]", time.Now().String(), concurrent, qps, total, sleepTime,
 	)
 
 	start := r.timer.Now()
-	r.benching(onceFn, concurrent, total)
+	r.benching(onceFn, concurrent, qps, total)
 	stop := r.timer.Now()
 	r.counter.Report(title, stop-start, concurrent, total, echoSize)
 }

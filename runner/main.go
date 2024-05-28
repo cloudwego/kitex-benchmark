@@ -30,6 +30,7 @@ var (
 	echoSize   int
 	total      int64
 	concurrent int
+	qps        int
 	poolSize   int
 	sleepTime  int
 )
@@ -55,6 +56,7 @@ func initFlags() {
 	flag.StringVar(&address, "addr", "127.0.0.1:8000", "client call address")
 	flag.IntVar(&echoSize, "b", 1024, "echo size once")
 	flag.IntVar(&concurrent, "c", 100, "call concurrent")
+	flag.IntVar(&qps, "qps", 0, "call qps")
 	flag.Int64Var(&total, "n", 1024*100, "call total nums")
 	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
 	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
@@ -91,7 +93,7 @@ func Main(name string, newer ClientNewer) {
 	handler := func() error { return cli.Echo(action, payload) }
 
 	// === warming ===
-	r.Warmup(handler, concurrent, 100*1000)
+	r.Warmup(handler, concurrent, qps, 100*1000)
 
 	// === beginning ===
 	if err := cli.Echo(BeginAction, "empty"); err != nil {
@@ -101,7 +103,7 @@ func Main(name string, newer ClientNewer) {
 	recorder.Begin()
 
 	// === benching ===
-	r.Run(name, handler, concurrent, total, echoSize, sleepTime)
+	r.Run(name, handler, concurrent, qps, total, echoSize, sleepTime)
 
 	// == ending ===
 	recorder.End()
