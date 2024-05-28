@@ -55,7 +55,7 @@ func (r *Runner) benching(onceFn RunOnce, concurrent, qps int, total int64) {
 	r.counter.Reset(total)
 	var qpsLimiter *ratelimit.Bucket
 	if qps > 0 {
-		qpsLimiter = ratelimit.NewBucketWithRate(float64(qps), 100)
+		qpsLimiter = ratelimit.NewBucketWithRate(float64(qps), int64(concurrent))
 	}
 	for i := 0; i < concurrent; i++ {
 		go func() {

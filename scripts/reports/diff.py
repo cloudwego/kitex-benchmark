@@ -35,8 +35,8 @@ def diff(from_csv, to_csv):
         result.append(diff_cell(from_reader[line_num][3], line[3]))  # tps
         result.append(diff_cell(from_reader[line_num][4], line[4]))  # p99
         result.append(diff_cell(from_reader[line_num][5], line[5]))  # p999
-        result.append(diff_cell(from_reader[line_num][6], line[6]))  # Client CPU
-        result.append(diff_cell(from_reader[line_num][7], line[7]))  # Server CPU
+        result.append(diff_cell(from_reader[line_num][6], line[6]))  # Server CPU
+        result.append(diff_cell(from_reader[line_num][7], line[7]))  # Client CPU
 
         results.append(result)
 
