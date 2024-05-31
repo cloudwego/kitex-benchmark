@@ -130,7 +130,7 @@ type genericHTTPClient struct {
 	client genericclient.Client
 }
 
-func (cli *genericHTTPClient) Echo(action, msg string) error {
+func (cli *genericHTTPClient) Send(action, msg string) error {
 	ctx := context.Background()
 
 	url := fmt.Sprintf("http://example.com/echo/complex/%s", action)

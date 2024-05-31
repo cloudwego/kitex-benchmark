@@ -44,17 +44,17 @@ func (s *GenericServerImpl) GenericCall(ctx context.Context, method string, requ
 	switch method {
 	case "Echo":
 		req := request.(map[string]interface{})
-		resp := runner.ProcessRequest(recorder, req["action"].(string), req["msg"].(string))
+		action, msg := runner.ProcessRequest(recorder, req["action"].(string), req["msg"].(string))
 		return map[string]interface{}{
-			"action": resp.Action,
-			"msg":    resp.Msg,
+			"action": action,
+			"msg":    msg,
 		}, nil
 	case "EchoComplex":
 		req := request.(map[string]interface{})
-		resp := runner.ProcessRequest(recorder, req["action"].(string), req["msg"].(string))
+		action, msg := runner.ProcessRequest(recorder, req["action"].(string), req["msg"].(string))
 		return map[string]interface{}{
-			"action":  resp.Action,
-			"msg":     resp.Msg,
+			"action":  action,
+			"msg":     msg,
 			"msgMap":  req["msgMap"],
 			"subMsgs": req["subMsgs"],
 			"msgSet":  req["msgSet"],

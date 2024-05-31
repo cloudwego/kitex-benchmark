@@ -50,7 +50,7 @@ type kClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *kClient) Echo(action, msg string) error {
+func (cli *kClient) Send(action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)

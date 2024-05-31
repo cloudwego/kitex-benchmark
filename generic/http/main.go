@@ -42,20 +42,20 @@ type EchoServerImpl struct{}
 
 // Echo implements the EchoServerImpl interface.
 func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+	action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
 	return &echo.Response{
-		Action: resp.Action,
-		Msg:    resp.Msg,
+		Action: action,
+		Msg:    msg,
 	}, nil
 }
 
 func (s *EchoServerImpl) EchoComplex(ctx context.Context, req *echo.ComplexRequest) (*echo.ComplexResponse, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+	action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
 	return &echo.ComplexResponse{
-		Action:  resp.Action,
-		Msg:     resp.Msg,
+		Action:  action,
+		Msg:     msg,
 		MsgMap:  req.MsgMap,
 		SubMsgs: req.SubMsgs,
 		MsgSet:  req.MsgSet,

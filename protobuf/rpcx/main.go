@@ -37,10 +37,9 @@ type Echo struct{}
 var recorder = perf.NewRecorder("RPCX@Server")
 
 func (s *Echo) Echo(ctx context.Context, args *gogo.Request, reply *gogo.Response) error {
-	resp := runner.ProcessRequest(recorder, args.Action, args.Msg)
-
-	reply.Action = resp.Action
-	reply.Msg = resp.Msg
+	action, msg := runner.ProcessRequest(recorder, args.Action, args.Msg)
+	reply.Action =action
+	reply.Msg = msg
 	return nil
 }
 

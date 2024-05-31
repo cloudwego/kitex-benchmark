@@ -94,7 +94,7 @@ type genericMapClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *genericMapClient) Echo(action, msg string) error {
+func (cli *genericMapClient) Send(action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(map[string]interface{})
 	defer cli.reqPool.Put(req)

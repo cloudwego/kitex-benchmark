@@ -56,7 +56,7 @@ type pbRpcxClient struct {
 	clipool  *client.XClientPool
 }
 
-func (cli *pbRpcxClient) Echo(action, msg string) (err error) {
+func (cli *pbRpcxClient) Send(action, msg string) (err error) {
 	args := cli.reqPool.Get().(*gogo.Request)
 	reply := cli.respPool.Get().(*gogo.Response)
 	defer cli.reqPool.Put(args)

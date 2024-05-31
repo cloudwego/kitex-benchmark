@@ -44,7 +44,8 @@ type Options struct {
 type ClientNewer func(opt *Options) Client
 
 type Client interface {
-	Echo(action, msg string) (err error)
+	// Send implement client's custom RPC call logic
+	Send(action, msg string) (err error)
 }
 
 type Response struct {
@@ -90,13 +91,13 @@ func Main(name string, newer ClientNewer) {
 		st := strconv.Itoa(sleepTime)
 		payload = fmt.Sprintf("%s,%s", st, payload[len(st)+1:])
 	}
-	handler := func() error { return cli.Echo(action, payload) }
+	handler := func() error { return cli.Send(action, payload) }
 
 	// === warming ===
 	r.Warmup(handler, concurrent, qps, 100*1000)
 
 	// === beginning ===
-	if err := cli.Echo(BeginAction, "empty"); err != nil {
+	if err := cli.Send(BeginAction, "empty"); err != nil {
 		log.Fatalf("beginning server failed: %v", err)
 	}
 	recorder := perf.NewRecorder(fmt.Sprintf("%s@Client", name))
@@ -107,7 +108,7 @@ func Main(name string, newer ClientNewer) {
 
 	// == ending ===
 	recorder.End()
-	if err := cli.Echo(EndAction, "empty"); err != nil {
+	if err := cli.Send(EndAction, "empty"); err != nil {
 		log.Fatalf("ending server failed: %v", err)
 	}
 

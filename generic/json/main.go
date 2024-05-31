@@ -134,8 +134,8 @@ func (s *GenericServerImpl) GenericCall(ctx context.Context, method string, requ
 		if err != nil {
 			return nil, kerrors.NewBizStatusError(500, err.Error())
 		}
-		resp := runner.ProcessRequest(recorder, rep.Action, rep.Msg)
-		return GetJsonString(resp.Action, resp.Msg), nil
+		action, msg := runner.ProcessRequest(recorder, rep.Action, rep.Msg)
+		return GetJsonString(action, msg), nil
 	}
 	return nil, kerrors.NewBizStatusError(404, "not found")
 }

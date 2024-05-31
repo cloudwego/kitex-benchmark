@@ -51,7 +51,7 @@ type thriftKiteXClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *thriftKiteXClient) Echo(action, msg string) error {
+func (cli *thriftKiteXClient) Send(action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)

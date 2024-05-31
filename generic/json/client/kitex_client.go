@@ -145,7 +145,7 @@ type genericJSONClient struct {
 	client genericclient.Client
 }
 
-func (cli *genericJSONClient) Echo(action, msg string) error {
+func (cli *genericJSONClient) Send(action, msg string) error {
 	ctx := context.Background()
 
 	reply, err := cli.client.GenericCall(ctx, "EchoComplex", GetJsonString(action, msg))
