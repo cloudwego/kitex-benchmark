@@ -58,7 +58,7 @@ type grpcClient struct {
 	reqPool    *sync.Pool
 }
 
-func (cli *grpcClient) Send(action, msg string) (err error) {
+func (cli *grpcClient) Send(method, action, msg string) (err error) {
 	req := cli.reqPool.Get().(*grpcg.Request)
 	defer cli.reqPool.Put(req)
 

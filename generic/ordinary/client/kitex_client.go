@@ -82,7 +82,7 @@ type genericOrdinaryClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *genericOrdinaryClient) Send(action, msg string) error {
+func (cli *genericOrdinaryClient) Send(method, action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.ComplexRequest)
 	defer cli.reqPool.Put(req)

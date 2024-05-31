@@ -17,10 +17,28 @@
 package main
 
 import (
+	"time"
+
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/connpool"
+	"github.com/cloudwego/kitex/transport"
+
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
 	"github.com/cloudwego/kitex-benchmark/runner"
+	"github.com/cloudwego/kitex-benchmark/thrift"
 )
 
 // main is use for routing.
 func main() {
-	runner.Main("KITEX", NewThriftKiteXClient)
+	runner.Main("KITEX", NewThriftKitexClient)
+}
+
+func NewThriftKitexClient(opt *runner.Options) runner.Client {
+	cli := echoserver.MustNewClient("test.echo.kitex",
+		client.WithTransportProtocol(transport.Framed),
+		client.WithHostPorts(opt.Address),
+		client.WithLongConnection(
+			connpool.IdleConfig{MaxIdlePerAddress: 1000, MaxIdleGlobal: 1000, MaxIdleTimeout: time.Minute}),
+	)
+	return thrift.NewKitexClient(cli)
 }

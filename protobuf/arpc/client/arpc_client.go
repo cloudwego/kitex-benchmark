@@ -68,7 +68,7 @@ type pbArpcClient struct {
 	clipool  *arpc.ClientPool
 }
 
-func (cli *pbArpcClient) Send(action, msg string) (err error) {
+func (cli *pbArpcClient) Send(method, action, msg string) (err error) {
 	args := cli.reqPool.Get().(*gogo.Request)
 	reply := cli.respPool.Get().(*gogo.Response)
 	defer cli.reqPool.Put(args)

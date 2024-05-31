@@ -134,6 +134,8 @@ go tool pprof localhost:{port}/debug/pprof/{pprof_type}
 ```bash
 # 发送压测请求数
 n=5000000
+# 请求体类型与请求方法，可选项：("echo", "echoComplex")
+method="echo"
 # 请求体大小
 body=(1024 5120)
 # 并发度

@@ -26,12 +26,11 @@ import (
 )
 
 const (
-	EchoAction        = "echo"
-	EchoComplexAction = "echo_complex"
-	BeginAction       = "begin"
-	EndAction         = "end"
-	SleepAction       = "sleep"
-	ReportAction      = "report"
+	EchoAction   = "echo"
+	BeginAction  = "begin"
+	EndAction    = "end"
+	SleepAction  = "sleep"
+	ReportAction = "report"
 )
 
 func ProcessRequest(recorder *perf.Recorder, action, msg string) (retAction, retMsg string) {
