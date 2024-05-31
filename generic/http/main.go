@@ -50,10 +50,10 @@ func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Res
 	}, nil
 }
 
-func (s *EchoServerImpl) TestObj(ctx context.Context, req *echo.ObjReq) (*echo.ObjResp, error) {
+func (s *EchoServerImpl) EchoComplex(ctx context.Context, req *echo.ComplexRequest) (*echo.ComplexResponse, error) {
 	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
-	return &echo.ObjResp{
+	return &echo.ComplexResponse{
 		Action:  resp.Action,
 		Msg:     resp.Msg,
 		MsgMap:  req.MsgMap,

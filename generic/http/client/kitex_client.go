@@ -133,7 +133,7 @@ type genericHTTPClient struct {
 func (cli *genericHTTPClient) Echo(action, msg string) error {
 	ctx := context.Background()
 
-	url := fmt.Sprintf("http://example.com/test/obj/%s", action)
+	url := fmt.Sprintf("http://example.com/echo/complex/%s", action)
 	httpRequest, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestData))
 	if err != nil {
 		return err

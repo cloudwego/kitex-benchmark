@@ -63,7 +63,7 @@ func NewGenericOrdinaryClient(opt *runner.Options) runner.Client {
 	)
 	cli.reqPool = &sync.Pool{
 		New: func() interface{} {
-			return &echo.ObjReq{
+			return &echo.ComplexRequest{
 				MsgMap: map[string]*echo.SubMessage{
 					"v1": subMsg1,
 					"v2": subMsg2,
@@ -84,13 +84,13 @@ type genericOrdinaryClient struct {
 
 func (cli *genericOrdinaryClient) Echo(action, msg string) error {
 	ctx := context.Background()
-	req := cli.reqPool.Get().(*echo.ObjReq)
+	req := cli.reqPool.Get().(*echo.ComplexRequest)
 	defer cli.reqPool.Put(req)
 
 	req.Action = action
 	req.Msg = msg
 
-	reply, err := cli.client.TestObj(ctx, req)
+	reply, err := cli.client.EchoComplex(ctx, req)
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)
 	}

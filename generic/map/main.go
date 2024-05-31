@@ -22,13 +22,14 @@ import (
 	"log"
 	"net"
 
-	"github.com/cloudwego/kitex-benchmark/perf"
-	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
+
+	"github.com/cloudwego/kitex-benchmark/perf"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
@@ -48,7 +49,7 @@ func (s *GenericServerImpl) GenericCall(ctx context.Context, method string, requ
 			"action": resp.Action,
 			"msg":    resp.Msg,
 		}, nil
-	case "TestObj":
+	case "EchoComplex":
 		req := request.(map[string]interface{})
 		resp := runner.ProcessRequest(recorder, req["action"].(string), req["msg"].(string))
 		return map[string]interface{}{
