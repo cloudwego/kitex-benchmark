@@ -1,0 +1,10 @@
+dubbo:
+  protocols:
+    triple:
+      name: tri
+      port: 8006
+  provider:
+    services:
+      EchoProvider:
+        interface: ""
+
