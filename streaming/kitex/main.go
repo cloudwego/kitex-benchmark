@@ -47,11 +47,11 @@ func (s *EchoImpl) Echo(stream echo.SEcho_EchoServer) error {
 		if err != nil {
 			return err
 		}
-		resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+		action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
 		err = stream.Send(&echo.Response{
-			Action: resp.Action,
-			Msg:    resp.Msg,
+			Action: action,
+			Msg:    msg,
 		})
 		if err != nil {
 			return err

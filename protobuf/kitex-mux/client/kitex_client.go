@@ -47,7 +47,7 @@ type pbKitexClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *pbKitexClient) Echo(action, msg string) error {
+func (cli *pbKitexClient) Send(method, action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(*echo.Request)
 	defer cli.reqPool.Put(req)

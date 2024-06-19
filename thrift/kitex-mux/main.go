@@ -18,7 +18,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -40,18 +39,24 @@ type EchoServerImpl struct{}
 
 var recorder = perf.NewRecorder("KITEX-MUX@Server")
 
-// Echo implements the EchoServerImpl interface.
 func (s *EchoServerImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
-
+	action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 	return &echo.Response{
-		Action: resp.Action,
-		Msg:    resp.Msg,
+		Action: action,
+		Msg:    msg,
 	}, nil
 }
 
-func (s *EchoServerImpl) TestObj(ctx context.Context, req *echo.ObjReq) (*echo.ObjResp, error) {
-	return nil, errors.New("not implemented")
+func (s *EchoServerImpl) EchoComplex(ctx context.Context, req *echo.ComplexRequest) (*echo.ComplexResponse, error) {
+	action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
+	return &echo.ComplexResponse{
+		Action:  action,
+		Msg:     msg,
+		MsgMap:  req.MsgMap,
+		SubMsgs: req.SubMsgs,
+		MsgSet:  req.MsgSet,
+		FlagMsg: req.FlagMsg,
+	}, nil
 }
 
 func main() {

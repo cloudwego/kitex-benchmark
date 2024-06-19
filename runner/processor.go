@@ -33,7 +33,7 @@ const (
 	ReportAction = "report"
 )
 
-func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
+func ProcessRequest(recorder *perf.Recorder, action, msg string) (retAction, retMsg string) {
 	switch action {
 	case BeginAction:
 		recorder.Begin()
@@ -42,10 +42,7 @@ func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
 		// report on server side
 		recorder.Report()
 		// send back server report to client
-		return &Response{
-			Action: ReportAction,
-			Msg:    recorder.ReportString(),
-		}
+		return ReportAction, recorder.ReportString()
 	case SleepAction:
 		timeStr := strings.Split(msg, ",")[0]
 		if n, err := strconv.Atoi(timeStr); err == nil {
@@ -58,10 +55,7 @@ func ProcessRequest(recorder *perf.Recorder, action, msg string) *Response {
 		// do business logic
 	}
 
-	return &Response{
-		Action: action,
-		Msg:    msg,
-	}
+	return action, msg
 }
 
 func ProcessResponse(action, msg string) {

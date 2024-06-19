@@ -22,13 +22,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/connpool"
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
+
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
@@ -144,10 +145,10 @@ type genericJSONClient struct {
 	client genericclient.Client
 }
 
-func (cli *genericJSONClient) Echo(action, msg string) error {
+func (cli *genericJSONClient) Send(method, action, msg string) error {
 	ctx := context.Background()
 
-	reply, err := cli.client.GenericCall(ctx, "TestObj", GetJsonString(action, msg))
+	reply, err := cli.client.GenericCall(ctx, "EchoComplex", GetJsonString(action, msg))
 	if reply != nil {
 		repl := reply.(string)
 		var rep echo.Request

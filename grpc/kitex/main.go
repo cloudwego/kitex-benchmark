@@ -43,11 +43,10 @@ type EchoImpl struct{}
 
 // Echo implements the EchoImpl interface.
 func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
-
+	action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 	return &echo.Response{
-		Action: resp.Action,
-		Msg:    resp.Msg,
+		Action: action,
+		Msg:    msg,
 	}, nil
 }
 

@@ -40,11 +40,11 @@ type server struct {
 }
 
 func (s *server) Echo(ctx context.Context, req *grpcg.Request) (*grpcg.Response, error) {
-	resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
+	action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
 	return &grpcg.Response{
-		Msg:    resp.Msg,
-		Action: resp.Action,
+		Action: action,
+		Msg:    msg,
 	}, nil
 }
 

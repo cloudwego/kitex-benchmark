@@ -94,7 +94,7 @@ type genericMapClient struct {
 	reqPool *sync.Pool
 }
 
-func (cli *genericMapClient) Echo(action, msg string) error {
+func (cli *genericMapClient) Send(method, action, msg string) error {
 	ctx := context.Background()
 	req := cli.reqPool.Get().(map[string]interface{})
 	defer cli.reqPool.Put(req)
@@ -102,7 +102,7 @@ func (cli *genericMapClient) Echo(action, msg string) error {
 	req["action"] = action
 	req["msg"] = msg
 
-	reply, err := cli.client.GenericCall(ctx, "TestObj", req)
+	reply, err := cli.client.GenericCall(ctx, "EchoComplex", req)
 	if reply != nil {
 		repl := reply.(map[string]interface{})
 		runner.ProcessResponse(repl["action"].(string), repl["msg"].(string))

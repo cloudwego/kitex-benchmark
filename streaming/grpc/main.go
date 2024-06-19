@@ -48,11 +48,10 @@ func (s *server) Echo(stream grpcg.SEcho_EchoServer) error {
 			}
 			return err
 		}
-		resp := runner.ProcessRequest(recorder, req.Action, req.Msg)
-
+		action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 		err = stream.Send(&grpcg.Response{
-			Msg:    resp.Msg,
-			Action: resp.Action,
+			Action: action,
+			Msg:    msg,
 		})
 		if err != nil {
 			log.Printf("stream send failed: %v\n", err)

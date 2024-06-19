@@ -30,8 +30,8 @@ for b in ${body[@]}; do
         echo "Server [$srp] running with [$cmd_server]"
 
         # run client
-        echo "Client [$crp] running with [$cmd_client]"
-        $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -n=$n --sleep=$sleep | $tee_cmd
+        echo "Client [$crp-$method] running with [$cmd_client]"
+        $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -method=$method -b=$b -c=$c -qps=$q -n=$n --sleep=$sleep | $tee_cmd
 
         # stop server
         kill_pid_listening_on_port ${ports[i]}

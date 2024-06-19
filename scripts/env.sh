@@ -3,6 +3,7 @@ set -e
 
 # benchmark params
 n=20000000
+method="echo"
 body=(1024)
 concurrent=(100 200 400 600 800 1000)
 qps=(0)

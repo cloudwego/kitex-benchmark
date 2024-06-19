@@ -24,14 +24,15 @@ import (
 	"net"
 	"strings"
 
-	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
-	"github.com/cloudwego/kitex-benchmark/perf"
-	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
 	"github.com/cloudwego/kitex/server/genericserver"
+
+	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
+	"github.com/cloudwego/kitex-benchmark/perf"
+	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
 const (
@@ -126,15 +127,15 @@ type GenericServerImpl struct{}
 
 func (s *GenericServerImpl) GenericCall(ctx context.Context, method string, request interface{}) (response interface{}, err error) {
 	switch method {
-	case "TestObj":
+	case "EchoComplex":
 		req := request.(string)
 		var rep echo.Response
 		err = json.Unmarshal([]byte(req), &rep)
 		if err != nil {
 			return nil, kerrors.NewBizStatusError(500, err.Error())
 		}
-		resp := runner.ProcessRequest(recorder, rep.Action, rep.Msg)
-		return GetJsonString(resp.Action, resp.Msg), nil
+		action, msg := runner.ProcessRequest(recorder, rep.Action, rep.Msg)
+		return GetJsonString(action, msg), nil
 	}
 	return nil, kerrors.NewBizStatusError(404, "not found")
 }

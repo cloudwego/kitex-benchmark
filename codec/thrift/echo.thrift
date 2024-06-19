@@ -1,5 +1,7 @@
 namespace go echo
 
+// Echo Args
+
 struct Request {
         1: required string action,
         2: required string msg,
@@ -10,10 +12,13 @@ struct Response {
         2: required string msg,
 }
 
+// EchoComplex Args
+
 struct SubMessage {
     1: optional i64 id;
     2: optional string value;
 }
+
 struct Message {
     1: optional i64 id;
     2: optional string value;
@@ -21,7 +26,7 @@ struct Message {
 }
 
 // 复杂参数
-struct ObjReq {
+struct ComplexRequest {
     1: required string action(api.path = 'action')
     2: required string msg(api.header = 'msg')
     3: required map<string, SubMessage> msgMap(api.body = 'msgMap')
@@ -31,7 +36,7 @@ struct ObjReq {
     7: optional string mockCost,
 }
 
-struct ObjResp {
+struct ComplexResponse {
     1: required string action(api.header = 'action')
     2: required string msg(api.header = 'msg')
     3: required map<string, SubMessage> msgMap(api.body = 'msgMap')
@@ -42,5 +47,5 @@ struct ObjResp {
 
 service EchoServer {
     Response Echo(1: Request req)
-    ObjResp TestObj(1: ObjReq req)(api.post = '/test/obj/:action', api.baseurl = 'example.com', api.param = 'true', api.serializer = 'json')
+    ComplexResponse EchoComplex(1: ComplexRequest req)(api.post = '/echo/complex/:action', api.baseurl = 'example.com', api.param = 'true', api.serializer = 'json')
 }

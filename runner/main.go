@@ -28,6 +28,7 @@ import (
 var (
 	address    string
 	echoSize   int
+	method     string
 	total      int64
 	concurrent int
 	qps        int
@@ -44,7 +45,8 @@ type Options struct {
 type ClientNewer func(opt *Options) Client
 
 type Client interface {
-	Echo(action, msg string) (err error)
+	// Send implement client's custom RPC call logic
+	Send(method, action, msg string) (err error)
 }
 
 type Response struct {
@@ -54,6 +56,7 @@ type Response struct {
 
 func initFlags() {
 	flag.StringVar(&address, "addr", "127.0.0.1:8000", "client call address")
+	flag.StringVar(&method, "method", "echo", "RPC method in (echo, echoComplex)")
 	flag.IntVar(&echoSize, "b", 1024, "echo size once")
 	flag.IntVar(&concurrent, "c", 100, "call concurrent")
 	flag.IntVar(&qps, "qps", 0, "call qps")
@@ -90,13 +93,13 @@ func Main(name string, newer ClientNewer) {
 		st := strconv.Itoa(sleepTime)
 		payload = fmt.Sprintf("%s,%s", st, payload[len(st)+1:])
 	}
-	handler := func() error { return cli.Echo(action, payload) }
+	handler := func() error { return cli.Send(method, action, payload) }
 
 	// === warming ===
 	r.Warmup(handler, concurrent, qps, 100*1000)
 
 	// === beginning ===
-	if err := cli.Echo(BeginAction, "empty"); err != nil {
+	if err := cli.Send(method, BeginAction, "empty"); err != nil {
 		log.Fatalf("beginning server failed: %v", err)
 	}
 	recorder := perf.NewRecorder(fmt.Sprintf("%s@Client", name))
@@ -107,7 +110,7 @@ func Main(name string, newer ClientNewer) {
 
 	// == ending ===
 	recorder.End()
-	if err := cli.Echo(EndAction, "empty"); err != nil {
+	if err := cli.Send(method, EndAction, "empty"); err != nil {
 		log.Fatalf("ending server failed: %v", err)
 	}
 
