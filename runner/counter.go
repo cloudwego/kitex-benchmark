@@ -65,20 +65,23 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 		tps = float64(c.Total) / (float64(totalns) / float64(sec))
 	}
 
+	var sum float64
 	costs := make([]float64, len(c.costs))
 	for i := range c.costs {
 		costs[i] = float64(c.costs[i])
+		sum += float64(c.costs[i])
 	}
+	avg := sum / float64(len(c.costs))
 	tp99, _ := stats.Percentile(costs, 99)
 	tp999, _ := stats.Percentile(costs, 99.9)
 
 	var result string
 	if tp999/1000 < 1 {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, qps=%d, n=%d)",
-			title, tps, tp99/1000, tp999/1000, echoSize, concurrent, qps, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, AVG: %.2fus, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, qps=%d, n=%d)",
+			title, tps, avg/1000, tp99/1000, tp999/1000, echoSize, concurrent, qps, total)
 	} else {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, qps=%d, n=%d)",
-			title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, qps, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, AVG: %.2fms, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, qps=%d, n=%d)",
+			title, tps, avg/1000000, tp99/1000000, tp999/1000000, echoSize, concurrent, qps, total)
 	}
 	logInfo(result)
 	return nil

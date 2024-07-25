@@ -3,7 +3,7 @@ import csv
 import sys
 
 '''CSV Format Example
-Kind,Concurrency,Data Size,TPS,P99,P999,Server_CPU,Client_CPU
+Kind,Concurrency,Data Size,TPS,AVG,P99,Server_CPU,Client_CPU
 [GRPC],100,1024,101152.29,3.36,5.30,188.04,423.07
 '''
 
@@ -23,7 +23,7 @@ class bcolors:
 def diff(from_csv, to_csv):
     from_reader = list(csv.reader(open(from_csv)))
     to_reader = csv.reader(open(to_csv))
-    title = ['Kind', 'Concurrency', 'Data Size', 'QPS', 'P99', 'P999', 'Client CPU', 'Server CPU']
+    title = ['Kind', 'Concurrency', 'Data Size', 'QPS', 'AVG', 'P99', 'Client CPU', 'Server CPU']
     results = []
 
     for line_num, line in enumerate(to_reader):
@@ -33,8 +33,8 @@ def diff(from_csv, to_csv):
         result.append(line[2])  # data size
 
         result.append(diff_cell(from_reader[line_num][3], line[3]))  # tps
-        result.append(diff_cell(from_reader[line_num][4], line[4]))  # p99
-        result.append(diff_cell(from_reader[line_num][5], line[5]))  # p999
+        result.append(diff_cell(from_reader[line_num][4], line[4]))  # avg
+        result.append(diff_cell(from_reader[line_num][5], line[5]))  # p99
         result.append(diff_cell(from_reader[line_num][6], line[6]))  # Server CPU
         result.append(diff_cell(from_reader[line_num][7], line[7]))  # Client CPU
 
