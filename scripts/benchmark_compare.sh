@@ -34,11 +34,13 @@ function log_prefix() {
 }
 
 function prepare_old() {
+    git checkout go.mod go.sum
     go get -v github.com/cloudwego/kitex@$old
     go mod tidy
 }
 
 function prepare_new() {
+    git checkout go.mod go.sum
     go get -v github.com/cloudwego/kitex@$new
     go mod tidy
 }
