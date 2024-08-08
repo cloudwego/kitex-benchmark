@@ -6,7 +6,7 @@ ports=(8000 8006)
 ip=${IP:-"127.0.0.1"}
 
 # build
-source $CURDIR/env.sh
+source $CURDIR/base.sh
 source $CURDIR/build_grpc.sh
 
 # benchmark

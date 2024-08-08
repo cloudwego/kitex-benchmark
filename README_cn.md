@@ -101,7 +101,7 @@ python ./scripts/reports/diff.py output/2021-12-13-21-40.csv output/2021-12-13-2
 
 ### Profiling
 
-由于默认压测参数会比较迅速完成一次压测，为了获得更长采集时间，可以手动在 `./scripts/env.sh` 中调整压测参数 n 大小。
+由于默认压测参数会比较迅速完成一次压测，为了获得更长采集时间，可以手动在 `./scripts/base.sh` 中调整压测参数 n 大小。
 
 #### Profiling Client
 
@@ -129,7 +129,7 @@ go tool pprof localhost:{port}/debug/pprof/{pprof_type}
 
 ### 更多场景测试
 
-修改 `./scripts/env.sh` 文件：
+修改 `./scripts/base.sh` 文件：
 
 ```bash
 # 发送压测请求数

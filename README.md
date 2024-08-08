@@ -103,7 +103,7 @@ python3 ./scripts/reports/diff.py output/2021-12-13-21-40.csv output/2021-12-13-
 
 ### Profiling
 
-Since the default benchmark will complete quickly, to obtain enough time to do profiling, you can increase the parameter `n` in `./scripts/env.sh`.
+Since the default benchmark will complete quickly, to obtain enough time to do profiling, you can increase the parameter `n` in `./scripts/base.sh`.
 
 #### Profiling Client
 
@@ -131,7 +131,7 @@ go tool pprof localhost:{port}/debug/pprof/{pprof_type}
 
 ### More scenarios
 
-Modify the `./scripts/env.sh` file:
+Modify the `./scripts/base.sh` file:
 
 ```bash
 # Send pressure test request number

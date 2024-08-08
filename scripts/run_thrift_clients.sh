@@ -6,7 +6,7 @@ ports=(8001 8002)
 ip=${IP:-"127.0.0.1"}
 
 # build
-source $CURDIR/env.sh
+source $CURDIR/base.sh
 source $CURDIR/build_thrift.sh
 
 # benchmark
