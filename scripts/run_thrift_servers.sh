@@ -4,7 +4,7 @@ CURDIR=$(cd $(dirname $0); pwd)
 repo=("kitex" "kitex-mux")
 
 # build
-source $CURDIR/env.sh
+source $CURDIR/base.sh
 source $CURDIR/build_thrift.sh
 
 # benchmark

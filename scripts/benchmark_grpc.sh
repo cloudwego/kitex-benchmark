@@ -3,7 +3,7 @@ set -e
 CURDIR=$(cd $(dirname $0); pwd)
 
 echo "Checking whether the environment meets the requirements ..."
-source $CURDIR/env.sh
+source $CURDIR/base.sh
 echo "Check finished."
 
 srepo=("grpc" "kitex")
