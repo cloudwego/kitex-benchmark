@@ -96,7 +96,11 @@ func Main(name string, newer ClientNewer) {
 	handler := func() error { return cli.Send(method, action, payload) }
 
 	// === warming ===
-	r.Warmup(handler, concurrent, qps, 100*1000)
+	warmupTotal := 100 * 1000
+	if qps > 0 {
+		warmupTotal = qps * 2
+	}
+	r.Warmup(handler, concurrent, qps, int64(warmupTotal))
 
 	// === beginning ===
 	if err := cli.Send(method, BeginAction, "empty"); err != nil {
