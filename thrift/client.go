@@ -23,6 +23,9 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/bytedance/gopkg/lang/fastrand"
+	"github.com/cloudwego/kitex-tests/pkg/utils"
+
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
 	"github.com/cloudwego/kitex-benchmark/runner"
@@ -45,7 +48,7 @@ func (cli *kitexClient) Send(method, action, msg string) error {
 	case "echocomplex":
 		return cli.echoComplex(action, msg)
 	default:
-		return fmt.Errorf("unknow method: %s", method)
+		return fmt.Errorf("unknown method: %s", method)
 	}
 }
 
@@ -77,71 +80,55 @@ var echoComplexReqPool = sync.Pool{
 }
 
 func (cli *kitexClient) echoComplex(action, msg string) error {
-	ctx := context.Background()
-	req := echoComplexReqPool.Get().(*echo.ComplexRequest)
-	defer echoComplexReqPool.Put(req)
+	req := createComplexRequest(action, msg)
 
-	// 复杂结构体下，我们需要把 msg string 分拆到 complex request 中，保证整体包大小没有太大变化下，提高字段复杂度
-	const complexity = 16
-	msgSize := len(msg)
-	req.Action = action
-
-	req.MsgMap = make(map[string]*echo.SubMessage, complexity)
-	content := msg[msgSize/4*0 : msgSize/4*1]
-	for idx, str := range splitString(content, complexity) {
-		id := int64(idx)
-		req.MsgMap[strconv.Itoa(idx)] = &echo.SubMessage{
-			Id:    &id,
-			Value: &str,
-		}
-	}
-
-	req.SubMsgs = make([]*echo.SubMessage, complexity)
-	content = msg[msgSize/4*1 : msgSize/4*2]
-	for idx, str := range splitString(content, complexity) {
-		id := int64(idx)
-		req.SubMsgs[idx] = &echo.SubMessage{
-			Id:    &id,
-			Value: &str,
-		}
-	}
-
-	req.MsgSet = make([]*echo.Message, complexity)
-	content = msg[msgSize/4*2 : msgSize/4*3]
-	for idx, str := range splitString(content, complexity) {
-		id := int64(idx)
-		req.MsgSet[idx] = &echo.Message{
-			Id: &id,
-			SubMessages: []*echo.SubMessage{
-				{
-					Id:    &id,
-					Value: &str,
-				},
-			},
-		}
-	}
-
-	req.FlagMsg = new(echo.Message)
-	content = msg[msgSize/4*3 : msgSize/4*4]
-	req.FlagMsg = &echo.Message{
-		Value: &content,
-	}
-
-	reply, err := cli.client.EchoComplex(ctx, req)
+	reply, err := cli.client.EchoComplex(context.Background(), req)
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)
 	}
 	return err
 }
 
-func splitString(str string, n int) []string {
-	ret := make([]string, n)
-	if n < 0 || len(str) < n {
-		return ret
+func createComplexRequest(action, msg string) *echo.ComplexRequest {
+	req := echoComplexReqPool.Get().(*echo.ComplexRequest)
+	defer echoComplexReqPool.Put(req)
+
+	id := int64(fastrand.Int31n(100))
+	smallSubMsg := &echo.SubMessage{
+		Id:    &id,
+		Value: ptr(utils.RandomString(10)),
 	}
-	single := len(str) / n
-	for i := 0; i < n; i++ {
-		ret[i] = str[i*single : (i+1)*single]
+	subMsg1K := &echo.SubMessage{
+		Id:    &id,
+		Value: ptr(utils.RandomString(1024)),
 	}
-	return ret
+
+	subMsgList2Items := []*echo.SubMessage{smallSubMsg, smallSubMsg}
+
+	message := &echo.Message{
+		Id:          &id,
+		Value:       ptr(utils.RandomString(1024)),
+		SubMessages: subMsgList2Items,
+	}
+
+	msgMap := make(map[string]*echo.SubMessage)
+	for i := 0; i < 5; i++ {
+		msgMap[strconv.Itoa(i)] = subMsg1K
+	}
+
+	subMsgList100Items := make([]*echo.SubMessage, 100)
+	for i := 0; i < len(subMsgList100Items); i++ {
+		subMsgList100Items[i] = smallSubMsg
+	}
+
+	req.Action = action
+	req.Msg = msg
+	req.MsgMap = msgMap
+	req.SubMsgs = subMsgList100Items
+	req.MsgSet = []*echo.Message{message}
+	req.FlagMsg = message
+
+	return req
 }
+
+func ptr[T any](v T) *T { return &v }
