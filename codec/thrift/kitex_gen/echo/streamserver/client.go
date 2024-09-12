@@ -4,7 +4,6 @@ package streamserver
 
 import (
 	"context"
-
 	echo "github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	client "github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/streamxclient"
@@ -14,11 +13,11 @@ import (
 	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 )
 
-type ClientInterface interface {
+type Client interface {
 	Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response], err error)
 }
 
-func NewClient(destService string, opts ...streamxclient.Option) (ClientInterface, error) {
+func NewClient(destService string, opts ...streamxclient.Option) (Client, error) {
 	var options []streamxclient.Option
 	options = append(options, streamxclient.WithDestService(destService))
 	options = append(options, opts...)
@@ -35,7 +34,7 @@ func NewClient(destService string, opts ...streamxclient.Option) (ClientInterfac
 	return kc, nil
 }
 
-var _ ClientInterface = (*kClient)(nil)
+var _ Client = (*kClient)(nil)
 
 type kClient struct {
 	caller   client.Client

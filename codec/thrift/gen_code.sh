@@ -1,1 +1,1 @@
-kitex -module -stream-v2 github.com/cloudwego/kitex-benchmark ./echo.thrift
+kitex -stream-v2 -module github.com/cloudwego/kitex-benchmark ./echo.thrift

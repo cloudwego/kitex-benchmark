@@ -34,7 +34,7 @@ import (
 const port = 8002
 
 var (
-	_ streamserver.ServerInterface = &StreamServerImpl{}
+	_ streamserver.Server = &StreamServerImpl{}
 
 	recorder = perf.NewRecorder("KITEX_TTS@Server")
 )

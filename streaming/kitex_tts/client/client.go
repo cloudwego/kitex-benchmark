@@ -33,12 +33,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 )
 
-var _ streamx.BidiStreamingClient[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response] = (*streamx.GenericClientStream[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response])(nil)
-
-type bidiStream struct {
-	streamx.BidiStreamingClient[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response]
-}
-
 func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 
@@ -69,7 +63,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 }
 
 type kClient struct {
-	client     streamserver.ClientInterface
+	client     streamserver.Client
 	streampool *sync.Pool
 	reqPool    *sync.Pool
 }
