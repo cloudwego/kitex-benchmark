@@ -23,6 +23,7 @@ service Echo {
 // === streaming ===
 //----------------------service-------------------
 service SEcho {
+  // bidirectional
   rpc echo (stream Request) returns (stream Response) {
   }
 }

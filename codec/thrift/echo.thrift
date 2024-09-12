@@ -49,3 +49,7 @@ service EchoServer {
     Response Echo(1: Request req)
     ComplexResponse EchoComplex(1: ComplexRequest req)(api.post = '/echo/complex/:action', api.baseurl = 'example.com', api.param = 'true', api.serializer = 'json')
 }
+
+service StreamServer {
+    Response Echo(1: Request req) (streaming.mode="bidirectional"),
+}
