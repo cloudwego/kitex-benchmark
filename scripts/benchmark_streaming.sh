@@ -2,8 +2,8 @@
 set -e
 
 # benchmark params
-srepo=("grpc" "kitex", "kitex_tts")
-crepo=("grpc" "kitex", "kitex_tts")
+srepo=("grpc" "kitex" "kitex_tts")
+crepo=("grpc" "kitex" "kitex_tts")
 ports=(8000 8001 8002)
 
 CURDIR=$(cd $(dirname $0); pwd)
