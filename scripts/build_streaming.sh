@@ -13,7 +13,7 @@ $GOEXEC build -v -o $output_dir/bin/kitex_reciever $streaming_dir/kitex
 
 # build kitex_tts
 $GOEXEC mod tidy
-$GOEXEC build -v -o $output_dir/bin/kitex_tts_bencher $streaming_dir/kitex/client
+$GOEXEC build -v -o $output_dir/bin/kitex_tts_bencher $streaming_dir/kitex_tts/client
 $GOEXEC build -v -o $output_dir/bin/kitex_tts_reciever $streaming_dir/kitex_tts
 
 # build grpc
