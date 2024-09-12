@@ -96,18 +96,18 @@ func createComplexRequest(action, msg string) *echo.ComplexRequest {
 	id := int64(fastrand.Int31n(100))
 	smallSubMsg := &echo.SubMessage{
 		Id:    &id,
-		Value: stringPtr(utils.RandomString(10)),
+		Value: ptr(utils.RandomString(10)),
 	}
 	subMsg1K := &echo.SubMessage{
 		Id:    &id,
-		Value: stringPtr(utils.RandomString(1024)),
+		Value: ptr(utils.RandomString(1024)),
 	}
 
 	subMsgList2Items := []*echo.SubMessage{smallSubMsg, smallSubMsg}
 
 	message := &echo.Message{
 		Id:          &id,
-		Value:       stringPtr(utils.RandomString(1024)),
+		Value:       ptr(utils.RandomString(1024)),
 		SubMessages: subMsgList2Items,
 	}
 
@@ -131,4 +131,4 @@ func createComplexRequest(action, msg string) *echo.ComplexRequest {
 	return req
 }
 
-func stringPtr(v string) *string { return &v }
+func ptr[T any](v T) *T { return &v }
