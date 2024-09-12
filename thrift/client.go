@@ -48,7 +48,7 @@ func (cli *kitexClient) Send(method, action, msg string) error {
 	case "echocomplex":
 		return cli.echoComplex(action, msg)
 	default:
-		return fmt.Errorf("unknow method: %s", method)
+		return fmt.Errorf("unknown method: %s", method)
 	}
 }
 
