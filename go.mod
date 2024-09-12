@@ -7,7 +7,7 @@ require (
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/gopkg v0.1.2-0.20240910075652-f542979ecca4
-	github.com/cloudwego/kitex v0.11.2-0.20240912062752-e5ea2abe7b45
+	github.com/cloudwego/kitex v0.11.2-0.20240912101306-b74420638cb1
 	github.com/gogo/protobuf v1.3.2
 	github.com/juju/ratelimit v1.0.1
 	github.com/lesismal/arpc v1.2.4

@@ -76,6 +76,12 @@ github.com/cloudwego/kitex v0.11.2-0.20240912062203-473ea27c61ef h1:XFVTE9VDylte
 github.com/cloudwego/kitex v0.11.2-0.20240912062203-473ea27c61ef/go.mod h1:vMmuPwtLs7Sl9SWpQXZakap3ZWruStqZF56etnX33Z8=
 github.com/cloudwego/kitex v0.11.2-0.20240912062752-e5ea2abe7b45 h1:i4Lu4nAqjoFKayvnvqpFTLOIE1Tu0tOnmvzt+Lehymw=
 github.com/cloudwego/kitex v0.11.2-0.20240912062752-e5ea2abe7b45/go.mod h1:vMmuPwtLs7Sl9SWpQXZakap3ZWruStqZF56etnX33Z8=
+github.com/cloudwego/kitex v0.11.2-0.20240912081801-5280af3c393e h1:egsiYPx5dyF3YdkCIRdKr6ivAcOiEDg+cJ8A+1olXSM=
+github.com/cloudwego/kitex v0.11.2-0.20240912081801-5280af3c393e/go.mod h1:vMmuPwtLs7Sl9SWpQXZakap3ZWruStqZF56etnX33Z8=
+github.com/cloudwego/kitex v0.11.2-0.20240912083747-702cd05fa3ab h1:h/DjvOGO2zHiARDR9QAu84VlBOXjLRrM/ZQIAFZIxuw=
+github.com/cloudwego/kitex v0.11.2-0.20240912083747-702cd05fa3ab/go.mod h1:vMmuPwtLs7Sl9SWpQXZakap3ZWruStqZF56etnX33Z8=
+github.com/cloudwego/kitex v0.11.2-0.20240912101306-b74420638cb1 h1:XrtEryvJ5r6UxGPyFUldBDsZshdDk/Lhs/UQlFc5cs8=
+github.com/cloudwego/kitex v0.11.2-0.20240912101306-b74420638cb1/go.mod h1:vMmuPwtLs7Sl9SWpQXZakap3ZWruStqZF56etnX33Z8=
 github.com/cloudwego/localsession v0.0.2 h1:N9/IDtCPj1fCL9bCTP+DbXx3f40YjVYWcwkJG0YhQkY=
 github.com/cloudwego/localsession v0.0.2/go.mod h1:kiJxmvAcy4PLgKtEnPS5AXed3xCiXcs7Z+KBHP72Wv8=
 github.com/cloudwego/netpoll v0.6.5-0.20240911104114-8a1f5597a920 h1:WT7vsDDb+ammyB7XLmNSS4vKGpPvM2JDl6h34Jj7mY4=
