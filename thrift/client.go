@@ -80,17 +80,16 @@ var echoComplexReqPool = sync.Pool{
 }
 
 func (cli *kitexClient) echoComplex(action, msg string) error {
-	ctx := context.Background()
-	ctx, req := createComplexRequest(ctx, action, msg)
+	req := createComplexRequest(action, msg)
 
-	reply, err := cli.client.EchoComplex(ctx, req)
+	reply, err := cli.client.EchoComplex(context.Background(), req)
 	if reply != nil {
 		runner.ProcessResponse(reply.Action, reply.Msg)
 	}
 	return err
 }
 
-func createComplexRequest(ctx context.Context, action, msg string) (context.Context, *echo.ComplexRequest) {
+func createComplexRequest(action, msg string) *echo.ComplexRequest {
 	req := echoComplexReqPool.Get().(*echo.ComplexRequest)
 	defer echoComplexReqPool.Put(req)
 
@@ -129,7 +128,7 @@ func createComplexRequest(ctx context.Context, action, msg string) (context.Cont
 	req.MsgSet = []*echo.Message{message}
 	req.FlagMsg = message
 
-	return ctx, req
+	return req
 }
 
 func stringPtr(v string) *string { return &v }
