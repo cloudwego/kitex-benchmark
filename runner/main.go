@@ -34,6 +34,7 @@ var (
 	qps        int
 	poolSize   int
 	sleepTime  int
+	warmup     int
 )
 
 type Options struct {
@@ -63,6 +64,7 @@ func initFlags() {
 	flag.Int64Var(&total, "n", 1024*100, "call total nums")
 	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
 	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
+	flag.IntVar(&sleepTime, "warmup", 100*1000, "sleep time for every request handler")
 	flag.Parse()
 }
 
@@ -96,8 +98,8 @@ func Main(name string, newer ClientNewer) {
 	handler := func() error { return cli.Send(method, action, payload) }
 
 	// === warming ===
-	warmupTotal := 100 * 1000
-	if qps > 0 {
+	warmupTotal := warmup
+	if qps > 0 && warmup != 0 {
 		warmupTotal = qps * 2
 	}
 	r.Warmup(handler, concurrent, qps, int64(warmupTotal))
