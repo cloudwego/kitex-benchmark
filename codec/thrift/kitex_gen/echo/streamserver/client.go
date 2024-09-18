@@ -14,18 +14,18 @@ import (
 )
 
 type Client interface {
-	Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response], err error)
+	Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[echo.Request, echo.Response], err error)
 }
 
 func NewClient(destService string, opts ...streamxclient.Option) (Client, error) {
 	var options []streamxclient.Option
 	options = append(options, streamxclient.WithDestService(destService))
-	options = append(options, opts...)
 	cp, err := ttstream.NewClientProvider(svcInfo)
 	if err != nil {
 		return nil, err
 	}
 	options = append(options, streamxclient.WithProvider(cp))
+	options = append(options, opts...)
 	cli, err := streamxclient.NewClient(svcInfo, options...)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ type kClient struct {
 	streamer streamxclient.Client
 }
 
-func (c *kClient) Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response], err error) {
-	return streamxclient.InvokeStream[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response](
+func (c *kClient) Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[echo.Request, echo.Response], err error) {
+	return streamxclient.InvokeStream[echo.Request, echo.Response](
 		ctx, c.streamer, serviceinfo.StreamingBidirectional, "Echo", nil, nil, callOptions...)
 }
