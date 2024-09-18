@@ -7,7 +7,7 @@ require (
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/gopkg v0.1.2-0.20240910075652-f542979ecca4
-	github.com/cloudwego/kitex v0.11.2-0.20240912101306-b74420638cb1
+	github.com/cloudwego/kitex v0.11.2-0.20240918080835-1a73caeb97dd
 	github.com/gogo/protobuf v1.3.2
 	github.com/juju/ratelimit v1.0.1
 	github.com/lesismal/arpc v1.2.4
@@ -51,7 +51,6 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/google/btree v1.0.0 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
 	github.com/grandcat/zeroconf v0.0.0-20180329153754-df75bb3ccae1 // indirect
 	github.com/hashicorp/consul/api v1.8.1 // indirect
@@ -123,3 +122,5 @@ require (
 )
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
+
+replace github.com/cloudwego/kitex => ../kitex

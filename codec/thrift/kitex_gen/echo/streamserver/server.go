@@ -11,7 +11,7 @@ import (
 )
 
 type Server interface {
-	Echo(ctx context.Context, stream streamx.BidiStreamingServer[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response]) error
+	Echo(ctx context.Context, stream streamx.BidiStreamingServer[echo.Request, echo.Response]) error
 }
 
 func RegisterService(svr server.Server, handler Server, opts ...server.RegisterOption) error {

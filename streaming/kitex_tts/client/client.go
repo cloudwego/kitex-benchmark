@@ -30,7 +30,6 @@ import (
 	"github.com/cloudwego/kitex/client/streamxclient"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/streamx"
-	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 )
 
 func NewKClient(opt *runner.Options) runner.Client {
@@ -76,7 +75,7 @@ func (cli *kClient) Send(method, action, msg string) error {
 	if st == nil {
 		return errors.New("new stream from streampool failed")
 	}
-	stream, ok := st.(streamx.BidiStreamingClient[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response])
+	stream, ok := st.(streamx.BidiStreamingClient[echo.Request, echo.Response])
 	if !ok {
 		return errors.New("new stream error")
 	}

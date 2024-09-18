@@ -27,7 +27,6 @@ import (
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex/pkg/streamx"
-	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 	"github.com/cloudwego/kitex/server"
 )
 
@@ -41,7 +40,7 @@ var (
 
 type StreamServerImpl struct{}
 
-func (si *StreamServerImpl) Echo(ctx context.Context, stream streamx.BidiStreamingServer[ttstream.Header, ttstream.Trailer, echo.Request, echo.Response]) error {
+func (si *StreamServerImpl) Echo(ctx context.Context, stream streamx.BidiStreamingServer[echo.Request, echo.Response]) error {
 	for {
 		req, err := stream.Recv(ctx)
 		if err == io.EOF {
