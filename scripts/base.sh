@@ -8,6 +8,11 @@ body=(1024)
 concurrent=(100 200 400 600 800 1000)
 qps=(0)
 sleep=0
+# NOTICE: if you want to dump profile, set "enable_profile" to 1
+enable_profile=0
+if [ $enable_profile -eq 1 ]; then
+  export KITEX_ENABLE_PROFILE=1
+fi
 
 CURDIR=$(cd $(dirname $0); pwd)
 
@@ -74,6 +79,15 @@ function kill_pid_listening_on_port() {
         exit 1
     fi
     pids=`lsof -i ":$port" | grep LISTEN | awk '{print $2}' | uniq`
+
+    for p in $pids; do
+        echo "Sending termination signal to $p..."
+        kill -s SIGTERM $p  # 发送 SIGTERM 信号给程序
+    done
+
+    # 给程序一定时间处理信号后再强制终止
+    sleep 2
+
     for p in $pids; do
         echo killing $p...
         kill $p

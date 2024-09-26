@@ -51,6 +51,21 @@ func (s *EchoImpl) Echo(ctx context.Context, req *echo.Request) (*echo.Response,
 }
 
 func main() {
+	if os.Getenv("KITEX_ENABLE_PROFILE") == "1" {
+		fmt.Println("[Kitex profile is enabled]")
+		// start cpu profile
+		cpuProfile, _ := os.Create("output/benchmark-grpc-server-cpu.pprof")
+		defer cpuProfile.Close()
+		_ = pprof.StartCPUProfile(cpuProfile)
+		defer pprof.StopCPUProfile()
+
+		// heap profile after finish
+		heapProfile, _ := os.Create("output/benchmark-grpc-server-mem.pprof")
+		defer func() {
+			_ = pprof.WriteHeapProfile(heapProfile)
+			heapProfile.Close()
+		}()
+	}
 	// start pprof server
 	go func() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
