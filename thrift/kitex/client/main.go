@@ -17,6 +17,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"runtime/pprof"
 	"time"
 
 	"github.com/cloudwego/kitex/client"

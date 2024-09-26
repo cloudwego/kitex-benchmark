@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"runtime/pprof"
 
 	"github.com/cloudwego/kitex/server"
 

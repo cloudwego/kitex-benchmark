@@ -17,6 +17,10 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"runtime/pprof"
+
 	"github.com/cloudwego/kitex-benchmark/runner"
 )
 
