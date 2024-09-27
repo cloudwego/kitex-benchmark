@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"runtime/pprof"
 
 	"github.com/cloudwego/kitex/server"
 
@@ -60,6 +62,21 @@ func (s *EchoServerImpl) EchoComplex(ctx context.Context, req *echo.ComplexReque
 }
 
 func main() {
+	if os.Getenv("KITEX_ENABLE_PROFILE") == "1" {
+		fmt.Println("[Kitex profile is enabled]")
+		// start cpu profile
+		cpuProfile, _ := os.Create("output/benchmark-thrift-server-cpu.pprof")
+		defer cpuProfile.Close()
+		_ = pprof.StartCPUProfile(cpuProfile)
+		defer pprof.StopCPUProfile()
+
+		// heap profile after finish
+		heapProfile, _ := os.Create("output/benchmark-thrift-server-mem.pprof")
+		defer func() {
+			_ = pprof.WriteHeapProfile(heapProfile)
+			heapProfile.Close()
+		}()
+	}
 	// start pprof server
 	go func() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
