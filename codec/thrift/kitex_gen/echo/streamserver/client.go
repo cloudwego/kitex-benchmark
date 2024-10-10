@@ -20,13 +20,13 @@ type Client interface {
 func NewClient(destService string, opts ...streamxclient.Option) (Client, error) {
 	var options []streamxclient.Option
 	options = append(options, streamxclient.WithDestService(destService))
-	cp, err := ttstream.NewClientProvider(svcInfo)
+	cp, err := ttstream.NewClientProvider(ServiceInfo)
 	if err != nil {
 		return nil, err
 	}
 	options = append(options, streamxclient.WithProvider(cp))
 	options = append(options, opts...)
-	cli, err := streamxclient.NewClient(svcInfo, options...)
+	cli, err := streamxclient.NewClient(ServiceInfo, options...)
 	if err != nil {
 		return nil, err
 	}

@@ -23,9 +23,11 @@ import (
 	"log"
 	"net"
 
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
 	"github.com/cloudwego/kitex-benchmark/perf"
+	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/pkg/streamx"
 	"github.com/cloudwego/kitex/server"
 )
@@ -33,14 +35,18 @@ import (
 const port = 8002
 
 var (
-	_ streamserver.Server = &StreamServerImpl{}
-
-	recorder = perf.NewRecorder("KITEX_TTS@Server")
+	_        streamserver.Server = &StreamServerImpl{}
+	recorder                     = perf.NewRecorder("KITEX_TTS_LCONN@Server")
 )
 
 type StreamServerImpl struct{}
 
 func (si *StreamServerImpl) Echo(ctx context.Context, stream streamx.BidiStreamingServer[echo.Request, echo.Response]) error {
+	v, _ := metainfo.GetValue(ctx, "header")
+	if v != "hello" {
+		return fmt.Errorf("invalid header: %v", v)
+	}
+
 	for {
 		req, err := stream.Recv(ctx)
 		if err == io.EOF {
@@ -49,9 +55,11 @@ func (si *StreamServerImpl) Echo(ctx context.Context, stream streamx.BidiStreami
 		if err != nil {
 			return err
 		}
+		action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
 		resp := new(echo.Response)
-		resp.Msg = req.Msg
+		resp.Action = action
+		resp.Msg = msg
 		err = stream.Send(ctx, resp)
 		if err != nil {
 			return err
@@ -65,7 +73,9 @@ func main() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
 
-	svr := server.NewServer(server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}))
+	svr := server.NewServer(
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
+	)
 	err := streamserver.RegisterService(svr, new(StreamServerImpl))
 	if err != nil {
 		panic(err)

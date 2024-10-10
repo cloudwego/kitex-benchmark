@@ -23,6 +23,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	grpcg "github.com/cloudwego/kitex-benchmark/codec/protobuf/grpc_gen"
 	"github.com/cloudwego/kitex-benchmark/perf"
@@ -40,6 +41,11 @@ type server struct {
 }
 
 func (s *server) Echo(stream grpcg.SEcho_EchoServer) error {
+	md, _ := metadata.FromIncomingContext(stream.Context())
+	if md == nil || len(md["header"]) == 0 || md["header"][0] != "hello" {
+		return fmt.Errorf("invalid header: %v", md)
+	}
+
 	for {
 		req, err := stream.Recv()
 		if err != nil {

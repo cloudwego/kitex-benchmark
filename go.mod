@@ -6,8 +6,8 @@ require (
 	github.com/bytedance/gopkg v0.1.1
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.5
-	github.com/cloudwego/gopkg v0.1.2-0.20240910075652-f542979ecca4
-	github.com/cloudwego/kitex v0.11.2-0.20240918080835-1a73caeb97dd
+	github.com/cloudwego/gopkg v0.1.2-0.20240919030844-cb7123236682
+	github.com/cloudwego/kitex v0.11.2-0.20241010053736-f4746b81e7d9
 	github.com/cloudwego/kitex-tests v0.1.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/juju/ratelimit v1.0.1
@@ -123,5 +123,3 @@ require (
 )
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
-
-replace github.com/cloudwego/kitex => ../kitex
