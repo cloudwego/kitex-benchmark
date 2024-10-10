@@ -23,6 +23,7 @@ import (
 	"sync"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	grpcg "github.com/cloudwego/kitex-benchmark/codec/protobuf/grpc_gen"
 	"github.com/cloudwego/kitex-benchmark/runner"
@@ -37,7 +38,8 @@ func NewGrpcClient(opt *runner.Options) runner.Client {
 	return &grpcClient{
 		client: client,
 		streampool: &sync.Pool{New: func() interface{} {
-			stream, err := client.Echo(context.Background())
+			ctx := metadata.AppendToOutgoingContext(context.Background(), "header", "hello")
+			stream, err := client.Echo(ctx)
 			if err != nil {
 				log.Printf("client new stream failed: %v", err)
 				return nil
@@ -78,4 +80,8 @@ func (cli *grpcClient) Send(method, action, msg string) (err error) {
 	}
 	runner.ProcessResponse(resp.Action, resp.Msg)
 	return nil
+}
+
+func main() {
+	runner.Main("GRPC", NewGrpcClient)
 }

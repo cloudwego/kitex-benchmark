@@ -10,7 +10,7 @@ import (
 	"github.com/cloudwego/kitex/server/streamxserver"
 )
 
-var svcInfo = &serviceinfo.ServiceInfo{
+var ServiceInfo = &serviceinfo.ServiceInfo{
 	ServiceName: "StreamServer",
 	Methods: map[string]serviceinfo.MethodInfo{
 		"Echo": serviceinfo.NewMethodInfo(

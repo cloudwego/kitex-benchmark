@@ -30,12 +30,21 @@ import (
 	"github.com/cloudwego/kitex/client/streamxclient"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/streamx"
+	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 )
 
 func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 
-	c, err := streamserver.NewClient("test.echo.kitex", streamxclient.WithHostPorts(opt.Address))
+	cp, _ := ttstream.NewClientProvider(
+		streamserver.ServiceInfo,
+		ttstream.WithClientLongConnPool(ttstream.DefaultLongConnConfig),
+	)
+	c, err := streamserver.NewClient(
+		"test.echo.kitex",
+		streamxclient.WithHostPorts(opt.Address),
+		streamxclient.WithProvider(cp),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,7 +52,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 		client: c,
 		streampool: &sync.Pool{
 			New: func() interface{} {
-				ctx := metainfo.WithValue(context.Background(), "headerkey", "headerval")
+				ctx := metainfo.WithValue(context.Background(), "header", "hello")
 				stream, err := c.Echo(ctx)
 				if err != nil {
 					log.Printf("client new stream failed: %v", err)
@@ -99,5 +108,5 @@ func (cli *kClient) Send(method, action, msg string) error {
 
 // main is use for routing.
 func main() {
-	runner.Main("KITEX_TTS", NewKClient)
+	runner.Main("KITEX_TTS_LCONN", NewKClient)
 }

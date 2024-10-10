@@ -24,6 +24,7 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/metadata"
 	"github.com/cloudwego/kitex/transport"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
@@ -42,7 +43,8 @@ func NewKClient(opt *runner.Options) runner.Client {
 		client: c,
 		streampool: &sync.Pool{
 			New: func() interface{} {
-				stream, err := c.Echo(context.Background())
+				ctx := metadata.AppendToOutgoingContext(context.Background(), "header", "hello")
+				stream, err := c.Echo(ctx)
 				if err != nil {
 					log.Printf("client new stream failed: %v", err)
 					return nil
@@ -86,4 +88,9 @@ func (cli *kClient) Send(method, action, msg string) error {
 	}
 	runner.ProcessResponse(resp.Action, resp.Msg)
 	return nil
+}
+
+// main is use for routing.
+func main() {
+	runner.Main("KITEX_GRPC", NewKClient)
 }

@@ -15,7 +15,7 @@ type Server interface {
 }
 
 func RegisterService(svr server.Server, handler Server, opts ...server.RegisterOption) error {
-	sp, err := ttstream.NewServerProvider(svcInfo)
+	sp, err := ttstream.NewServerProvider(ServiceInfo)
 	if err != nil {
 		return err
 	}
@@ -23,5 +23,5 @@ func RegisterService(svr server.Server, handler Server, opts ...server.RegisterO
 		streamxserver.WithProvider(sp),
 	}
 	nopts = append(nopts, opts...)
-	return svr.RegisterService(svcInfo, handler, nopts...)
+	return svr.RegisterService(ServiceInfo, handler, nopts...)
 }

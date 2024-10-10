@@ -21,6 +21,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/metadata"
 	"github.com/cloudwego/kitex/server"
 
 	"github.com/cloudwego/kitex-benchmark/codec/protobuf/kitex_gen/echo"
@@ -34,7 +35,7 @@ const port = 8001
 var (
 	_ echo.SEcho = &EchoImpl{}
 
-	recorder = perf.NewRecorder("KITEX@Server")
+	recorder = perf.NewRecorder("KITEX_GRPC@Server")
 )
 
 // EchoImpl implements the last service interface defined in the IDL.
@@ -42,6 +43,11 @@ type EchoImpl struct{}
 
 // Echo implements the EchoImpl interface.
 func (s *EchoImpl) Echo(stream echo.SEcho_EchoServer) error {
+	md, _ := metadata.FromIncomingContext(stream.Context())
+	if md == nil || len(md["header"]) == 0 || md["header"][0] != "hello" {
+		return fmt.Errorf("invalid header: %v", md)
+	}
+
 	for {
 		req, err := stream.Recv()
 		if err != nil {
