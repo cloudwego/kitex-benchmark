@@ -25,4 +25,3 @@ $GOEXEC build -v -o $output_dir/bin/kitex_tts_lconn_reciever $streaming_dir/kite
 $GOEXEC mod tidy
 $GOEXEC build -v -o $output_dir/bin/kitex_tts_mux_bencher $streaming_dir/kitex_tts_mux/client
 $GOEXEC build -v -o $output_dir/bin/kitex_tts_mux_reciever $streaming_dir/kitex_tts_mux
-
