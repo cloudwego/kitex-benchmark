@@ -27,7 +27,7 @@ import (
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
 	"github.com/cloudwego/kitex-benchmark/runner"
-	"github.com/cloudwego/kitex/client/streamxclient"
+	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/streamx"
 )
@@ -35,7 +35,10 @@ import (
 func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 
-	c, err := streamserver.NewClient("test.echo.kitex", streamxclient.WithHostPorts(opt.Address))
+	c, err := streamserver.NewClient(
+		"test.echo.kitex",
+		client.WithHostPorts(opt.Address),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,7 +47,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 		streampool: &sync.Pool{
 			New: func() interface{} {
 				ctx := metainfo.WithValue(context.Background(), "header", "hello")
-				stream, err := c.Echo(ctx)
+				_, stream, err := c.Echo(ctx)
 				if err != nil {
 					log.Printf("client new stream failed: %v", err)
 					return nil

@@ -3,6 +3,7 @@ package streamserver
 
 import (
 	"context"
+
 	echo "github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex/pkg/streamx"
 	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
@@ -15,13 +16,21 @@ type Server interface {
 }
 
 func RegisterService(svr server.Server, handler Server, opts ...server.RegisterOption) error {
-	sp, err := ttstream.NewServerProvider(ServiceInfo)
-	if err != nil {
-		return err
+	return svr.RegisterService(ServiceInfo, handler, opts...)
+}
+
+func NewServer(handler Server, opts ...server.Option) server.Server {
+	var options []server.Option
+
+	sp, _ := ttstream.NewServerProvider(ServiceInfo)
+	options = append(options, streamxserver.WithProvider(sp))
+
+	options = append(options, opts...)
+	options = append(options, server.WithCompatibleMiddlewareForUnary())
+
+	svr := server.NewServer(options...)
+	if err := svr.RegisterService(ServiceInfo, handler); err != nil {
+		panic(err)
 	}
-	nopts := []server.RegisterOption{
-		streamxserver.WithProvider(sp),
-	}
-	nopts = append(nopts, opts...)
-	return svr.RegisterService(ServiceInfo, handler, nopts...)
+	return svr
 }
