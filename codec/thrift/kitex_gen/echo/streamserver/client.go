@@ -4,6 +4,7 @@ package streamserver
 
 import (
 	"context"
+
 	echo "github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	client "github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/streamxclient"
@@ -14,23 +15,23 @@ import (
 )
 
 type Client interface {
-	Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[echo.Request, echo.Response], err error)
+	Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (context.Context, streamx.BidiStreamingClient[echo.Request, echo.Response], error)
 }
 
-func NewClient(destService string, opts ...streamxclient.Option) (Client, error) {
-	var options []streamxclient.Option
-	options = append(options, streamxclient.WithDestService(destService))
+func NewClient(destService string, opts ...client.Option) (Client, error) {
+	var options []client.Option
+	options = append(options, client.WithDestService(destService))
 	cp, err := ttstream.NewClientProvider(ServiceInfo)
 	if err != nil {
 		return nil, err
 	}
 	options = append(options, streamxclient.WithProvider(cp))
 	options = append(options, opts...)
-	cli, err := streamxclient.NewClient(ServiceInfo, options...)
+	cli, err := client.NewClient(ServiceInfo, options...)
 	if err != nil {
 		return nil, err
 	}
-	kc := &kClient{streamer: cli, caller: cli.(client.Client)}
+	kc := &kClient{streamer: cli.(client.StreamX), caller: cli.(client.Client)}
 	return kc, nil
 }
 
@@ -38,10 +39,10 @@ var _ Client = (*kClient)(nil)
 
 type kClient struct {
 	caller   client.Client
-	streamer streamxclient.Client
+	streamer client.StreamX
 }
 
-func (c *kClient) Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (stream streamx.BidiStreamingClient[echo.Request, echo.Response], err error) {
+func (c *kClient) Echo(ctx context.Context, callOptions ...streamxcallopt.CallOption) (context.Context, streamx.BidiStreamingClient[echo.Request, echo.Response], error) {
 	return streamxclient.InvokeStream[echo.Request, echo.Response](
 		ctx, c.streamer, serviceinfo.StreamingBidirectional, "Echo", nil, nil, callOptions...)
 }

@@ -15,17 +15,18 @@ var ServiceInfo = &serviceinfo.ServiceInfo{
 	Methods: map[string]serviceinfo.MethodInfo{
 		"Echo": serviceinfo.NewMethodInfo(
 			func(ctx context.Context, handler, reqArgs, resArgs interface{}) error {
-				return streamxserver.InvokeStream[echo.Request, echo.Response](
-					ctx, serviceinfo.StreamingBidirectional, handler.(streamx.StreamHandler), reqArgs.(streamx.StreamReqArgs), resArgs.(streamx.StreamResArgs))
+				return streamxserver.InvokeBidiStreamHandler[echo.Request, echo.Response](
+					ctx, reqArgs.(streamx.StreamReqArgs), resArgs.(streamx.StreamResArgs),
+					func(ctx context.Context, stream streamx.BidiStreamingServer[echo.Request, echo.Response]) error {
+						return handler.(Server).Echo(ctx, stream)
+					},
+				)
 			},
 			nil,
 			nil,
 			false,
 			serviceinfo.WithStreamingMode(serviceinfo.StreamingBidirectional),
+			serviceinfo.WithMethodExtra("streamx", "true"),
 		),
-	},
-	Extra: map[string]interface{}{
-		"streaming": true,
-		"streamx":   true,
 	},
 }

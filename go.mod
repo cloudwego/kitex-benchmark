@@ -7,7 +7,7 @@ require (
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/gopkg v0.1.2-0.20240919030844-cb7123236682
-	github.com/cloudwego/kitex v0.11.2-0.20241010053736-f4746b81e7d9
+	github.com/cloudwego/kitex v0.11.3-0.20241112064056-c0dad5a05e03
 	github.com/cloudwego/kitex-tests v0.1.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/juju/ratelimit v1.0.1
@@ -30,13 +30,13 @@ require (
 	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/configmanager v0.2.2 // indirect
-	github.com/cloudwego/dynamicgo v0.4.3-0.20241009082247-81665bf11089 // indirect
+	github.com/cloudwego/dynamicgo v0.4.4 // indirect
 	github.com/cloudwego/frugal v0.2.0 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/cloudwego/localsession v0.1.1 // indirect
 	github.com/cloudwego/netpoll v0.6.5-0.20240911104114-8a1f5597a920 // indirect
 	github.com/cloudwego/runtimex v0.1.0 // indirect
-	github.com/cloudwego/thriftgo v0.3.17 // indirect
+	github.com/cloudwego/thriftgo v0.3.18 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-jump v0.0.0-20170409065014-e1f439676b57 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect

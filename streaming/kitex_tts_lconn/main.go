@@ -73,13 +73,10 @@ func main() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
 
-	svr := server.NewServer(
+	svr := streamserver.NewServer(
+		new(StreamServerImpl),
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
 	)
-	err := streamserver.RegisterService(svr, new(StreamServerImpl))
-	if err != nil {
-		panic(err)
-	}
 	if err := svr.Run(); err != nil {
 		log.Println(err.Error())
 	}
