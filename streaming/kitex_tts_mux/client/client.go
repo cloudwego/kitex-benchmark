@@ -28,16 +28,23 @@ import (
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
 	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/client/streamxclient"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/streamx"
+	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 )
 
 func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 
+	cp, _ := ttstream.NewClientProvider(
+		streamserver.ServiceInfo,
+		ttstream.WithClientMuxConnPool(ttstream.MuxConnConfig{PoolSize: 4}),
+	)
 	c, err := streamserver.NewClient(
 		"test.echo.kitex",
 		client.WithHostPorts(opt.Address),
+		streamxclient.WithProvider(cp),
 	)
 	if err != nil {
 		log.Fatal(err)
