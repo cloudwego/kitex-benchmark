@@ -82,15 +82,19 @@ function kill_pid_listening_on_port() {
 
     for p in $pids; do
         echo "Sending termination signal to $p..."
-        kill -s SIGTERM $p  # 发送 SIGTERM 信号给程序
+        kill -s SIGTERM $p  # Send SIGTERM signal to the processes
     done
 
-    # 给程序一定时间处理信号后再强制终止
+    # Give the processes a certain amount of time to
+    # handle the signal before forcibly terminating them.
     sleep 2
 
+    # Ignore errors because the processes may not exist.
+    set +e
     for p in $pids; do
         echo killing $p...
         kill $p
     done
     sleep 1
+    set -e
 }
