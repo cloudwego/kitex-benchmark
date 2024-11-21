@@ -38,7 +38,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 
 	cp, _ := ttstream.NewClientProvider(
-		streamserver.ServiceInfo,
+		streamserver.NewServiceInfo(),
 		ttstream.WithClientLongConnPool(ttstream.DefaultLongConnConfig),
 	)
 	c, err := streamserver.NewClient(

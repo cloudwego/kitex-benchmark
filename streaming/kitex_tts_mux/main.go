@@ -29,14 +29,16 @@ import (
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
 	"github.com/cloudwego/kitex/pkg/streamx"
+	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 	"github.com/cloudwego/kitex/server"
+	"github.com/cloudwego/kitex/server/streamxserver"
 )
 
 const port = 8003
 
 var (
-	_        streamserver.Server = &StreamServerImpl{}
-	recorder                     = perf.NewRecorder("KITEX_TTS_MUX@Server")
+	_        streamserver.StreamServer = &StreamServerImpl{}
+	recorder                           = perf.NewRecorder("KITEX_TTS_MUX@Server")
 )
 
 type StreamServerImpl struct{}
@@ -73,9 +75,13 @@ func main() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
 
+	sp, _ := ttstream.NewServerProvider(
+		streamserver.NewServiceInfo(),
+	)
 	svr := streamserver.NewServer(
 		new(StreamServerImpl),
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
+		streamxserver.WithProvider(sp),
 	)
 	if err := svr.Run(); err != nil {
 		log.Println(err.Error())
