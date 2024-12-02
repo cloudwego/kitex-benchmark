@@ -1,6 +1,8 @@
 module github.com/cloudwego/kitex-benchmark
 
-go 1.22
+go 1.21
+
+toolchain go1.23.0
 
 require (
 	github.com/bytedance/gopkg v0.1.1
