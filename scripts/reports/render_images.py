@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import sys
 
-kind = "thrift"
+kind = "streaming"
 
 
 # 0-name, 1-concurrency, 2-size, 3-qps, 6-p99, 7-p999
@@ -61,6 +61,9 @@ color_dict = {
     "[KITEX-MUX]": "darkorange",
     "[RPCX]": "purple",
     "[GRPC]": "pink",
+    "[KITEX_GRPC]": "#6F1862",
+    "[KITEX_TTS_LCONN]": "#C5B8D3",
+    "[KITEX_TTS_MUX]": "#D7E58C",
 }
 
 
