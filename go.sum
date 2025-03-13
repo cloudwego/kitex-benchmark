@@ -70,8 +70,8 @@ github.com/cloudwego/gopkg v0.1.4 h1:EoQiCG4sTonTPHxOGE0VlQs+sQR+Hsi2uN0qqwu8O50
 github.com/cloudwego/gopkg v0.1.4/go.mod h1:FQuXsRWRsSqJLsMVd5SYzp8/Z1y5gXKnVvRrWUOsCMI=
 github.com/cloudwego/iasm v0.2.0 h1:1KNIy1I1H9hNNFEEH3DVnI4UujN+1zjpuk6gwHLTssg=
 github.com/cloudwego/iasm v0.2.0/go.mod h1:8rXZaNYT2n95jn+zTI1sDr+IgcD2GVs0nlbbQPiEFhY=
-github.com/cloudwego/kitex v0.12.4-0.20250311031203-08e720684bfa h1:oqDtZagwkiPpGpujgLZkqEnEQmSzBWdVJjIXFQwCGXs=
-github.com/cloudwego/kitex v0.12.4-0.20250311031203-08e720684bfa/go.mod h1:ioyCpdMdp82A9Zv2+Ab1G4MTYdIL/tBZkMznPk+xzvY=
+github.com/cloudwego/kitex v0.12.4-0.20250313064603-d262a8c6f28b h1:9yskT3Jyqtd0TGjegvwrqURO4kx3IHZ1QVUwYAQ7taM=
+github.com/cloudwego/kitex v0.12.4-0.20250313064603-d262a8c6f28b/go.mod h1:nj81K/pvKqmHd7VfOi8OMCHHsM46DCW0x2hIunY2RPA=
 github.com/cloudwego/kitex-tests v0.1.0 h1:ot96dU4j0mUkav1C+k7kfZgyC/yCSMYDCZwMnKxA4C8=
 github.com/cloudwego/kitex-tests v0.1.0/go.mod h1:tu/EAaw3/UQq82ejp9n0DOyNE6GG6UGguMdWLdQPkRg=
 github.com/cloudwego/kitex/pkg/protocol/bthrift v0.0.0-20241120040446-fa081214728e h1:LAQEoFCNYDZ+yvEuXBzKbw0mTSqAZM4AZ4mxK4Q1An0=
@@ -82,8 +82,8 @@ github.com/cloudwego/netpoll v0.6.5 h1:6E/BWhSzQoyLg9Kx/4xiMdIIpovzwBtXvuqSqaTUz
 github.com/cloudwego/netpoll v0.6.5/go.mod h1:BtM+GjKTdwKoC8IOzD08/+8eEn2gYoiNLipFca6BVXQ=
 github.com/cloudwego/runtimex v0.1.1 h1:lheZjFOyKpsq8TsGGfmX9/4O7F0TKpWmB8on83k7GE8=
 github.com/cloudwego/runtimex v0.1.1/go.mod h1:23vL/HGV0W8nSCHbe084AgEBdDV4rvXenEUMnUNvUd8=
-github.com/cloudwego/thriftgo v0.3.20-0.20250212050810-03aa891f3c6f h1:rCAJqn1YN2fK/m9ybFvT6TfoDBveVVcYgBik3qEN+q4=
-github.com/cloudwego/thriftgo v0.3.20-0.20250212050810-03aa891f3c6f/go.mod h1:AdLEJJVGW/ZJYvkkYAZf5SaJH+pA3OyC801WSwqcBwI=
+github.com/cloudwego/thriftgo v0.3.20-0.20250311063058-0cde2c1f4ed9 h1:Q07LNaikVfflK85XsLeAtuXdLKmxP35tflGKVzraZJg=
+github.com/cloudwego/thriftgo v0.3.20-0.20250311063058-0cde2c1f4ed9/go.mod h1:AdLEJJVGW/ZJYvkkYAZf5SaJH+pA3OyC801WSwqcBwI=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
 github.com/coreos/go-systemd v0.0.0-20181012123002-c6f51f82210d/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=

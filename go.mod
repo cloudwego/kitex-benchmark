@@ -9,7 +9,7 @@ require (
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/gopkg v0.1.4
-	github.com/cloudwego/kitex v0.12.4-0.20250311031203-08e720684bfa
+	github.com/cloudwego/kitex v0.12.4-0.20250313064603-d262a8c6f28b
 	github.com/cloudwego/kitex-tests v0.1.0
 	github.com/cloudwego/kitex/pkg/protocol/bthrift v0.0.0-20241120040446-fa081214728e
 	github.com/gogo/protobuf v1.3.2
@@ -39,7 +39,7 @@ require (
 	github.com/cloudwego/localsession v0.1.2 // indirect
 	github.com/cloudwego/netpoll v0.6.5 // indirect
 	github.com/cloudwego/runtimex v0.1.1 // indirect
-	github.com/cloudwego/thriftgo v0.3.20-0.20250212050810-03aa891f3c6f // indirect
+	github.com/cloudwego/thriftgo v0.3.20-0.20250311063058-0cde2c1f4ed9 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-jump v0.0.0-20170409065014-e1f439676b57 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
