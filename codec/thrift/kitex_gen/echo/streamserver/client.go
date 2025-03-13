@@ -23,7 +23,7 @@ func NewClient(destService string, opts ...client.Option) (Client, error) {
 	var options []client.Option
 	options = append(options, client.WithDestService(destService))
 
-	options = append(options, client.WithTransportProtocol(transport.GRPCStreaming))
+	options = append(options, client.WithTransportProtocol(transport.TTHeaderStreaming))
 
 	options = append(options, opts...)
 
