@@ -64,7 +64,7 @@ func initFlags() {
 	flag.Int64Var(&total, "n", 1024*100, "call total nums")
 	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
 	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
-	flag.IntVar(&sleepTime, "warmup", 100*1000, "sleep time for every request handler")
+	flag.IntVar(&warmup, "warmup", 100*1000, "sleep time for every request handler")
 	flag.Parse()
 }
 

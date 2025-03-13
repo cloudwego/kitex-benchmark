@@ -24,27 +24,22 @@ import (
 	"sync"
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
+
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
 	"github.com/cloudwego/kitex-benchmark/runner"
-	"github.com/cloudwego/kitex/client"
-	"github.com/cloudwego/kitex/client/streamxclient"
-	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/cloudwego/kitex/pkg/streamx"
-	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
 )
 
 func NewKClient(opt *runner.Options) runner.Client {
 	klog.SetLevel(klog.LevelWarn)
 
-	cp, _ := ttstream.NewClientProvider(
-		streamserver.NewServiceInfo(),
-		ttstream.WithClientMuxConnPool(ttstream.MuxConnConfig{PoolSize: 4}),
-	)
 	c, err := streamserver.NewClient(
 		"test.echo.kitex",
 		client.WithHostPorts(opt.Address),
-		streamxclient.WithProvider(cp),
+		client.WithTTHeaderStreamingOptions(client.WithTTHeaderStreamingProviderOptions(ttstream.WithClientMuxConnPool(ttstream.MuxConnConfig{PoolSize: 4}))),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -54,7 +49,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 		streampool: &sync.Pool{
 			New: func() interface{} {
 				ctx := metainfo.WithValue(context.Background(), "header", "hello")
-				_, stream, err := c.Echo(ctx)
+				stream, err := c.Echo(ctx)
 				if err != nil {
 					log.Printf("client new stream failed: %v", err)
 					return nil
@@ -85,7 +80,7 @@ func (cli *kClient) Send(method, action, msg string) error {
 	if st == nil {
 		return errors.New("new stream from streampool failed")
 	}
-	stream, ok := st.(streamx.BidiStreamingClient[echo.Request, echo.Response])
+	stream, ok := st.(streamserver.StreamServer_EchoClient)
 	if !ok {
 		return errors.New("new stream error")
 	}

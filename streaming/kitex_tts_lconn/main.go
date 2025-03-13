@@ -24,26 +24,24 @@ import (
 	"net"
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/cloudwego/kitex/server"
+
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
-	"github.com/cloudwego/kitex/pkg/streamx"
-	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
-	"github.com/cloudwego/kitex/server"
-	"github.com/cloudwego/kitex/server/streamxserver"
 )
 
 const port = 8002
 
 var (
-	_        streamserver.StreamServer = &StreamServerImpl{}
-	recorder                           = perf.NewRecorder("KITEX_TTS_LCONN@Server")
+	_        echo.StreamServer = &StreamServerImpl{}
+	recorder                   = perf.NewRecorder("KITEX_TTS_LCONN@Server")
 )
 
 type StreamServerImpl struct{}
 
-func (si *StreamServerImpl) Echo(ctx context.Context, stream streamx.BidiStreamingServer[echo.Request, echo.Response]) error {
+func (si *StreamServerImpl) Echo(ctx context.Context, stream echo.StreamServer_EchoServer) error {
 	v, _ := metainfo.GetValue(ctx, "header")
 	if v != "hello" {
 		return fmt.Errorf("invalid header: %v", v)
@@ -75,13 +73,9 @@ func main() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
 	}()
 
-	sp, _ := ttstream.NewServerProvider(
-		streamserver.NewServiceInfo(),
-	)
 	svr := streamserver.NewServer(
 		new(StreamServerImpl),
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4zero, Port: port}),
-		streamxserver.WithProvider(sp),
 	)
 	if err := svr.Run(); err != nil {
 		log.Println(err.Error())
