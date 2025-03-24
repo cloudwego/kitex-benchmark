@@ -26,7 +26,7 @@ import (
 	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/cloudwego/kitex/pkg/streamx/provider/ttstream"
+	"github.com/cloudwego/kitex/pkg/remote/trans/ttstream"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/streamserver"
@@ -39,7 +39,7 @@ func NewKClient(opt *runner.Options) runner.Client {
 	c, err := streamserver.NewClient(
 		"test.echo.kitex",
 		client.WithHostPorts(opt.Address),
-		client.WithTTHeaderStreamingOptions(client.WithTTHeaderStreamingProviderOptions(ttstream.WithClientMuxConnPool(ttstream.MuxConnConfig{PoolSize: 4}))),
+		client.WithTTHeaderStreamingOptions(client.WithTTHeaderStreamingTransportOptions(ttstream.WithClientMuxConnPool(ttstream.MuxConnConfig{PoolSize: 4}))),
 	)
 	if err != nil {
 		log.Fatal(err)
