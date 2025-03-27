@@ -9,7 +9,7 @@ require (
 	github.com/cloudfoundry/gosigar v1.3.3
 	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/gopkg v0.1.4
-	github.com/cloudwego/kitex v0.12.4-0.20250321062150-d76d38301a7b
+	github.com/cloudwego/kitex v0.12.3
 	github.com/cloudwego/kitex-tests v0.1.0
 	github.com/cloudwego/kitex/pkg/protocol/bthrift v0.0.0-20241120040446-fa081214728e
 	github.com/gogo/protobuf v1.3.2
