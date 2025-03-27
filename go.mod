@@ -1,8 +1,6 @@
 module github.com/cloudwego/kitex-benchmark
 
-go 1.21
-
-toolchain go1.23.0
+go 1.18
 
 require (
 	github.com/bytedance/gopkg v0.1.1
@@ -18,7 +16,7 @@ require (
 	github.com/lesismal/nbio v1.1.23-0.20210815145206-b106d99bce56
 	github.com/montanaflynn/stats v0.6.6
 	github.com/smallnest/rpcx v1.6.11
-	google.golang.org/grpc v1.66.2
+	google.golang.org/grpc v1.48.0
 	google.golang.org/protobuf v1.34.2
 )
 
