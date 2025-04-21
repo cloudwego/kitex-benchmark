@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	port = 8001
+	port = 8000
 )
 
 var recorder = perf.NewRecorder("KITEX@Server")
