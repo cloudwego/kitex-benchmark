@@ -66,7 +66,7 @@ func NewKitexClient(client *http.Client, addr string) *kitexClient {
 func (cli *kitexClient) Send(method, action, msg string) error {
 	req := createComplexRequest(action, msg)
 	buf, _ := sonic.Marshal(req)
-	request, err := http.NewRequest("POST", fmt.Sprintf("http://%s/api/EchoService/EchoComplex", cli.addr), bytes.NewBuffer(buf))
+	request, err := http.NewRequest("POST", fmt.Sprintf("http://%s/api/EchoServer/EchoComplex", cli.addr), bytes.NewBuffer(buf))
 	if err != nil {
 		return err
 	}
