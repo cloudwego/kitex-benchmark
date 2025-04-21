@@ -21,13 +21,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 
-	"github.com/bytedance/gopkg/lang/fastrand"
 	"github.com/bytedance/sonic"
-	"github.com/cloudwego/kitex-tests/pkg/utils"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
 	"github.com/cloudwego/kitex-benchmark/runner"
@@ -63,10 +60,20 @@ func NewKitexClient(client *http.Client, addr string) *kitexClient {
 	return c
 }
 
+var echoReqPool = sync.Pool{
+	New: func() interface{} {
+		return &echo.Request{}
+	},
+}
+
 func (cli *kitexClient) Send(method, action, msg string) error {
-	req := createComplexRequest(action, msg)
+	req := echoReqPool.Get().(*echo.Request)
+	defer echoReqPool.Put(req)
+
+	req.Action = action
+	req.Msg = msg
 	buf, _ := sonic.Marshal(req)
-	request, err := http.NewRequest("POST", fmt.Sprintf("http://%s/api/EchoServer/EchoComplex", cli.addr), bytes.NewBuffer(buf))
+	request, err := http.NewRequest("POST", fmt.Sprintf("http://%s/api/EchoServer/Echo", cli.addr), bytes.NewBuffer(buf))
 	if err != nil {
 		return err
 	}
@@ -79,7 +86,7 @@ func (cli *kitexClient) Send(method, action, msg string) error {
 	if err != nil {
 		return err
 	}
-	resp := &echo.ComplexResponse{}
+	resp := &echo.Response{}
 	rresp := &Response{Data: resp}
 	err = sonic.Unmarshal(body, rresp)
 	if err != nil {
@@ -94,53 +101,3 @@ type Response struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
-
-var echoComplexReqPool = sync.Pool{
-	New: func() interface{} {
-		return &echo.ComplexRequest{}
-	},
-}
-
-func createComplexRequest(action, msg string) *echo.ComplexRequest {
-	req := echoComplexReqPool.Get().(*echo.ComplexRequest)
-	defer echoComplexReqPool.Put(req)
-
-	id := int64(fastrand.Int31n(100))
-	smallSubMsg := &echo.SubMessage{
-		Id:    &id,
-		Value: ptr(utils.RandomString(10)),
-	}
-	subMsg1K := &echo.SubMessage{
-		Id:    &id,
-		Value: ptr(utils.RandomString(1024)),
-	}
-
-	subMsgList2Items := []*echo.SubMessage{smallSubMsg, smallSubMsg}
-
-	message := &echo.Message{
-		Id:          &id,
-		Value:       ptr(utils.RandomString(1024)),
-		SubMessages: subMsgList2Items,
-	}
-
-	msgMap := make(map[string]*echo.SubMessage)
-	for i := 0; i < 5; i++ {
-		msgMap[strconv.Itoa(i)] = subMsg1K
-	}
-
-	subMsgList100Items := make([]*echo.SubMessage, 100)
-	for i := 0; i < len(subMsgList100Items); i++ {
-		subMsgList100Items[i] = smallSubMsg
-	}
-
-	req.Action = action
-	req.Msg = msg
-	req.MsgMap = msgMap
-	req.SubMsgs = subMsgList100Items
-	req.MsgSet = []*echo.Message{message}
-	req.FlagMsg = message
-
-	return req
-}
-
-func ptr[T any](v T) *T { return &v }

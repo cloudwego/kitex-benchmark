@@ -2,7 +2,7 @@
 set -e
 CURDIR=$(cd $(dirname $0); pwd)
 
-cd $CURDIR && mkdir bin && mkdir log
+cd $CURDIR && rm -rf bin/ log && mkdir bin log
 
 go build -o bin/receiver ./
 
