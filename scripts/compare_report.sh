@@ -18,8 +18,8 @@ if [ -z "$dir" ];then
 fi
 
 for new in $dir/new*.csv; do
-    for old in $dir/old*.csv; do
-        echo python3 "scripts/reports/diff.py" "$old" "$new"
-        python3 "$PROJECT_ROOT/scripts/reports/diff.py" "$old" "$new"
-    done
+  file_type=$(basename "$new" .csv | sed 's/^new-//')
+  old="$dir/old-$file_type.csv"
+  echo python3 "scripts/reports/diff.py" "$old" "$new" "$file_type"
+  python3 "$PROJECT_ROOT/scripts/reports/diff.py" "$old" "$new" "$file_type"
 done

@@ -84,27 +84,25 @@ function compare() {
     build=$2
     repo=$3
     port=$4
-    report_dir=`date '+%m%d-%H%M'`-$type
     mkdir -p $PROJECT_ROOT/output/$report_dir
     log_prefix; echo "Begin comparing $type..."
 
     # old
     log_prefix; echo "Benchmark $type @ $old (old)"
-    export REPORT_PREFIX=$report_dir/old-
+    export REPORT=$report_dir/old-$type
     prepare_old
     time benchmark $build $repo $port
 
     # new
     log_prefix; echo "Benchmark $type @ $new (new)"
-    export REPORT_PREFIX=$report_dir/new-
+    export REPORT=$report_dir/new-$type
     prepare_new
     time benchmark $build $repo $port
 
-    # compare results
-    $PROJECT_ROOT/scripts/compare_report.sh $PROJECT_ROOT/output/$report_dir
-
     log_prefix; echo "End comparing $type..."
 }
+
+report_dir=`date '+%m%d-%H%M'`
 
 compare "thrift" "$PROJECT_ROOT/scripts/build_thrift.sh" "kitex" 8001
 
@@ -123,5 +121,8 @@ compare "generic-json" "$PROJECT_ROOT/scripts/build_generic.sh" "generic_json" 8
 compare "generic-map" "$PROJECT_ROOT/scripts/build_generic.sh" "generic_map" 8003
 
 # compare "generic-binary" "$PROJECT_ROOT/scripts/build_generic.sh" "generic_binary" 8004
+
+# compare results
+$PROJECT_ROOT/scripts/compare_report.sh $PROJECT_ROOT/output/$report_dir
 
 log_prefix; echo "All benchmark finished"

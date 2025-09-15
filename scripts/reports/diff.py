@@ -20,7 +20,7 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-def diff(from_csv, to_csv):
+def diff(from_csv, to_csv, benchmark_type):
     from_reader = list(csv.reader(open(from_csv)))
     to_reader = csv.reader(open(to_csv))
     title = ['Kind', 'Concurrency', 'Data Size', 'QPS', 'AVG', 'P99', 'Client CPU', 'Server CPU']
@@ -28,7 +28,10 @@ def diff(from_csv, to_csv):
 
     for line_num, line in enumerate(to_reader):
         result = []
-        result.append(line[0])  # kind
+        if benchmark_type != "":
+            result.append("["+benchmark_type+"]")  # kind
+        else:
+            result.append(line[0])  # kind
         result.append(line[1])  # concurrency
         result.append(line[2])  # data size
 
@@ -73,7 +76,11 @@ diff.py {baseline.csv} {current.csv}
         return
     from_csv = sys.argv[1]
     to_csv = sys.argv[2]
-    diff(from_csv, to_csv)
+    if len(sys.argv) < 4:
+        benchmark_type = ""
+    else:
+        benchmark_type = sys.argv[3]
+    diff(from_csv, to_csv, benchmark_type)
 
 
 if __name__ == '__main__':

@@ -48,7 +48,7 @@ GOEXEC=${GOEXEC:-"go"}
 GOROOT=$GOROOT
 
 USER=$(whoami)
-REPORT=${REPORT_PREFIX}${REPORT:-"$(date +%F-%H-%M)"}
+REPORT=${REPORT:-"$(date +%F-%H-%M)"}
 
 nice_cmd=''
 tee_cmd="tee -a output/${REPORT}.log"
