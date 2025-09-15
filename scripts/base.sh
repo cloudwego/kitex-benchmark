@@ -2,10 +2,10 @@
 set -e
 
 # benchmark params
-n=20000000
+n=10000000
 method="echo"
 body=(1024)
-concurrent=(100 200 400 600 800 1000)
+concurrent=(100)
 qps=(0)
 sleep=0
 # NOTICE: if you want to dump profile, set "enable_profile" to 1
@@ -48,7 +48,7 @@ GOEXEC=${GOEXEC:-"go"}
 GOROOT=$GOROOT
 
 USER=$(whoami)
-REPORT=${REPORT_PREFIX}${REPORT:-"$(date +%F-%H-%M)"}
+REPORT=${REPORT:-"$(date +%F-%H-%M)"}
 
 nice_cmd=''
 tee_cmd="tee -a output/${REPORT}.log"

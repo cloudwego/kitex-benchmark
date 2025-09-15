@@ -27,8 +27,6 @@ if [ -z "$old" -o -z "$new" ]; then
     exit 1
 fi
 
-types=("thrift" "grpc" "pb")
-
 function log_prefix() {
     echo -n "[`date '+%Y-%m-%d %H:%M:%S'`] "
 }
@@ -45,33 +43,88 @@ function prepare_new() {
     go mod tidy
 }
 
+function benchmark() {
+  ( # use subshell to remove dirty env/variables
+    build=$1
+    srp=$2
+    crp=$2
+    port=$3
+    # base
+    source $PROJECT_ROOT/scripts/base.sh
+    # build
+    source $build
+    # benchmark
+    for b in ${body[@]}; do
+      for c in ${concurrent[@]}; do
+        for q in ${qps[@]}; do
+          addr="127.0.0.1:${port}"
+          kill_pid_listening_on_port ${port}
+          # server start
+          echo "Starting server [$srp], if failed please check [output/log/nohup.log] for detail."
+          nohup $cmd_server $output_dir/bin/${srp}_reciever >> $output_dir/log/nohup.log 2>&1 &
+          sleep 1
+          echo "Server [$srp] running with [$cmd_server]"
+
+          # run client
+          echo "Client [$crp] running with [$cmd_client]"
+          $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -n=$n | $tee_cmd
+
+          # stop server
+          kill_pid_listening_on_port ${port}
+        done
+      done
+    done
+
+    finish_cmd
+  )
+}
+
 function compare() {
     type=$1
-    report_dir=`date '+%m%d-%H%M'`-$type
+    build=$2
+    repo=$3
+    port=$4
     mkdir -p $PROJECT_ROOT/output/$report_dir
     log_prefix; echo "Begin comparing $type..."
 
     # old
     log_prefix; echo "Benchmark $type @ $old (old)"
-    export REPORT_PREFIX=$report_dir/old-
+    export REPORT=$report_dir/old-$type
     prepare_old
-    time bash $PROJECT_ROOT/scripts/benchmark_$type.sh
+    time benchmark $build $repo $port
 
     # new
     log_prefix; echo "Benchmark $type @ $new (new)"
-    export REPORT_PREFIX=$report_dir/new-
+    export REPORT=$report_dir/new-$type
     prepare_new
-    time bash $PROJECT_ROOT/scripts/benchmark_$type.sh
-
-    # compare results
-    $PROJECT_ROOT/scripts/compare_report.sh $PROJECT_ROOT/output/$report_dir
+    time benchmark $build $repo $port
 
     log_prefix; echo "End comparing $type..."
 }
 
-for tp in ${types[@]}; do
-    compare $tp
+report_dir=`date '+%m%d-%H%M'`
+
+scenarios=(
+  "thrift          $PROJECT_ROOT/scripts/build_thrift.sh     kitex            8001"
+  "thrift-mux      $PROJECT_ROOT/scripts/build_thrift.sh     kitex-mux        8002"
+  "protobuf        $PROJECT_ROOT/scripts/build_pb.sh         kitex            8001"
+  "grpc-unary      $PROJECT_ROOT/scripts/build_grpc.sh       kitex            8006"
+  "grpc-bidi       $PROJECT_ROOT/scripts/build_streaming.sh  kitex_grpc       8001"
+  "ttstream-bidi   $PROJECT_ROOT/scripts/build_streaming.sh  kitex_tts_lconn  8002"
+  "generic-json    $PROJECT_ROOT/scripts/build_generic.sh    generic_json     8002"
+  "generic-map     $PROJECT_ROOT/scripts/build_generic.sh    generic_map      8003"
+  # "generic-binary  $PROJECT_ROOT/scripts/build_generic.sh    generic_binary   8004"
+)
+
+keys=()
+for s in "${scenarios[@]}"; do
+  IFS=' ' read -r -a value <<< "$s"
+  compare "${value[0]}" "${value[1]}" "${value[2]}" "${value[3]}"
+  keys+=("${value[0]}")
 done
 
+key_len=${#keys[@]}
+# compare results
+$PROJECT_ROOT/scripts/compare_report.sh $PROJECT_ROOT/output/$report_dir $(printf "%s|" "${keys[@]}" | sed 's/|$//') | grep -A $((key_len + 1)) Kind | column -t
 
 log_prefix; echo "All benchmark finished"

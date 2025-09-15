@@ -3,7 +3,7 @@ import csv
 import sys
 
 '''CSV Format Example
-Kind,Concurrency,Data Size,TPS,AVG,P99,Server_CPU,Client_CPU
+Kind,Concurrency,Data_Size,TPS,AVG,P99,Server_CPU,Client_CPU
 [GRPC],100,1024,101152.29,3.36,5.30,188.04,423.07
 '''
 
@@ -20,15 +20,18 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-def diff(from_csv, to_csv):
+def diff(from_csv, to_csv, benchmark_type, no_title):
     from_reader = list(csv.reader(open(from_csv)))
     to_reader = csv.reader(open(to_csv))
-    title = ['Kind', 'Concurrency', 'Data Size', 'QPS', 'AVG', 'P99', 'Client CPU', 'Server CPU']
+    title = ['Kind', 'Concurrency', 'Data_Size', 'QPS', 'AVG', 'P99', 'Client_CPU', 'Server_CPU']
     results = []
 
     for line_num, line in enumerate(to_reader):
         result = []
-        result.append(line[0])  # kind
+        if benchmark_type != "":
+            result.append("["+benchmark_type+"]")  # kind
+        else:
+            result.append(line[0])  # kind
         result.append(line[1])  # concurrency
         result.append(line[2])  # data size
 
@@ -41,7 +44,8 @@ def diff(from_csv, to_csv):
         results.append(result)
 
     results.sort(key=lambda result: result[0])
-    results.insert(0, title)
+    if not no_title:
+        results.insert(0, title)
     print_csv(results)
 
 
@@ -73,7 +77,15 @@ diff.py {baseline.csv} {current.csv}
         return
     from_csv = sys.argv[1]
     to_csv = sys.argv[2]
-    diff(from_csv, to_csv)
+    if len(sys.argv) < 4:
+        benchmark_type = ""
+    else:
+        benchmark_type = sys.argv[3]
+    if len(sys.argv) < 5:
+        no_title = False
+    else:
+        no_title = sys.argv[4] == "True"
+    diff(from_csv, to_csv, benchmark_type, no_title)
 
 
 if __name__ == '__main__':

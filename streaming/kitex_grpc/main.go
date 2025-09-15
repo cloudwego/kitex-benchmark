@@ -17,6 +17,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -42,20 +43,20 @@ var (
 type EchoImpl struct{}
 
 // Echo implements the EchoImpl interface.
-func (s *EchoImpl) Echo(stream echo.SEcho_EchoServer) error {
-	md, _ := metadata.FromIncomingContext(stream.Context())
+func (s *EchoImpl) Echo(ctx context.Context, stream echo.SEcho_EchoServer) error {
+	md, _ := metadata.FromIncomingContext(ctx)
 	if md == nil || len(md["header"]) == 0 || md["header"][0] != "hello" {
 		return fmt.Errorf("invalid header: %v", md)
 	}
 
 	for {
-		req, err := stream.Recv()
+		req, err := stream.Recv(ctx)
 		if err != nil {
 			return err
 		}
 		action, msg := runner.ProcessRequest(recorder, req.Action, req.Msg)
 
-		err = stream.Send(&echo.Response{
+		err = stream.Send(ctx, &echo.Response{
 			Action: action,
 			Msg:    msg,
 		})
