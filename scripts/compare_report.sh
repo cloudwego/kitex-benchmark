@@ -17,9 +17,15 @@ if [ -z "$dir" ];then
     exit 1
 fi
 
-for new in $dir/new*.csv; do
-  file_type=$(basename "$new" .csv | sed 's/^new-//')
-  old="$dir/old-$file_type.csv"
-  echo python3 "scripts/reports/diff.py" "$old" "$new" "$file_type"
-  python3 "$PROJECT_ROOT/scripts/reports/diff.py" "$old" "$new" "$file_type"
+IFS='|' read -ra keys <<< "$2"
+no_title=0
+for key in "${keys[@]}"; do
+  old="$dir/old-$key.csv"
+  new="$dir/new-$key.csv"
+  if [ "$no_title" -eq 0 ]; then
+    python3 "$PROJECT_ROOT/scripts/reports/diff.py" "$old" "$new" "$key"
+    no_title=1
+  else
+    python3 "$PROJECT_ROOT/scripts/reports/diff.py" "$old" "$new" "$key" "True"
+  fi
 done
