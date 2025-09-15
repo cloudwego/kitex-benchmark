@@ -78,11 +78,11 @@ func (cli *kClient) Send(method, action, msg string) error {
 	defer cli.streampool.Put(stream)
 	req.Action = action
 	req.Msg = msg
-	err := stream.Send(req)
+	err := stream.Send(stream.Context(), req)
 	if err != nil {
 		return err
 	}
-	resp, err := stream.Recv()
+	resp, err := stream.Recv(stream.Context())
 	if err != nil {
 		return err
 	}

@@ -27,8 +27,6 @@ if [ -z "$old" -o -z "$new" ]; then
     exit 1
 fi
 
-types=("thrift" "grpc" "pb")
-
 function log_prefix() {
     echo -n "[`date '+%Y-%m-%d %H:%M:%S'`] "
 }
@@ -45,8 +43,47 @@ function prepare_new() {
     go mod tidy
 }
 
+function benchmark() {
+  ( # use subshell to remove dirty env/variables
+    build=$1
+    srp=$2
+    crp=$2
+    port=$3
+    # base
+    source $PROJECT_ROOT/scripts/base.sh
+    # build
+    source $build
+    # benchmark
+    for b in ${body[@]}; do
+      for c in ${concurrent[@]}; do
+        for q in ${qps[@]}; do
+          addr="127.0.0.1:${port}"
+          kill_pid_listening_on_port ${port}
+          # server start
+          echo "Starting server [$srp], if failed please check [output/log/nohup.log] for detail."
+          nohup $cmd_server $output_dir/bin/${srp}_reciever >> $output_dir/log/nohup.log 2>&1 &
+          sleep 1
+          echo "Server [$srp] running with [$cmd_server]"
+
+          # run client
+          echo "Client [$crp] running with [$cmd_client]"
+          $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -n=$n | $tee_cmd
+
+          # stop server
+          kill_pid_listening_on_port ${port}
+        done
+      done
+    done
+
+    finish_cmd
+  )
+}
+
 function compare() {
     type=$1
+    build=$2
+    repo=$3
+    port=$4
     report_dir=`date '+%m%d-%H%M'`-$type
     mkdir -p $PROJECT_ROOT/output/$report_dir
     log_prefix; echo "Begin comparing $type..."
@@ -55,13 +92,13 @@ function compare() {
     log_prefix; echo "Benchmark $type @ $old (old)"
     export REPORT_PREFIX=$report_dir/old-
     prepare_old
-    time bash $PROJECT_ROOT/scripts/benchmark_$type.sh
+    time benchmark $build $repo $port
 
     # new
     log_prefix; echo "Benchmark $type @ $new (new)"
     export REPORT_PREFIX=$report_dir/new-
     prepare_new
-    time bash $PROJECT_ROOT/scripts/benchmark_$type.sh
+    time benchmark $build $repo $port
 
     # compare results
     $PROJECT_ROOT/scripts/compare_report.sh $PROJECT_ROOT/output/$report_dir
@@ -69,9 +106,22 @@ function compare() {
     log_prefix; echo "End comparing $type..."
 }
 
-for tp in ${types[@]}; do
-    compare $tp
-done
+compare "thrift" "$PROJECT_ROOT/scripts/build_thrift.sh" "kitex" 8001
 
+compare "thrift-mux" "$PROJECT_ROOT/scripts/build_thrift.sh" "kitex-mux" 8002
+
+compare "protobuf" "$PROJECT_ROOT/scripts/build_pb.sh" "kitex" 8001
+
+compare "grpc-unary" "$PROJECT_ROOT/scripts/build_grpc.sh" "kitex" 8006
+
+compare "grpc-bidistream" "$PROJECT_ROOT/scripts/build_streaming.sh" "kitex_grpc" 8001
+
+compare "ttstream-bidistream" "$PROJECT_ROOT/scripts/build_streaming.sh" "kitex_tts_lconn" 8002
+
+compare "generic-json" "$PROJECT_ROOT/scripts/build_generic.sh" "generic_json" 8002
+
+compare "generic-map" "$PROJECT_ROOT/scripts/build_generic.sh" "generic_map" 8003
+
+# compare "generic-binary" "$PROJECT_ROOT/scripts/build_generic.sh" "generic_binary" 8004
 
 log_prefix; echo "All benchmark finished"
