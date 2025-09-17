@@ -24,6 +24,7 @@ import (
 	"net"
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo"
@@ -68,6 +69,7 @@ func (si *StreamServerImpl) Echo(ctx context.Context, stream echo.StreamServer_E
 }
 
 func main() {
+	klog.SetLevel(klog.LevelWarn)
 	// start pprof server
 	go func() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
