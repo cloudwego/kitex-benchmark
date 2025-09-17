@@ -31,13 +31,9 @@ type Counter struct {
 }
 
 func NewCounter() *Counter {
-	return &Counter{}
-}
-
-func (c *Counter) Reset() {
-	c.Total = 0
-	c.Failed = 0
-	c.costs = make([]int64, 0, 1024*16) // 预分配内存, 减少扩容
+	return &Counter{
+		costs: make([]int64, 0, 1024*16), // 预分配内存, 减少扩容
+	}
 }
 
 func (c *Counter) AddRecord(err error, cost int64) {

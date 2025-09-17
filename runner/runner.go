@@ -104,7 +104,7 @@ func (r *Runner) Run(title string, onceFn RunOnce, concurrent, qps int, duration
 	start := r.timer.Now()
 	r.benching(onceFn, concurrent, qps, duration)
 	stop := r.timer.Now()
-	var totalCounter Counter
+	totalCounter := NewCounter()
 	for _, c := range r.counters {
 		totalCounter.Total += c.Total
 		totalCounter.Failed += c.Failed
