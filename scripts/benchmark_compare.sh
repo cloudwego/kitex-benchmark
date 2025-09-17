@@ -67,7 +67,7 @@ function benchmark() {
 
           # run client
           echo "Client [$crp] running with [$cmd_client]"
-          $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -n=$n | $tee_cmd
+          $cmd_client $output_dir/bin/${crp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -t=$t | $tee_cmd
 
           # stop server
           kill_pid_listening_on_port ${port}

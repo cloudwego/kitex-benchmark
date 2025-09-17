@@ -29,12 +29,12 @@ var (
 	address    string
 	echoSize   int
 	method     string
-	total      int64
+	duration   int64
 	concurrent int
 	qps        int
 	poolSize   int
 	sleepTime  int
-	warmup     int
+	warmup     int64
 )
 
 type Options struct {
@@ -61,10 +61,10 @@ func initFlags() {
 	flag.IntVar(&echoSize, "b", 1024, "echo size once")
 	flag.IntVar(&concurrent, "c", 100, "call concurrent")
 	flag.IntVar(&qps, "qps", 0, "call qps")
-	flag.Int64Var(&total, "n", 1024*100, "call total nums")
+	flag.Int64Var(&duration, "t", 60, "call duration, in seconds")
 	flag.IntVar(&poolSize, "pool", 10, "conn poll size")
 	flag.IntVar(&sleepTime, "sleep", 0, "sleep time for every request handler")
-	flag.IntVar(&warmup, "warmup", 100*1000, "sleep time for every request handler")
+	flag.Int64Var(&warmup, "warmup", 2, "warmup time before benching, in seconds")
 	flag.Parse()
 }
 
@@ -98,11 +98,7 @@ func Main(name string, newer ClientNewer) {
 	handler := func() error { return cli.Send(method, action, payload) }
 
 	// === warming ===
-	warmupTotal := warmup
-	if qps > 0 && warmup != 0 {
-		warmupTotal = qps * 2
-	}
-	r.Warmup(handler, concurrent, qps, int64(warmupTotal))
+	r.Warmup(handler, concurrent, qps, warmup)
 
 	// === beginning ===
 	if err := cli.Send(method, BeginAction, "empty"); err != nil {
@@ -112,7 +108,7 @@ func Main(name string, newer ClientNewer) {
 	recorder.Begin()
 
 	// === benching ===
-	r.Run(name, handler, concurrent, qps, total, echoSize, sleepTime)
+	r.Run(name, handler, concurrent, qps, duration, echoSize, sleepTime)
 
 	// == ending ===
 	recorder.End()

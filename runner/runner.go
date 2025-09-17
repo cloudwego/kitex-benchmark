@@ -19,6 +19,7 @@ package runner
 import (
 	"errors"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
@@ -33,14 +34,12 @@ const window = 10 * time.Millisecond
 type RunOnce func() error
 
 type Runner struct {
-	counter *Counter // 计数器
-	timer   Timer    // 计时器
+	counters []*Counter // 计数器
+	timer    Timer      // 计时器
 }
 
 func NewRunner() *Runner {
-	r := &Runner{
-		counter: NewCounter(),
-	}
+	r := &Runner{}
 	if qps == 0 {
 		r.timer = NewTimer(time.Microsecond)
 	} else {
@@ -49,21 +48,26 @@ func NewRunner() *Runner {
 	return r
 }
 
-func (r *Runner) benching(onceFn RunOnce, concurrent, qps int, total int64) {
+func (r *Runner) benching(onceFn RunOnce, concurrent, qps int, duration int64) {
 	var wg sync.WaitGroup
 	wg.Add(concurrent)
-	r.counter.Reset(total)
+	r.counters = nil
 	var qpsLimiter *ratelimit.Bucket
 	if qps > 0 {
 		qpsLimiter = ratelimit.NewBucketWithRate(float64(qps), int64(concurrent))
 	}
+	var stopped uint32
+	time.AfterFunc(time.Duration(duration)*time.Second, func() {
+		atomic.StoreUint32(&stopped, 1)
+	})
 	for i := 0; i < concurrent; i++ {
-		go func() {
+		c := NewCounter()
+		r.counters = append(r.counters, c)
+		go func(c *Counter) {
 			defer wg.Done()
 			for {
-				idx := r.counter.Idx()
-				if idx >= total {
-					return
+				if atomic.LoadUint32(&stopped) == 1 {
+					break
 				}
 				if qpsLimiter != nil {
 					qpsLimiter.Wait(1)
@@ -73,33 +77,38 @@ func (r *Runner) benching(onceFn RunOnce, concurrent, qps int, total int64) {
 				end := r.timer.Now()
 				if err != nil {
 					if errors.Is(err, kerrors.ErrCircuitBreak) {
-						klog.Warnf("No.%d request failed: %v, circuit break happens, stop test!", idx, err)
+						klog.Warnf("No.%d request failed: %v, circuit break happens, stop test!", c.Total, err)
 						break
 					}
-					klog.Warnf("No.%d request failed: %v", idx, err)
+					klog.Warnf("No.%d request failed: %v", c.Total, err)
 				}
 				cost := end - begin
-				r.counter.AddRecord(idx, err, cost)
+				c.AddRecord(err, cost)
 			}
-		}()
+		}(c)
 	}
 	wg.Wait()
-	r.counter.Total = total
 }
 
-func (r *Runner) Warmup(onceFn RunOnce, concurrent, qps int, total int64) {
-	r.benching(onceFn, concurrent, qps, total)
+func (r *Runner) Warmup(onceFn RunOnce, concurrent, qps int, duration int64) {
+	r.benching(onceFn, concurrent, qps, duration)
 }
 
 // 并发测试
-func (r *Runner) Run(title string, onceFn RunOnce, concurrent, qps int, total int64, echoSize, sleepTime int) {
+func (r *Runner) Run(title string, onceFn RunOnce, concurrent, qps int, duration int64, echoSize, sleepTime int) {
 	logInfo(
-		"%s start benching [%s], concurrent: %d, qps: %d, total: %d, sleep: %d",
-		"["+title+"]", time.Now().String(), concurrent, qps, total, sleepTime,
+		"%s start benching [%s], concurrent: %d, qps: %d, duration: %ds, sleep: %d",
+		"["+title+"]", time.Now().String(), concurrent, qps, duration, sleepTime,
 	)
 
 	start := r.timer.Now()
-	r.benching(onceFn, concurrent, qps, total)
+	r.benching(onceFn, concurrent, qps, duration)
 	stop := r.timer.Now()
-	r.counter.Report(title, stop-start, concurrent, total, echoSize)
+	totalCounter := NewCounter()
+	for _, c := range r.counters {
+		totalCounter.Total += c.Total
+		totalCounter.Failed += c.Failed
+		totalCounter.costs = append(totalCounter.costs, c.costs...)
+	}
+	totalCounter.Report(title, stop-start, concurrent, duration, echoSize)
 }
