@@ -19,10 +19,10 @@ for b in ${body[@]}; do
 
         # run client
         echo "Client [$rp] running with [$cmd_client]"
-        $cmd_client $output_dir/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -n=$n --sleep=$sleep | $tee_cmd
+        $cmd_client $output_dir/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -t=$t --sleep=$sleep | $tee_cmd
 
         echo "client $rp running with $cmd_client"
-        $cmd_client $output_dir/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -n=$n --sleep=$sleep | $tee_cmd
+        $cmd_client $output_dir/bin/${rp}_bencher -addr="$addr" -b=$b -c=$c -qps=$q -t=$t --sleep=$sleep | $tee_cmd
       done
     done
   done

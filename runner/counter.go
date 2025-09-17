@@ -18,7 +18,6 @@ package runner
 
 import (
 	"fmt"
-	"sync/atomic"
 	"time"
 
 	"github.com/montanaflynn/stats"
@@ -35,25 +34,21 @@ func NewCounter() *Counter {
 	return &Counter{}
 }
 
-func (c *Counter) Reset(total int64) {
-	atomic.StoreInt64(&c.Total, 0)
-	atomic.StoreInt64(&c.Failed, 0)
-	c.costs = make([]int64, total)
+func (c *Counter) Reset() {
+	c.Total = 0
+	c.Failed = 0
+	c.costs = make([]int64, 0, 1024*16) // 预分配内存, 减少扩容
 }
 
-func (c *Counter) AddRecord(idx int64, err error, cost int64) {
-	c.costs[idx] = cost
+func (c *Counter) AddRecord(err error, cost int64) {
+	c.costs = append(c.costs, cost)
+	c.Total++
 	if err != nil {
-		atomic.AddInt64(&c.Failed, 1)
+		c.Failed++
 	}
 }
 
-// idx < 0 表示用尽
-func (c *Counter) Idx() (idx int64) {
-	return atomic.AddInt64(&c.Total, 1) - 1
-}
-
-func (c *Counter) Report(title string, totalns int64, concurrent int, total int64, echoSize int) error {
+func (c *Counter) Report(title string, totalns int64, concurrent int, duration int64, echoSize int) error {
 	ms, sec := int64(time.Millisecond), int64(time.Second)
 	logInfo("[%s]: finish benching [%s], took %d ms for %d requests", title, time.Now().String(), totalns/ms, c.Total)
 	logInfo("[%s]: requests total: %d, failed: %d", title, c.Total, c.Failed)
@@ -77,11 +72,11 @@ func (c *Counter) Report(title string, totalns int64, concurrent int, total int6
 
 	var result string
 	if tp999/1000 < 1 {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, AVG: %.2fus, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, qps=%d, n=%d)",
-			title, tps, avg/1000, tp99/1000, tp999/1000, echoSize, concurrent, qps, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, AVG: %.2fus, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, qps=%d, t=%ds)",
+			title, tps, avg/1000, tp99/1000, tp999/1000, echoSize, concurrent, qps, duration)
 	} else {
-		result = fmt.Sprintf("[%s]: TPS: %.2f, AVG: %.2fms, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, qps=%d, n=%d)",
-			title, tps, avg/1000000, tp99/1000000, tp999/1000000, echoSize, concurrent, qps, total)
+		result = fmt.Sprintf("[%s]: TPS: %.2f, AVG: %.2fms, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, qps=%d, t=%ds)",
+			title, tps, avg/1000000, tp99/1000000, tp999/1000000, echoSize, concurrent, qps, duration)
 	}
 	logInfo(result)
 	return nil

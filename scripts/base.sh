@@ -2,7 +2,7 @@
 set -e
 
 # benchmark params
-n=10000000
+t=30
 method="echo"
 body=(1024)
 concurrent=(100)
