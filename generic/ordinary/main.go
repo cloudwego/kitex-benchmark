@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	port = 8000
+	port = 8004
 )
 
 var recorder = perf.NewRecorder("GenericOrdinary@Server")
