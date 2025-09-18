@@ -41,7 +41,7 @@ var recorder = perf.NewRecorder("GenericBinary@Server")
 // EchoServerImpl implements the last service interface defined in the IDL.
 type EchoServerImpl struct{}
 
-func (s *EchoServerImpl) DefaultHandler(ctx context.Context, service, method string, request interface{}) (response interface{}, err error) {
+func (s EchoServerImpl) DefaultHandler(ctx context.Context, service, method string, request interface{}) (response interface{}, err error) {
 	switch method {
 	case "Echo":
 		args := &echo.EchoServerEchoArgs{}
