@@ -17,7 +17,9 @@ $GOEXEC mod tidy
 # build clients
 $GOEXEC build -v -o $output_dir/bin/kitex_bencher $thrift_dir/kitex/client
 $GOEXEC build -v -o $output_dir/bin/kitex-mux_bencher $thrift_dir/kitex-mux/client
+$GOEXEC build -v -o $output_dir/bin/kitex-shmipc_bencher $thrift_dir/kitex-shmipc/client
 
 # build servers
 $GOEXEC build -v -o $output_dir/bin/kitex_reciever $thrift_dir/kitex
 $GOEXEC build -v -o $output_dir/bin/kitex-mux_reciever $thrift_dir/kitex-mux
+$GOEXEC build -v -o $output_dir/bin/kitex-shmipc_reciever $thrift_dir/kitex-shmipc
