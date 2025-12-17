@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net"
 
@@ -51,6 +52,9 @@ func (s *EchoImpl) Echo(ctx context.Context, stream echo.SEcho_EchoServer) error
 
 	for {
 		req, err := stream.Recv(ctx)
+		if err == io.EOF {
+			return nil
+		}
 		if err != nil {
 			return err
 		}

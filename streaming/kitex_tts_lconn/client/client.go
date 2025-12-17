@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 CloudWeGo Authors
+ * Copyright 2025 CloudWeGo Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,15 +85,14 @@ func (cli *kClient) Send(method, action, msg string) error {
 	}
 	defer cli.streampool.Put(stream)
 
-	ctx := context.Background()
 	req.Action = action
 	req.Msg = msg
-	err := stream.Send(ctx, req)
+	err := stream.Send(stream.Context(), req)
 	if err != nil {
 		return err
 	}
 
-	resp, err := stream.Recv(ctx)
+	resp, err := stream.Recv(stream.Context())
 	if err != nil && !errors.Is(err, io.EOF) {
 		return err
 	}
