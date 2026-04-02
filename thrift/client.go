@@ -79,8 +79,14 @@ var echoComplexReqPool = sync.Pool{
 	},
 }
 
+const (
+	complexRequestStringFieldCount = 1000
+	complexRequestStringFieldSize  = 10 * 1024
+)
+
 func (cli *kitexClient) echoComplex(action, msg string) error {
 	req := createComplexRequest(action, msg)
+	defer echoComplexReqPool.Put(req)
 
 	reply, err := cli.client.EchoComplex(context.Background(), req)
 	if reply != nil {
@@ -91,40 +97,42 @@ func (cli *kitexClient) echoComplex(action, msg string) error {
 
 func createComplexRequest(action, msg string) *echo.ComplexRequest {
 	req := echoComplexReqPool.Get().(*echo.ComplexRequest)
-	defer echoComplexReqPool.Put(req)
+	*req = echo.ComplexRequest{}
 
 	id := int64(fastrand.Int31n(100))
-	smallSubMsg := &echo.SubMessage{
-		Id:    &id,
-		Value: ptr(utils.RandomString(10)),
-	}
-	subMsg1K := &echo.SubMessage{
-		Id:    &id,
-		Value: ptr(utils.RandomString(1024)),
-	}
+	largeValue := utils.RandomString(complexRequestStringFieldSize)
 
-	subMsgList2Items := []*echo.SubMessage{smallSubMsg, smallSubMsg}
+	msgMapSize := complexRequestStringFieldCount / 2
+	subMsgListSize := complexRequestStringFieldCount - msgMapSize
+
+	msgMap := make(map[string]*echo.SubMessage, msgMapSize)
+	for i := 0; i < msgMapSize; i++ {
+		subID := id + int64(i)
+		msgMap[strconv.Itoa(i)] = &echo.SubMessage{
+			Id:    &subID,
+			Value: ptr(largeValue),
+		}
+	}
 
 	message := &echo.Message{
 		Id:          &id,
-		Value:       ptr(utils.RandomString(1024)),
-		SubMessages: subMsgList2Items,
+		Value:       ptr(largeValue),
+		SubMessages: nil,
 	}
 
-	msgMap := make(map[string]*echo.SubMessage)
-	for i := 0; i < 5; i++ {
-		msgMap[strconv.Itoa(i)] = subMsg1K
-	}
-
-	subMsgList100Items := make([]*echo.SubMessage, 100)
-	for i := 0; i < len(subMsgList100Items); i++ {
-		subMsgList100Items[i] = smallSubMsg
+	subMsgs := make([]*echo.SubMessage, subMsgListSize)
+	for i := 0; i < len(subMsgs); i++ {
+		subID := id + int64(msgMapSize+i)
+		subMsgs[i] = &echo.SubMessage{
+			Id:    &subID,
+			Value: ptr(largeValue),
+		}
 	}
 
 	req.Action = action
 	req.Msg = msg
 	req.MsgMap = msgMap
-	req.SubMsgs = subMsgList100Items
+	req.SubMsgs = subMsgs
 	req.MsgSet = []*echo.Message{message}
 	req.FlagMsg = message
 
